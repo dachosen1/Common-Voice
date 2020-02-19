@@ -1,0 +1,10 @@
+IPython
+Flask
+future
+numpy
+pydub
+PyYAML
+six
+torch
+torchvision
+Werkzeug
