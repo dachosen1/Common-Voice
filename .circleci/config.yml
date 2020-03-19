@@ -11,11 +11,11 @@ jobs:
       - python/load-cache
       - python/install-deps
       - python/save-cache
-      - run:
-          command: ./manage.py test
-          name: Test
+#       - run:
+#           command: ./manage.py test
+#           name: Test
 
-workflows:
-  main:
-    jobs:
-      - build-and-test
+# workflows:
+#   main:
+#     jobs:
+#       - build-and-test
