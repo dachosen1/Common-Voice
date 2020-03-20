@@ -3,7 +3,7 @@ youtube-dl==2020.3.8
 audioread==2.1.8
 Flask==1.1.1
 librosa==0.7.2
-numpy==1.18.1
+numpy==1.18.2
 pandas==1.0.3
 pydub==0.23.1
 python-speech-features==0.6
