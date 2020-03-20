@@ -1,3 +1,4 @@
+import numpy as np
 import torch
 import torch.nn as nn
 
@@ -13,7 +14,7 @@ class Voice_LSTM(nn.Module):
         """
         Initialize the model by setting up the layers.
         """
-        super(voice__lstm, self).__init__()
+        super(Voice_LSTM, self).__init__()
 
         self.output_size = output_size
         self.n_layers = n_layers
