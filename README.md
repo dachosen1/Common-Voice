@@ -1,4 +1,6 @@
 ## Common Voice
+[![CircleCI](https://circleci.com/gh/dachosen1/Common-Voice.svg?style=svg)](https://circleci.com/gh/dachosen1/Common-Voice)
+
 
 
 ### Background 
