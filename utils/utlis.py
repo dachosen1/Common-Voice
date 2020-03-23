@@ -51,21 +51,6 @@ def clean_data(filename, rate, signal, new_file_path):
 # todo: add all data to an s3 bucket
 
 
-def envelope(*, y, rate, threshold, time):
-    mask = []
-
-    y = pd.Series(y).apply(np.abs)
-    y_mean = y.rolling(window = int(rate / time), min_periods = 1, center = True).mean()
-
-    for mean in y_mean:
-        if mean > threshold:
-            mask.append(True)
-        else:
-            mask.append(False)
-
-    return mask
-
-
 def convert_mp3_to_wav():
     """
     Converts all mp3  in the clips folder to wav and removes them from the folder
@@ -82,7 +67,7 @@ def convert_mp3_to_wav():
 
     # todo: needs to be dynamic: search for director for mp3 files also function needs to save document in s3
     # todo: Add the option to specify a path
-    # todo: add the options to upload model to the cloud
+    # todo: add the options to upload RNN_Model to the cloud
 
 
 class Wav_parse:
