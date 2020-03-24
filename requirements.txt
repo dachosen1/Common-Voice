@@ -1,5 +1,5 @@
 matplotlib==3.2.1
-youtube-dl==2020.3.8
+youtube-dl==2020.3.24
 audioread==2.1.8
 Flask==1.1.1
 librosa==0.7.2
