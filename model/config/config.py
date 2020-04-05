@@ -13,9 +13,13 @@ class Auth:
 class Model:
     OUTPUT_SIZE = 2
     HIDDEN_DIM = 256
-    NUM_LAYERS = 10
-    DROPOUT = 0.5
-    BATCH = 1000
-    LEARNING_RATE = 0.001
+    NUM_LAYERS = 2
+    DROPOUT = 0.25
+    INPUT_SIZE = 480
+    BATCH_SIZE = 256
+
+
+class Train:
+    LEARNING_RATE = 0.0001
     GRADIENT_CLIP = 10
-    EPOCH = 10
+    EPOCH = 200
