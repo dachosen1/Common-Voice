@@ -34,7 +34,7 @@ def get_male_female_file(PATH):
 
 def move_files(AUDIO_FILE_NAME, FILE_SAVE_PATH):
     """
-    Module to search for audio file name in master audio file and move it to it's proper folder
+    Module to search for audio name name in master audio name and move it to it's proper folder
 
     :param AUDIO_FILE_NAME
     :param: AUDIO_FILE_NAME

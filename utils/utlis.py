@@ -5,19 +5,25 @@ import os
 import numpy as np
 import pandas as pd
 import torch
-import youtube_dl
-from matplotlib import pyplot as plt
 from pydub import AudioSegment
 from scipy.io import wavfile
 
-AudioSegment.ffmpeg = r"C:\Users\ander\Anaconda3\Lib\ffmpeg\bin"
 
+def csv_loader(path: str) -> torch.Tensor:
+    """
 
-def csv_loader(path):
-    data = np.array(pd.read_csv(path))
+    :param path:
+    :return:
+    """
+    data = np.array(pd.read_csv(path, header = None))
 
     sample = torch.from_numpy(data)
     return sample
+
+
+def mp3_loader(path):
+    file = AudioSegment.from_mp3(path)
+    return file
 
 
 def envelope(*, y, rate, threshold):
@@ -48,7 +54,8 @@ def clean_data(filename, rate, signal, new_file_path):
         )
 
 
-# todo: add all data to an s3 bucket
+def convert_mp3_to_wav(mp3):
+    file = AudioSegment.from_mp3(mp3)
 
 
 def convert_mp3_to_wav():
@@ -67,7 +74,7 @@ def convert_mp3_to_wav():
 
     # todo: needs to be dynamic: search for director for mp3 files also function needs to save document in s3
     # todo: Add the option to specify a path
-    # todo: add the options to upload RNN_Model to the cloud
+    # todo: add the options to upload model to the cloud
 
 
 class Wav_parse:
@@ -80,7 +87,7 @@ class Wav_parse:
         pass
 
     def play_wav_file(self):
-        # todo: function to be able to play wav file
+        # todo: function to be able to play wav name
         pass
 
     def remove_background_noise(self):
@@ -100,7 +107,7 @@ class Wav_parse:
         pass
 
     def voice_content(self):
-        # todo: function to fetch the meta data for wav file.
+        # todo: function to fetch the meta data for wav name.
         pass
 
 
@@ -127,75 +134,7 @@ def calc_fft(*, y, rate):
     return Y, freq
 
 
-def plot_signals(signals):
-    fig, axes = plt.subplots(
-        nrows = len(signals) // 5, ncols = 5, sharex = False, sharey = True, figsize = (20, 5)
-    )
-    fig.suptitle("Time Series", size = 16)
-    i = 0
-    for x in range(len(signals) // 5):
-        for y in range(5):
-            axes[x, y].set_title(list(signals.keys())[i])
-            axes[x, y].plot(list(signals.values())[i])
-            axes[x, y].get_xaxis().set_visible(False)
-            axes[x, y].get_yaxis().set_visible(False)
-            i += 1
-
-
-def plot_fft(signals, fft):
-    fig, axes = plt.subplots(
-        nrows = len(signals) // 5, ncols = 5, sharex = False, sharey = True, figsize = (20, 5)
-    )
-    fig.suptitle("Fourier Transforms", size = 16)
-    i = 0
-    for x in range(len(signals) // 5):
-        for y in range(2):
-            data = list(fft.values())[i]
-            Y, freq = data[0], data[1]
-            axes[x, y].set_title(list(fft.keys())[i])
-            axes[x, y].plot(freq, Y)
-            axes[x, y].get_xaxis().set_visible(False)
-            axes[x, y].get_yaxis().set_visible(False)
-            i += 1
-
-
-def plot_fbank(signals, fbank):
-    fig, axes = plt.subplots(
-        nrows = len(signals) // 5, ncols = 5, sharex = False, sharey = True, figsize = (20, 5)
-    )
-    fig.suptitle("Filter Bank Coefficients", size = 16)
-    i = 0
-    for x in range(len(signals) // 5):
-        for y in range(5):
-            axes[x, y].set_title(list(fbank.keys())[i])
-            axes[x, y].imshow(
-                list(fbank.values())[i], cmap = "hot", interpolation = "nearest"
-            )
-            axes[x, y].get_xaxis().set_visible(False)
-            axes[x, y].get_yaxis().set_visible(False)
-            i += 1
-
-
-def plot_mfccs(signals, mfccs):
-    fig, axes = plt.subplots(
-        nrows = len(signals) // 5, ncols = 5, sharex = False, sharey = True, figsize = (20, 5)
-    )
-    fig.suptitle("Mel Frequency Cepstrum Coefficients", size = 16)
-    i = 0
-    for x in range(2):
-        for y in range(5):
-            axes[x, y].set_title(list(mfccs.keys())[i])
-            axes[x, y].imshow(
-                list(mfccs.values())[i], cmap = "hot", interpolation = "nearest"
-            )
-            axes[x, y].get_xaxis().set_visible(False)
-            axes[x, y].get_yaxis().set_visible(False)
-            i += 1
-
-
-ydl_opts = {}
-with youtube_dl.YoutubeDL(ydl_opts) as ydl:
-    ydl.download(["https://www.youtube.com/watch?v=BaW_jenozKc"])
 
 if __name__ == "__main__":
     convert_mp3_to_wav()
+    AudioSegment.ffmpeg = r"C:\Users\ander\Anaconda3\Lib\ffmpeg\bin"

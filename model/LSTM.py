@@ -67,7 +67,7 @@ class AudioLSTM(nn.Module):
 
         assert seq_count == self.input_size
 
-        lstm_out, hidden = self.lstm(x, hidden)
+        lstm_out, hidden = self.lstm(x)
 
         # stack up lstm outputs
         lstm_out = lstm_out.contiguous().view(-1, self.hidden_size)
@@ -90,7 +90,7 @@ class AudioLSTM(nn.Module):
         Initializes hidden state. Create two new tensors with sizes n_layers x batch_size x hidden_dim, initialized to
         zero, for hidden state and cell state of LSTM.
 
-        :param batch_size: number of batcbes
+        :param batch_size: number of batches
 
         :return: Tensor for hidden states
         """
