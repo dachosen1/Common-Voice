@@ -24,7 +24,7 @@ def get_male_female_file(PATH):
     """
     Module to search for return the files name for male and female
     """
-    DATA = pd.read_csv(PATH, delimiter = "\t")
+    DATA = pd.read_csv(PATH, delimiter="\t")
     GENDER_SPLIT = DATA[DATA["gender"].notna()]
     male_mp3_list = GENDER_SPLIT[GENDER_SPLIT["gender"] == "male"]["path"]
     female_mp3_list = GENDER_SPLIT[GENDER_SPLIT["gender"] == "female"]["path"]

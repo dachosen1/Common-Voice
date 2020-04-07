@@ -8,14 +8,14 @@ class AudioLSTM(nn.Module):
     """
 
     def __init__(
-            self,
-            input_size,
-            hidden_size,
-            num_layer,
-            dropout,
-            output_size,
-            batch = True,
-            bidirectional = True,
+        self,
+        input_size,
+        hidden_size,
+        num_layer,
+        dropout,
+        output_size,
+        batch=True,
+        bidirectional=True,
     ):
         """
         :param input_size: The number of expected features in the input x
@@ -38,12 +38,12 @@ class AudioLSTM(nn.Module):
         self.dropout = dropout
 
         self.lstm = nn.LSTM(
-            input_size = input_size,
-            hidden_size = hidden_size,
-            num_layers = num_layer,
-            dropout = dropout,
-            batch_first = batch,
-            bidirectional = bidirectional,
+            input_size=input_size,
+            hidden_size=hidden_size,
+            num_layers=num_layer,
+            dropout=dropout,
+            batch_first=batch,
+            bidirectional=bidirectional,
         )
 
         # dropout layer

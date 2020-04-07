@@ -1,3 +1,4 @@
+import collections
 import os
 
 import gcsfs
@@ -87,7 +88,6 @@ def delete_blob(bucket_blob: google.cloud.storage.bucket.Bucket, blob_name: str)
     blob.delete()
 
 
-@functools.lru_cache()
 def delete_extra_file(name: chr, bucket: str) -> None:
     """
     Function was created to load all the files in the delete and remove those files by name in the raw folders. Those
