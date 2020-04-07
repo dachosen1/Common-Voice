@@ -2,7 +2,7 @@ gcsfs
 audioread==2.1.8
 Flask==1.1.1
 google==2.0.3
-google-cloud-storage==1.26.0
+google-cloud-storage==1.27.0
 Jinja2==2.11.1
 joblib==0.14.1
 librosa==0.7.2
