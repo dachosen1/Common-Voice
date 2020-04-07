@@ -6,10 +6,6 @@ class Bucket:
     TRAIN_SET = "common-voice-train"
 
 
-class Auth:
-    AUTH_KEY_PATH = r"C:\Users\ander\Google Drive\Projects\Common Voice\Development\common-voice-6d593b0eee09.json"
-
-
 class Model:
     OUTPUT_SIZE = 2
     HIDDEN_DIM = 256
