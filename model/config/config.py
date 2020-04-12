@@ -9,10 +9,10 @@ class Bucket:
 class Model:
     OUTPUT_SIZE = 2
     HIDDEN_DIM = 256
-    NUM_LAYERS = 2
+    NUM_LAYERS = 3
     DROPOUT = 0.25
-    INPUT_SIZE = 480
-    BATCH_SIZE = 256
+    INPUT_SIZE = 648
+    BATCH_SIZE = 512
 
 
 class Train:

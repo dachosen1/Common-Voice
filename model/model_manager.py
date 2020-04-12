@@ -10,14 +10,14 @@ _logger = logging.getLogger(__name__)
 
 
 def train(
-        model,
-        train_loader,
-        valid_loader,
-        print_every = 10,
-        learning_rate = Train.LEARNING_RATE,
-        epoch = Train.EPOCH,
-        gradient_clip = Train.GRADIENT_CLIP,
-        batch_size = Model.BATCH_SIZE,
+    model,
+    train_loader,
+    valid_loader,
+    print_every=10,
+    learning_rate=Train.LEARNING_RATE,
+    epoch=Train.EPOCH,
+    gradient_clip=Train.GRADIENT_CLIP,
+    batch_size=Model.BATCH_SIZE,
 ):
     """
 
@@ -43,7 +43,7 @@ def train(
     model.train()
 
     criterion = nn.BCELoss()
-    optimizer = torch.optim.Adam(model.parameters(), lr = learning_rate)
+    optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate)
 
     if torch.cuda.is_available():
         model.cuda()
@@ -51,11 +51,13 @@ def train(
     counter = 0
 
     for e in range(epoch):
+
         # initialize hidden state
         h = model.init_hidden(batch_size)
-        num_correct = 0
 
         for inputs, labels in train_loader:
+            val_num_correct = 0
+            train_num_correct = 0
             counter += 1
 
             if torch.cuda.is_available():
@@ -68,10 +70,25 @@ def train(
             model.zero_grad()
 
             # get the output from the model
-            output, h = model(inputs, h)
+            train_output, h = model(inputs, h)
+
+            # convert output probabilities to predicted class (0 or 1)
+            train_pred = torch.round(
+                train_output.squeeze()
+            )  # rounds to the nearest integer
+
+            # compare predictions to true label
+            train_correct_tensor = train_pred.eq(labels.float().view_as(train_pred))
+            train_correct = (
+                np.squeeze(train_correct_tensor.numpy())
+                if not torch.cuda.is_available()
+                else np.squeeze(train_correct_tensor.cpu().numpy())
+            )
+            train_num_correct += np.sum(train_correct)
+            train_acc = train_num_correct / len(train_loader.dataset)
 
             # calculate the loss and perform backprop
-            loss = criterion(output.squeeze(), labels.float())
+            loss = criterion(train_output.squeeze(), labels.float())
             loss.backward()
 
             # `clip_grad_norm` helps prevent the exploding gradient problem in RNNs / LSTMs.
@@ -93,43 +110,45 @@ def train(
                     if torch.cuda.is_available():
                         inputs, labels = inputs.cuda(), labels.cuda()
 
-                    output, val_h = model(inputs, val_h)
-                    val_loss = criterion(output.squeeze(), labels.float())
+                    val_output, val_h = model(inputs, val_h)
+                    val_loss = criterion(val_output.squeeze(), labels.float())
                     val_losses.append(val_loss.item())
 
                     # convert output probabilities to predicted class (0 or 1)
-                    pred = torch.round(
-                        output.squeeze()
+                    val_pred = torch.round(
+                        val_output.squeeze()
                     )  # rounds to the nearest integer
 
                     # compare predictions to true label
-                    correct_tensor = pred.eq(labels.float().view_as(pred))
-                    correct = (
-                        np.squeeze(correct_tensor.numpy())
+                    val_correct_tensor = val_pred.eq(labels.float().view_as(val_pred))
+                    val_correct = (
+                        np.squeeze(val_correct_tensor.numpy())
                         if not torch.cuda.is_available()
-                        else np.squeeze(correct_tensor.cpu().numpy())
+                        else np.squeeze(val_correct_tensor.cpu().numpy())
                     )
-                    num_correct += np.sum(correct)
+                    val_num_correct += np.sum(val_correct)
 
                 model.train()
-                test_acc = num_correct / len(valid_loader.dataset)
-                _logger.info("Epoch: {}/{}...".format(e + 1, epoch),
-                             "Step: {}...".format(counter),
-                             "Loss: {:.6f}...".format(loss.item()),
-                             "Val Loss: {:.6f}".format(np.mean(val_losses)),
-                             "Test Accuracy: {:.6f}".format(test_acc))
+                test_acc = val_num_correct / len(valid_loader.dataset)
+                _logger.info(
+                    "Epoch: {}/{}...".format(e + 1, epoch),
+                    "Step: {}...".format(counter),
+                    "Loss: {:.6f}...".format(loss.item()),
+                    "Val Loss: {:.6f}".format(np.mean(val_losses)),
+                    "Test Accuracy: {:.6f}".format(test_acc),
+                )
 
                 print(
                     "Epoch: {}/{}...".format(e + 1, epoch),
                     "Step: {}...".format(counter),
                     "Training Loss: {:.6f}...".format(loss.item()),
                     "Validation Loss: {:.6f}".format(np.mean(val_losses)),
-                    "Test Accuracy: {:.6f}".format(test_acc)
+                    "Test Accuracy: {:.6f}".format(test_acc),
                 )
 
-                writer.add_scalar('Loss/train', loss.item(), counter)
-                writer.add_scalar('Loss/val', np.mean(val_losses), counter)
-                writer.add_scalar('Accuracy/test', test_acc, counter)
+                writer.add_scalar("Loss/train", loss.item(), counter)
+                writer.add_scalar("Loss/val", np.mean(val_losses), counter)
+                writer.add_scalar("Accuracy/test", test_acc, counter)
+                writer.add_scalar("Accuracy/train", train_acc, counter)
 
-                num_correct = 0
     return model
