@@ -19,3 +19,14 @@ class Train:
     LEARNING_RATE = 0.0001
     GRADIENT_CLIP = 10
     EPOCH = 200
+
+
+class Virtual_Machine_Path:
+    WAV_PATH = r"C:\Users\ander\Documents\common-voice-all\wav"
+    RAW_DATA_PATH = r"C:\Users\ander\Documents\common-voice-all"
+    PARENT_FOLDER_PATH = r"C:\Users\ander\Documents\common-voice-dev"
+
+
+class Train_Pipeline:
+    TRAIN_DIR = r"C:\Users\ander\Documents\train_data"
+    VAL_DIR = r"C:\Users\ander\Documents\dev_data"
