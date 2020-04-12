@@ -72,10 +72,6 @@ def convert_mp3_to_wav():
         file.export(wav_path, format="wav")
         os.remove(path)
 
-    # todo: needs to be dynamic: search for director for mp3 files also function needs to save document in s3
-    # todo: Add the option to specify a path
-    # todo: add the options to upload model to the cloud
-
 
 class Wav_parse:
     def __init__(self, path):
