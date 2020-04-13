@@ -19,7 +19,7 @@ def convert_to_wav(clips_name: set) -> None:
         file.export(wav_path, format="wav")
 
 
-def remove_unlabel_files(clips_names):
+def remove_un_label_files(clips_names):
     data = pd.read_csv("Development/data.csv")
     data_path = set(data.path)
 

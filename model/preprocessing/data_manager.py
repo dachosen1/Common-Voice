@@ -39,13 +39,15 @@ def clean_data(
             )
             save_path = os.path.join(document_path, "gender", train_test_choice, label)
             flatten_data.iloc[row].to_csv(
-                f"{save_path}\{filename}-{row}.csv", header=False, index=False
+                "{}\{}-{}.csv".format(save_path, filename, row),
+                header=False,
+                index=False,
             )
 
             assert flatten_data.iloc[row].shape[0] == rate
 
     except ValueError:
-        print(f" Skipped {filename} ......")
+        print(" Skipped {} ......".format(filename))
 
 
 def gender_split(
@@ -69,7 +71,7 @@ def gender_split(
             mel = mfcc(signal, rate, numcep=13, nfilt=26, nfft=1500).flatten()
             clean_data(document_path, wav_name, mel_seq_count, mel, label_name)
         except IndexError:
-            print(f" The label for {wav} is not in compatible")
+            print(" The label for {} is not in compatible".format(wav))
 
 
 if __name__ == "__main__":

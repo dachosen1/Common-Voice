@@ -50,12 +50,10 @@ def clean_data(filename, rate, signal, new_file_path):
 
     for row in range(flatten_data.shape[0]):
         flatten_data.iloc[row].to_csv(
-            f"{new_file_path}{filename}_{row}.csv", header=False, index=False
+            "{}{}_{}.csv".format(new_file_path, filename, row),
+            header=False,
+            index=False,
         )
-
-
-def convert_mp3_to_wav(mp3):
-    file = AudioSegment.from_mp3(mp3)
 
 
 def convert_mp3_to_wav():
