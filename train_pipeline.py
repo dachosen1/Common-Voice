@@ -4,7 +4,7 @@ import torch
 from torch.utils.data import DataLoader
 from torchvision.datasets import DatasetFolder
 
-# from model import __version__
+from model import __version__
 from model.LSTM import AudioLSTM
 from model.config.config import Model
 from model.config.config import Train_Pipeline
@@ -36,7 +36,10 @@ def run_training(train_dir, val_dir) -> None:
 
     train_model = train(model, train_data_loader, val_data_loader)
     _logger.info("Save model in directory")
-    torch.save(train_model.state_dict(), "model/trained_model" + "/model_.pt")
+    torch.save(
+        train_model.state_dict(),
+        "model/trained_model" + "/model_{}.pt".format(__version__),
+    )
 
 
 if __name__ == "__main__":
