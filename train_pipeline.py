@@ -4,11 +4,11 @@ import torch
 from torch.utils.data import DataLoader
 from torchvision.datasets import DatasetFolder
 
-from LSTM import AudioLSTM
-from config.config import Model
 from model import __version__
+from model.LSTM import AudioLSTM
+from model.config.config import Model
 from model.config.config import Train_Pipeline
-from model_manager import train
+from model.model_manager import train
 from utils.utlis import csv_loader
 
 _logger = logging.getLogger(__name__)
