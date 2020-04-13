@@ -21,12 +21,12 @@ class Train:
     EPOCH = 200
 
 
-class Virtual_Machine_Path:
+class Storage:
     WAV_PATH = r"C:\Users\ander\Documents\common-voice-all\wav"
     RAW_DATA_PATH = r"C:\Users\ander\Documents\common-voice-all"
     PARENT_FOLDER_PATH = r"C:\Users\ander\Documents\common-voice-dev"
 
 
 class Train_Pipeline:
-    TRAIN_DIR = r"C:\Users\ander\Documents\common-voice-dev\gender\train_data"
-    VAL_DIR = r"C:\Users\ander\Documents\common-voice-dev\gender\val_data"
+    TRAIN_DIR = r"/home/an2908/common-voice-dev/gender/train_data"
+    VAL_DIR = r"/home/an2908/common-voice-dev/gender/val_data"

@@ -6,7 +6,7 @@ from python_speech_features import mfcc
 from scipy.io import wavfile
 from tqdm import tqdm
 
-from model.config.config import Model, Virtual_Machine_Path
+from model.config.config import Model, Storage
 
 
 def envelope(*, y: object, signal_rate: object, threshold: object):
@@ -74,8 +74,8 @@ def gender_split(
 
 if __name__ == "__main__":
     gender_split(
-        wav_path=Virtual_Machine_Path.WAV_PATH,
-        data_path=Virtual_Machine_Path.RAW_DATA_PATH,
+        wav_path=Storage.WAV_PATH,
+        data_path=Storage.RAW_DATA_PATH,
         mel_seq_count=Model.INPUT_SIZE,
-        document_path=Virtual_Machine_Path.PARENT_FOLDER_PATH,
+        document_path=Storage.PARENT_FOLDER_PATH,
     )
