@@ -28,5 +28,5 @@ class Virtual_Machine_Path:
 
 
 class Train_Pipeline:
-    TRAIN_DIR = r"C:\Users\ander\Documents\train_data"
-    VAL_DIR = r"C:\Users\ander\Documents\dev_data"
+    TRAIN_DIR = r"C:\Users\ander\Documents\common-voice-dev\gender\train_data"
+    VAL_DIR = r"C:\Users\ander\Documents\common-voice-dev\gender\val_data"
