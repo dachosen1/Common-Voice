@@ -65,7 +65,7 @@ def convert_mp3_to_wav():
     for mp3 in os.listdir():
         path = os.path.join(os.getcwd(), mp3)
         file = AudioSegment.from_mp3(mp3)
-        new_file_name = f'{mp3.split(".")[0]}.wav'
+        new_file_name = "{}.wav".format(mp3.split(".")[0])
         wav_path = os.path.join(os.getcwd(), new_file_name)
         file.export(wav_path, format="wav")
         os.remove(path)
