@@ -18,7 +18,7 @@ class Model:
 class Train:
     LEARNING_RATE = 0.00001
     GRADIENT_CLIP = 10
-    EPOCH = 200
+    EPOCH = 10
 
 
 class Storage:
@@ -28,5 +28,5 @@ class Storage:
 
 
 class Train_Pipeline:
-    TRAIN_DIR = r"../common-voice-dev/gender/train_data"
-    VAL_DIR = r"../common-voice-dev/gender/val_data"
+    TRAIN_DIR = r"C:\Users\ander\Documents\common-voice-dev\gender\train_data"
+    VAL_DIR = r"C:\Users\ander\Documents\common-voice-dev\gender\val_data"

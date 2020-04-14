@@ -9,6 +9,10 @@ from model.config.config import Model, Train
 _logger = logging.getLogger(__name__)
 
 
+def calc_accuracy(prediction, labels):
+    return prediction.argmax(dim=1).eq(labels).sum().item()
+
+
 def train(
     model,
     train_loader,
@@ -56,35 +60,34 @@ def train(
 
             if torch.cuda.is_available():
                 train_inputs, train_labels = train_inputs.cuda(), train_labels.cuda()
-                
+
             h = tuple([each.data for each in h])
             model.zero_grad()
             train_output, h = model(train_inputs, h)
-            
-            train_pred = torch.round(
-                train_output.squeeze()
-            )  
+
+            train_pred = torch.round(train_output.squeeze())
 
             train_correct_tensor = train_pred.eq(
                 train_labels.float().view_as(train_pred)
             )
-            
+
             train_correct = (
                 np.squeeze(train_correct_tensor.numpy())
                 if not torch.cuda.is_available()
                 else np.squeeze(train_correct_tensor.cpu().numpy())
             )
-            
+
+            # todo: test new accracy formula
+
             train_acc = np.sum(train_correct) / len(train_inputs)
             writer.add_scalar("Accuracy/train", train_acc, counter)
 
             train_loss = criterion(train_output.squeeze(), train_labels.float())
             train_loss.backward()
             writer.add_scalar("Loss/train", train_loss.item(), counter)
-            
+
             nn.utils.clip_grad_norm_(model.parameters(), gradient_clip)
             optimizer.step()
-
 
             if counter % print_every == 0:
                 val_h = model.init_hidden(batch_size)
@@ -97,14 +100,12 @@ def train(
                         val_inputs, val_labels = val_inputs.cuda(), val_labels.cuda()
 
                     val_output, val_h = model(val_inputs, val_h)
-                    
+
                     val_loss = criterion(val_output.squeeze(), val_labels.float())
                     val_losses.append(val_loss.item())
                     writer.add_scalar("Loss/test", val_loss.item(), counter)
 
-                    val_pred = torch.round(
-                        val_output.squeeze()
-                    )  
+                    val_pred = torch.round(val_output.squeeze())
 
                     val_correct_tensor = val_pred.eq(
                         val_labels.float().view_as(val_pred)
@@ -114,7 +115,7 @@ def train(
                         if not torch.cuda.is_available()
                         else np.squeeze(val_correct_tensor.cpu().numpy())
                     )
-                    
+
                     test_acc = np.sum(val_correct) / len(val_inputs)
                     writer.add_scalar("Accuracy/test", test_acc, counter)
 

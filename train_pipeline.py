@@ -13,6 +13,8 @@ from utils.utlis import csv_loader
 
 _logger = logging.getLogger(__name__)
 
+torch.manual_seed(0)
+
 
 def run_training(train_dir, val_dir) -> None:
     train_dataset = DatasetFolder(root=train_dir, loader=csv_loader, extensions=".csv",)
@@ -38,7 +40,7 @@ def run_training(train_dir, val_dir) -> None:
     _logger.info("Save model in directory")
     torch.save(
         train_model.state_dict(),
-        "model/trained_model" + "/model_{}.pt".format(__version__),
+        "model/trained_model" + "/model_gender_{}.pt".format(__version__),
     )
 
 
