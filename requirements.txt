@@ -7,7 +7,7 @@ Jinja2==2.11.1
 joblib==0.14.1
 librosa==0.7.2
 matplotlib
-numpy==1.18.2
+numpy
 pandas
 pydub==0.23.1
 python-speech-features==0.6
