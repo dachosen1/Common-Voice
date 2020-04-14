@@ -152,10 +152,10 @@ def train(
                 )
 
                 writer.add_scalar("Loss/train", train_loss.item(), counter)
-                writer.add_scalar("Loss/val", np.mean(val_losses), counter)
+                writer.add_scalar("Loss/test", np.mean(val_losses), counter)
+
+                writer.add_scalar("Accuracy/train", train_acc, counter)
                 writer.add_scalar("Accuracy/test", test_acc, counter)
-                writer.add_scalar("Accuracy/train", train_acc, counter)
-                writer.add_scalar("Accuracy/train", train_acc, counter)
 
                 val_num_correct = 0
                 train_num_correct = 0

@@ -9,10 +9,10 @@ AudioSegment.ffmpeg = r"C:\Users\ander\ffmpeg-4.2.2-win64-static\bin"
 
 
 def convert_to_wav(clips_name: set) -> None:
-    clips_dir = r"C:\Users\ander\Documents"
+    clips_dir = r"C:\Users\ander\Documents\common-voice-all\clips"
 
     for mp3 in tqdm(clips_name):
-        path = os.path.join(clips_dir + "\clips", mp3)
+        path = os.path.join(clips_dir, mp3)
         file = AudioSegment.from_mp3(path)
         new_file_name = f'{mp3.split(".")[0]}.wav'
         wav_path = os.path.join(clips_dir + "\wav", new_file_name)
@@ -31,8 +31,8 @@ def remove_un_label_files(clips_names):
 
 
 if __name__ == "__main__":
-    clips_path = r"C:\Users\ander\Documents\clips"
-    mp3_list = os.listdir(clips_path)[2900:]
+    clips_path = r"C:\Users\ander\Documents\common-voice-all\clips"
+    mp3_list = os.listdir(clips_path)
     mp3_list = set(mp3_list)
     # with concurrent.futures.ProcessPoolExecutor() as executor:
     #     executor.map(convert_to_wav, mp3_list)
