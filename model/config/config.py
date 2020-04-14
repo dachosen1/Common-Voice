@@ -9,14 +9,14 @@ class Bucket:
 class Model:
     OUTPUT_SIZE = 2
     HIDDEN_DIM = 256
-    NUM_LAYERS = 3
-    DROPOUT = 0.25
+    NUM_LAYERS = 4
+    DROPOUT = 0.30
     INPUT_SIZE = 648
-    BATCH_SIZE = 1024
+    BATCH_SIZE = 512
 
 
 class Train:
-    LEARNING_RATE = 0.0001
+    LEARNING_RATE = 0.00001
     GRADIENT_CLIP = 10
     EPOCH = 200
 
@@ -28,5 +28,5 @@ class Storage:
 
 
 class Train_Pipeline:
-    TRAIN_DIR = r"/home/an2908/common-voice-dev/gender/train_data"
-    VAL_DIR = r"/home/an2908/common-voice-dev/gender/val_data"
+    TRAIN_DIR = r"../common-voice-dev/gender/train_data"
+    VAL_DIR = r"../common-voice-dev/gender/val_data"
