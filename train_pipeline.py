@@ -36,11 +36,11 @@ def run_training(train_dir, val_dir) -> None:
         dropout=Model.DROPOUT,
     )
 
-    train_model = train(model, train_data_loader, val_data_loader)
+    train_model = train(model, train_data_loader, val_data_loader, early_stopping=False)
     _logger.info("Save model in directory")
     torch.save(
         train_model.state_dict(),
-        "model/trained_model" + "/model_gender_{}.pt".format(__version__),
+        "model/trained_model" + "/model_gender_{}.pth".format(__version__),
     )
 
 
