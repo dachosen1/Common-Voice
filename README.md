@@ -1,5 +1,6 @@
 ## Common Voice
 [![CircleCI](https://circleci.com/gh/dachosen1/Common-Voice.svg?style=svg)](https://circleci.com/gh/dachosen1/Common-Voice)
+[![CodeFactor](https://www.codefactor.io/repository/github/dachosen1/common-voice/badge)](https://www.codefactor.io/repository/github/dachosen1/common-voice)
 
 
 ### Background 
