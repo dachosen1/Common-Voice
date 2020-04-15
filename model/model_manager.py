@@ -139,49 +139,53 @@ def train(
             nn.utils.clip_grad_norm_(model.parameters(), gradient_clip)
             optimizer.step()
 
-        if counter % print_every == 0:
-            val_h = model.init_hidden(batch_size)
-            val_losses = []
-            model.eval()
-            for val_inputs, val_labels in valid_loader:
-                val_h = tuple([each.data for each in val_h])
+            if counter % print_every == 0:
+                val_h = model.init_hidden(batch_size)
+                val_losses = []
+                model.eval()
+                for val_inputs, val_labels in valid_loader:
+                    val_h = tuple([each.data for each in val_h])
 
-                if torch.cuda.is_available():
-                    val_inputs, val_labels = val_inputs.cuda(), val_labels.cuda()
+                    if torch.cuda.is_available():
+                        val_inputs, val_labels = val_inputs.cuda(), val_labels.cuda()
 
-                val_output, val_h = model(val_inputs, val_h)
+                    val_output, val_h = model(val_inputs, val_h)
 
-                val_loss = criterion(val_output.squeeze(), val_labels.float())
-                val_losses.append(val_loss.item())
-                writer.add_scalar("Loss/test", val_loss.item(), counter)
+                    val_loss = criterion(val_output.squeeze(), val_labels.float())
+                    val_losses.append(val_loss.item())
+                    writer.add_scalar("Loss/test", val_loss.item(), counter)
 
-                val_pred = torch.round(val_output.squeeze())
+                    val_pred = torch.round(val_output.squeeze())
 
-                if early_stopping:
-                    stopping(val_loss=val_loss, model=model)
+                    if early_stopping:
+                        stopping(val_loss=val_loss, model=model)
 
-                    if stopping.early_stop:
-                        print("Early stopping")
-                        break
+                        if stopping.early_stop:
+                            print("Early stopping")
+                            break
 
-                val_correct_tensor = val_pred.eq(val_labels.float().view_as(val_pred))
-                val_correct = (
-                    np.squeeze(val_correct_tensor.numpy())
-                    if not torch.cuda.is_available()
-                    else np.squeeze(val_correct_tensor.cpu().numpy())
+                    val_correct_tensor = val_pred.eq(
+                        val_labels.float().view_as(val_pred)
+                    )
+                    val_correct = (
+                        np.squeeze(val_correct_tensor.numpy())
+                        if not torch.cuda.is_available()
+                        else np.squeeze(val_correct_tensor.cpu().numpy())
+                    )
+
+                    test_acc = np.sum(val_correct) / len(val_inputs)
+                    writer.add_scalar("Accuracy/test", test_acc, counter)
+
+                model.train()
+                print(
+                    "Epoch: {}/{}...".format(e + 1, epoch),
+                    "Step: {}...".format(counter),
+                    "Training Loss: {:.6f}...".format(train_loss.item()),
+                    "Validation Loss: {:.6f}".format(val_loss.item()),
+                    "Train Accuracy: {:.6f}".format(train_acc),
+                    "Test Accuracy: {:.6f}".format(test_acc),
                 )
 
-                test_acc = np.sum(val_correct) / len(val_inputs)
-                writer.add_scalar("Accuracy/test", test_acc, counter)
+            writer.add_graph(model, (train_inputs, h))
 
-            print(
-                "Epoch: {}/{}...".format(e + 1, epoch),
-                "Step: {}...".format(counter),
-                "Training Loss: {:.6f}...".format(train_loss.item()),
-                "Validation Loss: {:.6f}".format(val_loss.item()),
-                "Train Accuracy: {:.6f}".format(train_acc),
-                "Test Accuracy: {:.6f}".format(test_acc),
-            )
-
-        writer.add_graph(model, (train_inputs, h))
     return model
