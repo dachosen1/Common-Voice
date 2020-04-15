@@ -15,7 +15,7 @@ class EarlyStopping:
     """Early stops the training if validation loss doesn't improve after a given threshold."""
 
     def __init__(
-            self, threshold: int = 50, verbose: bool = False, delta: float = 0
+        self, threshold: int = 50, verbose: bool = False, delta: float = 0
     ) -> None:
         """
         :param threshold: How long to wait after last time validation loss improved. Default: 50
@@ -65,16 +65,16 @@ class EarlyStopping:
 
 
 def train(
-        model: object,
-        train_loader: torch.utils.data.dataloader.DataLoader,
-        valid_loader: torch.utils.data.dataloader.DataLoader,
-        learning_rate: float = Train.LEARNING_RATE,
-        print_every: int = 10,
-        epoch: int = Train.EPOCH,
-        gradient_clip: int = Train.GRADIENT_CLIP,
-        batch_size: int = Model.BATCH_SIZE,
-        early_stopping_threshold: int = 50,
-        early_stopping: bool = True,
+    model: object,
+    train_loader: torch.utils.data.dataloader.DataLoader,
+    valid_loader: torch.utils.data.dataloader.DataLoader,
+    learning_rate: float = Train.LEARNING_RATE,
+    print_every: int = 10,
+    epoch: int = Train.EPOCH,
+    gradient_clip: int = Train.GRADIENT_CLIP,
+    batch_size: int = Model.BATCH_SIZE,
+    early_stopping_threshold: int = 50,
+    early_stopping: bool = True,
 ) -> object:
     """
 
@@ -94,7 +94,7 @@ def train(
 
     """
     if early_stopping:
-        early_stopping = EarlyStopping(threshold = early_stopping_threshold, verbose = True)
+        early_stopping = EarlyStopping(threshold=early_stopping_threshold, verbose=True)
 
     writer = SummaryWriter()
 
