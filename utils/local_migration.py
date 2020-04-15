@@ -1,5 +1,6 @@
 import os
 import shutil
+from concurrent import futures
 
 import pandas as pd
 from pydub import AudioSegment
@@ -10,13 +11,13 @@ AudioSegment.ffmpeg = r"C:\Users\ander\ffmpeg-4.2.2-win64-static\bin"
 
 def convert_to_wav(clips_name: set) -> None:
     clips_dir = r"C:\Users\ander\Documents\common-voice-all\clips"
+    wav_dir = r"C:\Users\ander\Documents\common-voice-all\wav"
 
-    for mp3 in tqdm(clips_name):
-        path = os.path.join(clips_dir, mp3)
-        file = AudioSegment.from_mp3(path)
-        new_file_name = f'{mp3.split(".")[0]}.wav'
-        wav_path = os.path.join(clips_dir + "\wav", new_file_name)
-        file.export(wav_path, format="wav")
+    path = os.path.join(clips_dir, clips_name)
+    file = AudioSegment.from_mp3(path)
+    new_file_name = f'{clips_name.split(".")[0]}.wav'
+    wav_path = os.path.join(wav_dir, new_file_name)
+    file.export(wav_path, format="wav")
 
 
 def remove_un_label_files(clips_names):
@@ -34,7 +35,5 @@ if __name__ == "__main__":
     clips_path = r"C:\Users\ander\Documents\common-voice-all\clips"
     mp3_list = os.listdir(clips_path)
     mp3_list = set(mp3_list)
-    # with concurrent.futures.ProcessPoolExecutor() as executor:
-    #     executor.map(convert_to_wav, mp3_list)
-
-    convert_to_wav(mp3_list)
+    with futures.ProcessPoolExecutor() as executor:
+        tqdm(executor.map(convert_to_wav, mp3_list))

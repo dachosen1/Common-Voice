@@ -3,44 +3,98 @@ import logging
 import numpy as np
 import torch
 import torch.nn as nn
+from torch.utils.tensorboard import SummaryWriter
 
+from model import __version__
 from model.config.config import Model, Train
 
 _logger = logging.getLogger(__name__)
 
 
-def calc_accuracy(prediction, labels):
-    return prediction.argmax(dim=1).eq(labels).sum().item()
+class EarlyStopping:
+    """Early stops the training if validation loss doesn't improve after a given threshold."""
+
+    def __init__(
+            self, threshold: int = 50, verbose: bool = False, delta: float = 0
+    ) -> None:
+        """
+        :param threshold: How long to wait after last time validation loss improved. Default: 50
+        :param verbose: If True, prints a message for each validation loss improvement.Default: False
+        :param delta: Minimum change in the monitored quantity to qualify as an improvement.Default: 0
+        """
+
+        self.threshold = threshold
+        self.verbose = verbose
+        self.counter = 0
+        self.best_score = None
+        self.early_stop = False
+        self.val_loss_min = np.Inf
+        self.delta = delta
+
+    def __call__(self, val_loss, model):
+
+        score = -val_loss
+
+        if self.best_score is None:
+            self.best_score = score
+            self.save_checkpoint(val_loss, model)
+
+        elif score < self.best_score + self.delta:
+            self.counter += 1
+            print(f"EarlyStopping counter: {self.counter} out of {self.threshold}")
+
+            if self.counter >= self.threshold:
+                self.early_stop = True
+        else:
+            self.best_score = score
+            self.save_checkpoint(val_loss, model)
+            self.counter = 0
+
+    def save_checkpoint(self, val_loss, model):
+        """Saves model when validation loss decrease."""
+        if self.verbose:
+            print(
+                f"Validation loss decreased ({self.val_loss_min:.6f} --> {val_loss:.6f}).  Saving model ..."
+            )
+
+        torch.save(
+            model.state_dict(),
+            "./trained_model/" + "/model_gender_{}.pt".format(__version__),
+        )
+        self.val_loss_min = val_loss
 
 
 def train(
-    model,
-    train_loader,
-    valid_loader,
-    print_every=10,
-    learning_rate=Train.LEARNING_RATE,
-    epoch=Train.EPOCH,
-    gradient_clip=Train.GRADIENT_CLIP,
-    batch_size=Model.BATCH_SIZE,
-):
+        model: object,
+        train_loader: torch.utils.data.dataloader.DataLoader,
+        valid_loader: torch.utils.data.dataloader.DataLoader,
+        learning_rate: float = Train.LEARNING_RATE,
+        print_every: int = 10,
+        epoch: int = Train.EPOCH,
+        gradient_clip: int = Train.GRADIENT_CLIP,
+        batch_size: int = Model.BATCH_SIZE,
+        early_stopping_threshold: int = 50,
+        early_stopping: bool = True,
+) -> object:
     """
 
-    :param epoch:
-    :type epoch:
-    :param gradient_clip:
-    :type gradient_clip:
-    :param learning_rate:
-    :type learning_rate:
-    :param batch_size:
-    :type batch_size:
-    :param model:
-    :param train_loader:
-    :param valid_loader:
     :param print_every:
+    :type print_every:
+    :param train_loader:
+    :type train_loader:
+    :param early_stopping_threshold:
+    :param early_stopping:
+    :param epoch:
+    :param gradient_clip:
+    :param learning_rate:
+    :param batch_size:
+    :param model:
+    :param valid_loader:
     :return:
 
     """
-    from torch.utils.tensorboard import SummaryWriter
+    if early_stopping:
+        early_stopping = EarlyStopping(threshold = early_stopping_threshold, verbose = True)
 
     writer = SummaryWriter()
 
@@ -101,33 +155,26 @@ def train(
 
                     val_output, val_h = model(val_inputs, val_h)
 
-                    val_loss = criterion(val_output.squeeze(), val_labels.float())
-                    val_losses.append(val_loss.item())
-                    writer.add_scalar("Loss/test", val_loss.item(), counter)
+                    if early_stopping.early_stop:
+                        print("Early stopping")
+                        break
 
-                    val_pred = torch.round(val_output.squeeze())
+                val_losses.append(val_loss.item())
+                writer.add_scalar("Loss/test", val_loss.item(), counter)
 
-                    val_correct_tensor = val_pred.eq(
-                        val_labels.float().view_as(val_pred)
-                    )
-                    val_correct = (
-                        np.squeeze(val_correct_tensor.numpy())
-                        if not torch.cuda.is_available()
-                        else np.squeeze(val_correct_tensor.cpu().numpy())
-                    )
-
-                    test_acc = np.sum(val_correct) / len(val_inputs)
-                    writer.add_scalar("Accuracy/test", test_acc, counter)
+                val_pred = torch.round(val_pred.squeeze())
+                test_acc = sum(val_pred == val_labels) / len(val_inputs)
+                writer.add_scalar("Accuracy/test", test_acc, counter)
 
                 model.train()
 
                 print(
                     "Epoch: {}/{}...".format(e + 1, epoch),
                     "Step: {}...".format(counter),
-                    "Training Loss: {:.6f}...".format(train_loss.item()),
-                    "Validation Loss: {:.6f}".format(val_loss.item()),
-                    "Train Accuracy: {:.6f}".format(train_acc),
-                    "Test Accuracy: {:.6f}".format(test_acc),
+                    "Training Loss: {:.3f}...".format(train_loss.item()),
+                    "Validation Loss: {:.3f}".format(val_loss.item()),
+                    "Train Accuracy: {:.3f}".format(train_acc),
+                    "Test Accuracy: {:.3f}".format(test_acc),
                 )
 
         writer.add_graph(model, (train_inputs, h))
