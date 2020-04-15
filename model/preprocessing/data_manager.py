@@ -35,7 +35,7 @@ def clean_data(
 
         for row in range(flatten_data.shape[0]):
             train_test_choice = np.random.choice(
-                ["train_data", "val_data"], p=[0.8, 0.2]
+                ["train_data", "val_data", "test_data"], p=[0.7, 0.1, 0.1]
             )
             save_path = os.path.join(document_path, "gender", train_test_choice, label)
             flatten_data.iloc[row].to_csv(

@@ -94,7 +94,7 @@ def train(
 
     """
     if early_stopping:
-        early_stopping = EarlyStopping(threshold=early_stopping_threshold, verbose=True)
+        stopping = EarlyStopping(threshold=early_stopping_threshold, verbose=True)
 
     writer = SummaryWriter()
 
@@ -121,61 +121,67 @@ def train(
 
             train_pred = torch.round(train_output.squeeze())
 
-            train_correct_tensor = train_pred.eq(
-                train_labels.float().view_as(train_pred)
-            )
+            val_correct_tensor = train_pred.eq(train_labels.float().view_as(train_pred))
 
             train_correct = (
-                np.squeeze(train_correct_tensor.numpy())
+                np.squeeze(val_correct_tensor.numpy())
                 if not torch.cuda.is_available()
-                else np.squeeze(train_correct_tensor.cpu().numpy())
+                else np.squeeze(val_correct_tensor.cpu().numpy())
             )
-
-            # todo: test new accracy formula
 
             train_acc = np.sum(train_correct) / len(train_inputs)
             writer.add_scalar("Accuracy/train", train_acc, counter)
 
             train_loss = criterion(train_output.squeeze(), train_labels.float())
-            train_loss.backward()
             writer.add_scalar("Loss/train", train_loss.item(), counter)
 
+            train_loss.backward()
             nn.utils.clip_grad_norm_(model.parameters(), gradient_clip)
             optimizer.step()
 
-            if counter % print_every == 0:
-                val_h = model.init_hidden(batch_size)
-                val_losses = []
-                model.eval()
-                for val_inputs, val_labels in valid_loader:
-                    val_h = tuple([each.data for each in val_h])
+        if counter % print_every == 0:
+            val_h = model.init_hidden(batch_size)
+            val_losses = []
+            model.eval()
+            for val_inputs, val_labels in valid_loader:
+                val_h = tuple([each.data for each in val_h])
 
-                    if torch.cuda.is_available():
-                        val_inputs, val_labels = val_inputs.cuda(), val_labels.cuda()
+                if torch.cuda.is_available():
+                    val_inputs, val_labels = val_inputs.cuda(), val_labels.cuda()
 
-                    val_output, val_h = model(val_inputs, val_h)
+                val_output, val_h = model(val_inputs, val_h)
 
-                    if early_stopping.early_stop:
-                        print("Early stopping")
-                        break
-
+                val_loss = criterion(val_output.squeeze(), val_labels.float())
                 val_losses.append(val_loss.item())
                 writer.add_scalar("Loss/test", val_loss.item(), counter)
 
-                val_pred = torch.round(val_pred.squeeze())
-                test_acc = sum(val_pred == val_labels) / len(val_inputs)
+                val_pred = torch.round(val_output.squeeze())
+
+                if early_stopping:
+                    stopping(val_loss=val_loss, model=model)
+
+                    if stopping.early_stop:
+                        print("Early stopping")
+                        break
+
+                val_correct_tensor = val_pred.eq(val_labels.float().view_as(val_pred))
+                val_correct = (
+                    np.squeeze(val_correct_tensor.numpy())
+                    if not torch.cuda.is_available()
+                    else np.squeeze(val_correct_tensor.cpu().numpy())
+                )
+
+                test_acc = np.sum(val_correct) / len(val_inputs)
                 writer.add_scalar("Accuracy/test", test_acc, counter)
 
-                model.train()
-
-                print(
-                    "Epoch: {}/{}...".format(e + 1, epoch),
-                    "Step: {}...".format(counter),
-                    "Training Loss: {:.3f}...".format(train_loss.item()),
-                    "Validation Loss: {:.3f}".format(val_loss.item()),
-                    "Train Accuracy: {:.3f}".format(train_acc),
-                    "Test Accuracy: {:.3f}".format(test_acc),
-                )
+            print(
+                "Epoch: {}/{}...".format(e + 1, epoch),
+                "Step: {}...".format(counter),
+                "Training Loss: {:.6f}...".format(train_loss.item()),
+                "Validation Loss: {:.6f}".format(val_loss.item()),
+                "Train Accuracy: {:.6f}".format(train_acc),
+                "Test Accuracy: {:.6f}".format(test_acc),
+            )
 
         writer.add_graph(model, (train_inputs, h))
     return model

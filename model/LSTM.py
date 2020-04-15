@@ -9,14 +9,14 @@ class AudioLSTM(nn.Module):
 
     def __init__(
         self,
-        input_size,
-        hidden_size,
-        num_layer,
-        dropout,
-        output_size,
-        batch=True,
-        bidirectional=True,
-    ):
+        input_size: int,
+        hidden_size: int,
+        dropout: float,
+        num_layer: int,
+        output_size: int,
+        batch: bool = True,
+        bidirectional: bool = True,
+    ) -> None:
         """
         :param input_size: The number of expected features in the input x
         :param hidden_size:The number of features in the hidden state h
@@ -85,11 +85,15 @@ class AudioLSTM(nn.Module):
 
         return sig_out, hidden
 
-    def init_hidden(self, batch_size):
+    def init_hidden(self, batch_size: int):
         """
         Initializes hidden state. Create two new tensors with sizes n_layers x batch_size x hidden_dim, initialized to
         zero, for hidden state and cell state of LSTM.
 
+        :return: 
+        :rtype: 
+        :return: 
+        :rtype: 
         :param batch_size: number of batches
 
         :return: Tensor for hidden states

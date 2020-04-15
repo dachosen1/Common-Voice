@@ -16,7 +16,7 @@ _logger = logging.getLogger(__name__)
 torch.manual_seed(0)
 
 
-def run_training(train_dir, val_dir) -> None:
+def run_training(model, train_dir, val_dir) -> None:
     train_dataset = DatasetFolder(root=train_dir, loader=csv_loader, extensions=".csv",)
 
     val_dataset = DatasetFolder(root=val_dir, loader=csv_loader, extensions=".csv")
@@ -28,7 +28,7 @@ def run_training(train_dir, val_dir) -> None:
         val_dataset, batch_size=Model.BATCH_SIZE, shuffle=True
     )
 
-    model = AudioLSTM(
+    model = model(
         num_layer=Model.NUM_LAYERS,
         input_size=Model.INPUT_SIZE,
         hidden_size=Model.HIDDEN_DIM,
@@ -46,5 +46,7 @@ def run_training(train_dir, val_dir) -> None:
 
 if __name__ == "__main__":
     run_training(
-        train_dir=Train_Pipeline.TRAIN_DIR, val_dir=Train_Pipeline.VAL_DIR,
+        model=AudioLSTM,
+        train_dir=Train_Pipeline.TRAIN_DIR,
+        val_dir=Train_Pipeline.VAL_DIR,
     )
