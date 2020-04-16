@@ -12,7 +12,9 @@ _logger = logging.getLogger(__name__)
 
 
 class EarlyStopping:
-    """Early stops the training if validation loss doesn't improve after a given threshold."""
+    """
+    Early stops the training if validation loss doesn't improve after a given threshold.
+    """
 
     def __init__(
         self, threshold: int = 50, verbose: bool = False, delta: float = 0
@@ -77,7 +79,6 @@ def train(
     early_stopping: bool = True,
 ) -> object:
     """
-
     :param print_every:
     :type print_every:
     :param train_loader:
@@ -91,7 +92,6 @@ def train(
     :param model:
     :param valid_loader:
     :return:
-
     """
     if early_stopping:
         stopping = EarlyStopping(threshold=early_stopping_threshold, verbose=True)

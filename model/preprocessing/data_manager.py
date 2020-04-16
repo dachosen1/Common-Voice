@@ -7,25 +7,21 @@ from python_speech_features import mfcc
 from scipy.io import wavfile
 from tqdm import tqdm
 
-
-def envelope(*, y: object, signal_rate: object, threshold: object):
-    signal_clean = []
-    y = pd.Series(y).apply(np.abs)
-    y_mean = y.rolling(
-        window=int(signal_rate / 1000), min_periods=1, center=True
-    ).mean()
-
-    for mean in y_mean:
-        if mean > threshold:
-            signal_clean.append(True)
-        else:
-            signal_clean.append(False)
-    return signal_clean
+from utils.utlis import envelope
 
 
 def clean_data(
     document_path, filename: str, rate: int, signal: np.ndarray, label: object
 ) -> None:
+    """
+    :param document_path:
+    :param filename:
+    :param rate:
+    :param signal:
+    :param label:
+    :return:
+    :rtype:
+    """
     seq_count = signal.shape[0] // rate
 
     try:
@@ -42,8 +38,6 @@ def clean_data(
                 header=False,
                 index=False,
             )
-
-            assert flatten_data.iloc[row].shape[0] == rate
 
     except ValueError:
         print(" Skipped {} ......".format(filename))

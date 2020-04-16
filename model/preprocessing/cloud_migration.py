@@ -64,7 +64,9 @@ def bucket_migration(local_directory, authentication_key, storage_bucket) -> Non
 
 @functools.lru_cache()
 def list_blobs(bucket_name):
-    """Lists all the blobs in the bucket."""
+    """
+    Lists all the blobs in the bucket.
+    """
     storage_client = storage.Client()
     blobs = storage_client.list_blobs(bucket_name)
     # list_files = [blob.name for blob in tqdm(blobs)]
@@ -94,7 +96,9 @@ def delete_mp3_from_bucket(
 def delete_blob(
     bucket_blob: google.cloud.storage.bucket.Bucket, blob_name: str
 ) -> None:
-    """Deletes a blob from the bucket."""
+    """
+    Deletes a blob from the bucket.
+    """
 
     blob = bucket_blob.blob(f"clips/{blob_name}")
     blob.delete()
@@ -161,8 +165,7 @@ def upload_blob(
 
 def clean_bucket(bucket: str, name: str, project: str) -> None:
     """
-
-    Find all the file names that do not have one of the 3 labels of age, gender and accent
+    Find all the file names that do not have one of the 3 labels of age, gender and accent.
 
     :param bucket: name of Google Cloud bucket
     :param name:  name of file or google cloud  blob

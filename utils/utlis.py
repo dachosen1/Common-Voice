@@ -6,12 +6,10 @@ import numpy as np
 import pandas as pd
 import torch
 from pydub import AudioSegment
-from scipy.io import wavfile
 
 
 def csv_loader(path: str) -> torch.Tensor:
     """
-
     :param path:
     :return:
     """
@@ -69,55 +67,6 @@ def convert_mp3_to_wav():
         wav_path = os.path.join(os.getcwd(), new_file_name)
         file.export(wav_path, format="wav")
         os.remove(path)
-
-
-class Wav_parse:
-    def __init__(self, path):
-        self.path = path
-        self.wav = []  # todo: convert path to wav
-
-        self.rate, self.signal = wavfile.read(path)
-
-        pass
-
-    def play_wav_file(self):
-        # todo: function to be able to play wav name
-        pass
-
-    def remove_background_noise(self):
-        # todo: function to remove any background noise
-        pass
-
-    def voice_window(self, window):
-        # todo: sliding window that isolates a window in a time of voice
-        pass
-
-    def normalize_voice(self):
-        # todo: function to normalize voice pace
-        pass
-
-    def visualize_wav(self):
-        # todo: visualize differnt voice patterns
-        pass
-
-    def voice_content(self):
-        # todo: function to fetch the meta data for wav name.
-        pass
-
-
-class Wav_model:
-    """
-    Module to format get wav ready for modeling
-
-    """
-
-    def format_wav(self):
-        # todo: function to format WAV files to for modeling. Maaybe a matrix? do more research on it
-        pass
-
-    def voice_batch(self):
-        # todo: select a batch of voices to train RNN on
-        pass
 
 
 def calc_fft(*, y, rate):

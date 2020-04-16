@@ -20,13 +20,11 @@ def run_training(model, train_dir, val_dir) -> None:
     train_dataset = DatasetFolder(root=train_dir, loader=csv_loader, extensions=".csv",)
 
     val_dataset = DatasetFolder(root=val_dir, loader=csv_loader, extensions=".csv")
-    train_data_loader = torch.utils.data.DataLoader(
+    train_data_loader = DataLoader(
         train_dataset, batch_size=Model.BATCH_SIZE, shuffle=True
     )
 
-    val_data_loader = torch.utils.data.DataLoader(
-        val_dataset, batch_size=Model.BATCH_SIZE, shuffle=True
-    )
+    val_data_loader = DataLoader(val_dataset, batch_size=Model.BATCH_SIZE, shuffle=True)
 
     model = model(
         num_layer=Model.NUM_LAYERS,

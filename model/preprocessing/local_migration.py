@@ -1,10 +1,11 @@
 import os
 import shutil
-from concurrent import futures
 
 import pandas as pd
 from pydub import AudioSegment
 from tqdm import tqdm
+
+from model.config.config import Storage
 
 AudioSegment.ffmpeg = r"C:\Users\ander\ffmpeg-4.2.2-win64-static\bin"
 
@@ -31,15 +32,3 @@ def remove_un_label_files(clips_names):
     for mp3 in tqdm(clips_names):
         if mp3 not in data_path:
             shutil.move(os.path.join(clips_path, mp3), os.path.join(delete_path, mp3))
-
-
-if __name__ == "__main__":
-    from model.config.config import Storage
-
-    clips_path = Storage.DATA_CLIPS_PATH
-    mp3_list = os.listdir(clips_path)
-    mp3_list = set(mp3_list)
-    with futures.ThreadPoolExecutor() as executor:
-        tqdm(executor.map(convert_to_wav, mp3_list))
-
-    # convert_to_wav(mp3_list)

@@ -21,8 +21,7 @@ class AudioLSTM(nn.Module):
         :param input_size: The number of expected features in the input x
         :param hidden_size:The number of features in the hidden state h
         :param num_layer: Number of recurrent layers. E.g., setting num_layers=2 would mean stacking two LSTMs together
-        to form a stacked LSTM, with the second LSTM taking in outputs of the first LSTM and computing the final
-         results.
+        to form a stacked LSTM, with the second LSTM taking in outputs of the first LSTM and computing the final results.
         :param dropout:f non-zero, introduces a Dropout layer on the outputs of each LSTM layer except the last layer,
         with dropout probability equal to dropout
         :param output_size: Number of label prediction
@@ -64,8 +63,6 @@ class AudioLSTM(nn.Module):
         batch_size = x.size(0)
         seq_count = x.shape[1]
         x = x.float().view(1, -1, seq_count)
-
-        assert seq_count == self.input_size
 
         lstm_out, hidden = self.lstm(x)
 
