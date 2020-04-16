@@ -69,7 +69,6 @@ def label_split(
     wav_path: str, data_path: str, mel_seq_count: int, document_path: str
 ) -> None:
     """
-    
     :param wav_path:
     :param data_path:
     :param mel_seq_count:

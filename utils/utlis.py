@@ -24,19 +24,19 @@ def mp3_loader(path):
     return file
 
 
-def envelope(*, y, rate, threshold):
-    mask = []
-
+def envelope(*, y: object, signal_rate: object, threshold: object):
+    signal_clean = []
     y = pd.Series(y).apply(np.abs)
-    y_mean = y.rolling(window=int(rate / 10), min_periods=1, center=True).mean()
+    y_mean = y.rolling(
+        window=int(signal_rate / 1000), min_periods=1, center=True
+    ).mean()
 
     for mean in y_mean:
         if mean > threshold:
-            mask.append(True)
+            signal_clean.append(True)
         else:
-            mask.append(False)
-
-    return mask
+            signal_clean.append(False)
+    return signal_clean
 
 
 def clean_data(filename, rate, signal, new_file_path):
