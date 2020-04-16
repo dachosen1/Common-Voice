@@ -30,7 +30,9 @@ def get_file_handler():
 
 
 def get_logger(*, logger_name):
-    """Get logger with prepared handlers."""
+    """
+    Get logger with prepared handlers.
+    """
 
     logger = logging.getLogger(logger_name)
 
@@ -47,7 +49,7 @@ class Config:
     DEBUG = False
     TESTING = False
     CSRF_ENABLED = True
-    SECRET_KEY = "TBU"
+    # SECRET_KEY = "TBU"
     SERVER_PORT = 5000
     UPLOAD_FOLDER = UPLOAD_FOLDER
 

@@ -22,11 +22,13 @@ class Train:
 
 
 class Storage:
-    WAV_PATH = r"C:\Users\ander\Documents\common-voice-all\wav"
-    RAW_DATA_PATH = r"C:\Users\ander\Documents\common-voice-all"
+    WAV_PATH = r"C:\Users\ander\Documents\common-voice-data\wav"
+    RAW_DATA_PATH = r"C:\Users\ander\Documents\common-voice-data"
     PARENT_FOLDER_PATH = r"C:\Users\ander\Documents\common-voice-dev"
+    DATA_CLIPS_PATH = r"C:\Users\ander\Documents\common-voice-data\clips"
 
 
 class Train_Pipeline:
     TRAIN_DIR = r"C:\Users\ander\Documents\common-voice-dev\gender\train_data"
     VAL_DIR = r"C:\Users\ander\Documents\common-voice-dev\gender\val_data"
+    TEST_DIR = r"C:\Users\ander\Documents\common-voice-dev\gender\test_data"
