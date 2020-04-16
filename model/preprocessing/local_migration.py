@@ -10,19 +10,21 @@ AudioSegment.ffmpeg = r"C:\Users\ander\ffmpeg-4.2.2-win64-static\bin"
 
 
 def convert_to_wav(clips_name: set) -> None:
-    clips_dir = r"C:\Users\ander\Documents\common-voice-all\clips"
-    wav_dir = r"C:\Users\ander\Documents\common-voice-all\wav"
+    clips_dir = r"C:\Users\ander\Documents\common-voice-data\clips"
+    wav_dir = r"C:\Users\ander\Documents\common-voice-data\wav"
 
     path = os.path.join(clips_dir, clips_name)
     file = AudioSegment.from_mp3(path)
     new_file_name = f'{clips_name.split(".")[0]}.wav'
     wav_path = os.path.join(wav_dir, new_file_name)
     file.export(wav_path, format="wav")
+    print("exported {}".format(clips_name))
 
 
 def remove_un_label_files(clips_names):
     data = pd.read_csv("Development/data.csv")
     data_path = set(data.path)
+    clips_path = Storage.DATA_CLIPS_PATH
 
     delete_path = r"C:\Users\ander\Documents\delete"
 
@@ -32,8 +34,12 @@ def remove_un_label_files(clips_names):
 
 
 if __name__ == "__main__":
-    clips_path = r"C:\Users\ander\Documents\common-voice-all\clips"
+    from model.config.config import Storage
+
+    clips_path = Storage.DATA_CLIPS_PATH
     mp3_list = os.listdir(clips_path)
     mp3_list = set(mp3_list)
-    with futures.ProcessPoolExecutor() as executor:
+    with futures.ThreadPoolExecutor() as executor:
         tqdm(executor.map(convert_to_wav, mp3_list))
+
+    # convert_to_wav(mp3_list)
