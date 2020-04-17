@@ -2,7 +2,7 @@ import torch
 import torch.nn as nn
 
 
-class AudioLSTM(nn.Module):
+class AudioGRU(nn.Module):
     """
     LSTM for audio classification
     """
@@ -29,14 +29,14 @@ class AudioLSTM(nn.Module):
         :param bidirectional: If True, becomes a bidirectional LSTM
 
         """
-        super(AudioLSTM, self).__init__()
+        super(AudioGRU, self).__init__()
 
         self.input_size = input_size
         self.hidden_size = hidden_size
         self.num_layer = num_layer
         self.dropout = dropout
 
-        self.lstm = nn.LSTM(
+        self.gru = nn.GRU(
             input_size=input_size,
             hidden_size=hidden_size,
             num_layers=num_layer,
@@ -64,13 +64,13 @@ class AudioLSTM(nn.Module):
         seq_count = x.shape[1]
         x = x.float().view(1, -1, seq_count)
 
-        lstm_out, hidden = self.lstm(x)
+        gru_out, hidden = self.gru(x)
 
         # stack up lstm outputs
-        lstm_out = lstm_out.contiguous().view(-1, self.hidden_size)
+        gru_out = gru_out.contiguous().view(-1, self.hidden_size)
 
         # dropout and fully-connected layer
-        out = self.dropout(lstm_out)
+        out = self.dropout(gru_out)
         out = self.fc(out)
 
         # sigmoid function
@@ -87,10 +87,10 @@ class AudioLSTM(nn.Module):
         Initializes hidden state. Create two new tensors with sizes n_layers x batch_size x hidden_dim, initialized to
         zero, for hidden state and cell state of LSTM.
 
-        :return: 
-        :rtype: 
-        :return: 
-        :rtype: 
+        :return:
+        :rtype:
+        :return:
+        :rtype:
         :param batch_size: number of batches
 
         :return: Tensor for hidden states
