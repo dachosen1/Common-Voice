@@ -3,12 +3,21 @@ import logging
 import numpy as np
 import torch
 import torch.nn as nn
+from sklearn.metrics import accuracy_score, f1_score, precision_score, recall_score
 from torch.utils.tensorboard import SummaryWriter
 
 from model import __version__
 from model.config.config import Model, Train
 
 _logger = logging.getLogger(__name__)
+
+
+def metric_summary(pred, label):
+    acc = accuracy_score(y_true=label, y_pred=pred)
+    f1 = f1_score(y_true=label, y_pred=pred)
+    pc = precision_score(y_true=label, y_pred=pred)
+    rs = recall_score(y_true=label, y_pred=pred)
+    return acc, f1, pc, rs
 
 
 class EarlyStopping:
@@ -118,19 +127,16 @@ def train(
             h = tuple([each.data for each in h])
             model.zero_grad()
             train_output, h = model(train_inputs, h)
-
             train_pred = torch.round(train_output.squeeze())
 
-            val_correct_tensor = train_pred.eq(train_labels.float().view_as(train_pred))
-
-            train_correct = (
-                np.squeeze(val_correct_tensor.numpy())
-                if not torch.cuda.is_available()
-                else np.squeeze(val_correct_tensor.cpu().numpy())
+            train_acc, train_f1, train_pr, train_rc = metric_summary(
+                pred=train_pred.cpu().data.numpy(), label=train_labels.cpu().numpy()
             )
 
-            train_acc = np.sum(train_correct) / len(train_inputs)
             writer.add_scalar("Accuracy/train", train_acc, counter)
+            writer.add_scalar("F1/train", train_f1, counter)
+            writer.add_scalar("Precision/train", train_pr, counter)
+            writer.add_scalar("Recall/train", train_rc, counter)
 
             train_loss = criterion(train_output.squeeze(), train_labels.float())
             writer.add_scalar("Loss/train", train_loss.item(), counter)
@@ -153,7 +159,7 @@ def train(
 
                     val_loss = criterion(val_output.squeeze(), val_labels.float())
                     val_losses.append(val_loss.item())
-                    writer.add_scalar("Loss/test", val_loss.item(), counter)
+                    writer.add_scalar("Loss/val", val_loss.item(), counter)
 
                     val_pred = torch.round(val_output.squeeze())
 
@@ -164,27 +170,24 @@ def train(
                             print("Early stopping")
                             break
 
-                    val_correct_tensor = val_pred.eq(
-                        val_labels.float().view_as(val_pred)
-                    )
-                    val_correct = (
-                        np.squeeze(val_correct_tensor.numpy())
-                        if not torch.cuda.is_available()
-                        else np.squeeze(val_correct_tensor.cpu().numpy())
+                    val_acc, val_f1, val_pr, val_rc = metric_summary(
+                        pred=val_pred.cpu().data.numpy(), label=val_labels.cpu().numpy()
                     )
 
-                    test_acc = np.sum(val_correct) / len(val_inputs)
-                    writer.add_scalar("Accuracy/test", test_acc, counter)
+                    writer.add_scalar("Accuracy/val", val_acc, counter)
+                    writer.add_scalar("F1/val", val_f1, counter)
+                    writer.add_scalar("Precision/val", val_pr, counter)
+                    writer.add_scalar("Recall/val", val_rc, counter)
 
-                model.train()
                 print(
                     "Epoch: {}/{}...".format(e + 1, epoch),
                     "Step: {}...".format(counter),
                     "Training Loss: {:.6f}...".format(train_loss.item()),
                     "Validation Loss: {:.6f}".format(val_loss.item()),
                     "Train Accuracy: {:.6f}".format(train_acc),
-                    "Test Accuracy: {:.6f}".format(test_acc),
+                    "Test Accuracy: {:.6f}".format(val_acc),
                 )
+                model.train()
 
             writer.add_graph(model, (train_inputs, h))
 
