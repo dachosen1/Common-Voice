@@ -12,39 +12,6 @@ from utils.utlis import envelope
 def clean_data(
     document_path, filename: str, rate: int, signal: np.ndarray, label: object
 ) -> None:
-    """
-    :param document_path:
-    :param filename:
-    :param rate:
-    :param signal:
-    :param label:
-    :return:
-    :rtype:
-    """
-    seq_count = signal.shape[0] // rate
-
-    try:
-        flatten_data = signal[0 : seq_count * rate].reshape(seq_count, -1)
-        flatten_data = pd.DataFrame(flatten_data)
-
-        for row in range(flatten_data.shape[0]):
-            train_test_choice = np.random.choice(
-                ["train_data", "val_data", "test_data"], p=[0.7, 0.2, 0.1]
-            )
-            save_path = os.path.join(document_path, "gender", train_test_choice, label)
-            flatten_data.iloc[row].to_csv(
-                "{}\{}-{}.csv".format(save_path, filename, row),
-                header=False,
-                index=False,
-            )
-
-    except ValueError:
-        print(" Skipped {} ......".format(filename))
-
-
-def clean_data(
-    document_path, filename: str, rate: int, signal: np.ndarray, label: object
-) -> None:
     seq_count = signal.shape[0] // rate
 
     try:
@@ -61,8 +28,6 @@ def clean_data(
                 header=False,
                 index=False,
             )
-
-            assert flatten_data.iloc[row].shape[0] == rate
 
     except ValueError:
         print(" Skipped {} ......".format(filename))

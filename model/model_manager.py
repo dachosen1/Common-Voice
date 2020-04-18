@@ -3,11 +3,18 @@ import logging
 import numpy as np
 import torch
 import torch.nn as nn
-from sklearn.metrics import accuracy_score, f1_score, precision_score, recall_score
+from sklearn.metrics import (
+    accuracy_score,
+    confusion_matrix,
+    f1_score,
+    precision_score,
+    recall_score,
+)
 from torch.utils.tensorboard import SummaryWriter
 
 from model import __version__
 from model.config.config import Model, Train
+from utils.utlis import plot_confusion_matrix
 
 _logger = logging.getLogger(__name__)
 
@@ -127,16 +134,36 @@ def train(
             h = tuple([each.data for each in h])
             model.zero_grad()
             train_output, h = model(train_inputs, h)
+
+            writer.add_histogram("weight/fc", model.fc.weight.data, counter)
+
             train_pred = torch.round(train_output.squeeze())
 
             train_acc, train_f1, train_pr, train_rc = metric_summary(
                 pred=train_pred.cpu().data.numpy(), label=train_labels.cpu().numpy()
             )
 
+            train_cm = confusion_matrix(
+                y_true=train_labels.cpu().numpy(), y_pred=train_pred.cpu().data.numpy()
+            )
+
+            figure = plot_confusion_matrix(
+                train_cm, class_names=train_loader.dataset.classes
+            )
+            # cm_image = plot_to_image(figure)
+            #
+            # writer.add_images("Confusion Matrix", cm_image, counter)
             writer.add_scalar("Accuracy/train", train_acc, counter)
             writer.add_scalar("F1/train", train_f1, counter)
             writer.add_scalar("Precision/train", train_pr, counter)
             writer.add_scalar("Recall/train", train_rc, counter)
+
+            writer.add_pr_curve(
+                tag="Precision Recall Curve/train",
+                labels=train_labels.cpu().numpy(),
+                predictions=train_pred.cpu().data.numpy(),
+                global_step=counter,
+            )
 
             train_loss = criterion(train_output.squeeze(), train_labels.float())
             writer.add_scalar("Loss/train", train_loss.item(), counter)
@@ -178,6 +205,13 @@ def train(
                     writer.add_scalar("F1/val", val_f1, counter)
                     writer.add_scalar("Precision/val", val_pr, counter)
                     writer.add_scalar("Recall/val", val_rc, counter)
+
+                    writer.add_pr_curve(
+                        tag="Precision Recall Curve/val",
+                        labels=val_labels.cpu().numpy(),
+                        predictions=val_pred.cpu().data.numpy(),
+                        global_step=counter,
+                    )
 
                 print(
                     "Epoch: {}/{}...".format(e + 1, epoch),
