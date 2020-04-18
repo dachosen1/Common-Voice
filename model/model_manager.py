@@ -1,5 +1,6 @@
 import logging
 
+import numpy
 import numpy as np
 import torch
 import torch.nn as nn
@@ -19,7 +20,7 @@ from utils.utlis import plot_confusion_matrix
 _logger = logging.getLogger(__name__)
 
 
-def metric_summary(pred, label):
+def metric_summary(pred: numpy.ndarray, label: numpy.ndarray):
     acc = accuracy_score(y_true=label, y_pred=pred)
     f1 = f1_score(y_true=label, y_pred=pred)
     pc = precision_score(y_true=label, y_pred=pred)

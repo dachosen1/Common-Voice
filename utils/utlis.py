@@ -1,10 +1,11 @@
 from __future__ import unicode_literals
 
-import io
 import itertools
 import os
 
+import matplotlib
 import matplotlib.pyplot as plt
+import numpy
 import numpy as np
 import pandas as pd
 import torch
@@ -76,7 +77,9 @@ def calc_fft(*, y, rate):
     return Y, freq
 
 
-def plot_confusion_matrix(cm, class_names):
+def plot_confusion_matrix(
+    cm: numpy.ndarray, class_names: list()
+) -> matplotlib.figure.Figure:
     """
   Returns a matplotlib figure containing the plotted confusion matrix.
 
@@ -105,21 +108,3 @@ def plot_confusion_matrix(cm, class_names):
     plt.ylabel("True label")
     plt.xlabel("Predicted label")
     return figure
-
-
-def plot_to_image(figure):
-    """Converts the matplotlib plot specified by 'figure' to a PNG image and
-  returns it. The supplied figure is closed and inaccessible after this call."""
-    # Save the plot to a PNG in memory.
-    buf = io.BytesIO()
-    plt.savefig(buf, format="png")
-    # Closing the figure prevents it from being displayed directly inside
-    # the notebook.
-    plt.close(figure)
-    buf.seek(0)
-
-    # Convert PNG buffer to TF image
-    image = tf.image.decode_png(buf.getvalue(), channels=4)
-    # Add the batch dimension
-    image = tf.expand_dims(image, 0)
-    return image.numpy()
