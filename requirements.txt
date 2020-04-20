@@ -1,7 +1,7 @@
 gcsfs~=0.6.1
 google==2.0.3
 matplotlib~=3.2.1
-numpy~=1.18.2
+numpy~=1.18.3
 pandas~=1.0.3
 pydub==0.23.1
 scipy==1.4.1
