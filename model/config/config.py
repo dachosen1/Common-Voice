@@ -22,13 +22,13 @@ class Train:
 
 
 class Storage:
-    WAV_PATH = r"C:\Users\ander\Documents\common-voice-data\wav"
-    RAW_DATA_PATH = r"C:\Users\ander\Documents\common-voice-data"
-    PARENT_FOLDER_PATH = r"C:\Users\ander\Documents\common-voice-dev"
+    WAV_PATH = "/home/jupyter/wav"
+    RAW_DATA_PATH = "/home/jupyter/"
+    PARENT_FOLDER_PATH = "/home/jupyter/common-voice-train"
     DATA_CLIPS_PATH = r"C:\Users\ander\Documents\common-voice-data\clips"
 
 
 class Train_Pipeline:
-    TRAIN_DIR = r"C:\Users\ander\Documents\common-voice-dev\gender\train_data"
-    VAL_DIR = r"C:\Users\ander\Documents\common-voice-dev\gender\val_data"
-    TEST_DIR = r"C:\Users\ander\Documents\common-voice-dev\gender\test_data"
+    TRAIN_DIR = "/home/jupyter/wav/gender/train_data"
+    VAL_DIR = "/home/jupyter/wav/gender/val_data"
+    TEST_DIR = "/home/jupyter/wav/gender/test_data"
