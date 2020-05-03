@@ -1,5 +1,5 @@
 ## Common Voice
-[![Codacy Badge](https://api.codacy.com/project/badge/Grade/4a32d5982c5841de89a59fd9c5b39e52)](https://app.codacy.com/manual/anderson.nelson1/Common-Voice?utm_source=github.com&utm_medium=referral&utm_content=dachosen1/Common-Voice&utm_campaign=Badge_Grade_Dashboard)
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/729a3911117c41a499b7c317255d508f)](https://www.codacy.com/manual/dachosen1/Common-Voice?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=dachosen1/Common-Voice&amp;utm_campaign=Badge_Grade)
 [![CircleCI](https://circleci.com/gh/dachosen1/Common-Voice.svg?style=svg)](https://circleci.com/gh/dachosen1/Common-Voice)
 
 
