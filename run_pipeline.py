@@ -36,10 +36,10 @@ def run_training(model: type, train_dir: str, val_dir: str) -> None:
     )
 
     train_model = train(model, train_data_loader, val_data_loader, early_stopping=False)
-    _logger.info("Save model in directory")
+    _logger.info("Save RNN_TYPE in directory")
     torch.save(
         train_model.state_dict(),
-        "model/trained_model" + "/model_gender_{}.pth".format(__version__),
+        "RNN_TYPE/trained_model" + "/model_gender_{}.pth".format(__version__),
     )
 
 

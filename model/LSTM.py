@@ -16,6 +16,7 @@ class AudioLSTM(nn.Module):
         output_size: int,
         batch: bool = True,
         bidirectional: bool = True,
+        RNN_TYPE = 'LSTM'
     ) -> None:
         """
         :param input_size: The number of expected features in the input x
@@ -36,14 +37,25 @@ class AudioLSTM(nn.Module):
         self.num_layer = num_layer
         self.dropout = dropout
 
-        self.lstm = nn.LSTM(
-            input_size=input_size,
-            hidden_size=hidden_size,
-            num_layers=num_layer,
-            dropout=dropout,
-            batch_first=batch,
-            bidirectional=bidirectional,
-        )
+        if RNN_TYPE == 'LSTM'
+            self.RNN_TYPE = nn.LSTM(
+                input_size = input_size,
+                hidden_size = hidden_size,
+                num_layers = num_layer,
+                dropout = dropout,
+                batch_first = batch,
+                bidirectional = bidirectional,
+            )
+
+        if RNN_TYPE == 'GRU':
+            self.RNN_TYPE = nn.GRU(
+                input_size = input_size,
+                hidden_size = hidden_size,
+                num_layers = num_layer,
+                dropout = dropout,
+                batch_first = batch,
+                bidirectional = bidirectional,
+            )
 
         # dropout layer
         self.dropout = nn.Dropout(dropout)
@@ -64,9 +76,9 @@ class AudioLSTM(nn.Module):
         seq_count = x.shape[1]
         x = x.float().view(1, -1, seq_count)
 
-        lstm_out, hidden = self.lstm(x)
+        lstm_out, hidden = self.RNN_TYPE(x)
 
-        # stack up lstm outputs
+        # stack up RNN_TYPE outputs
         lstm_out = lstm_out.contiguous().view(-1, self.hidden_size)
 
         # dropout and fully-connected layer

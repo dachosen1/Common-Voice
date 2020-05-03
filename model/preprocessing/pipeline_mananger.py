@@ -5,9 +5,9 @@
 #
 # def save_pipeline(*, pipeline_to_persist) -> None:
 #     """Persist the pipeline.
-#     Saves the versioned model, and overwrites any previous
+#     Saves the versioned RNN_TYPE, and overwrites any previous
 #     saved models. This ensures that when the package is
-#     published, there is only one trained model that can be
+#     published, there is only one trained RNN_TYPE that can be
 #     called, and we know exactly how it was built.
 #     """
 #
@@ -30,9 +30,9 @@
 #
 # def remove_old_pipelines(*, files_to_keep: t.List[str]) -> None:
 #     """
-#     Remove old model pipelines.
+#     Remove old RNN_TYPE pipelines.
 #     This is to ensure there is a simple one-to-one
-#     mapping between the package version and the model
+#     mapping between the package version and the RNN_TYPE
 #     version to be imported and used by other applications.
 #     However, we do also include the immediate previous
 #     pipeline version for differential testing purposes.
