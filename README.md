@@ -1,5 +1,5 @@
 ## Common Voice
-[![Codacy Badge](https://api.codacy.com/project/badge/Grade/729a3911117c41a499b7c317255d508f)](https://www.codacy.com/manual/dachosen1/Common-Voice?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=dachosen1/Common-Voice&amp;utm_campaign=Badge_Grade)
+[![CodeFactor](https://www.codefactor.io/repository/github/dachosen1/common-voice/badge)](https://www.codefactor.io/repository/github/dachosen1/common-voice)
 [![CircleCI](https://circleci.com/gh/dachosen1/Common-Voice.svg?style=svg)](https://circleci.com/gh/dachosen1/Common-Voice)
 
 
