@@ -16,7 +16,7 @@ class AudioLSTM(nn.Module):
         output_size: int,
         batch: bool = True,
         bidirectional: bool = True,
-        RNN_TYPE = 'LSTM'
+        RNN_TYPE: str = "LSTM",
     ) -> None:
         """
         :param input_size: The number of expected features in the input x
@@ -28,7 +28,7 @@ class AudioLSTM(nn.Module):
         :param output_size: Number of label prediction
         :param batch If True, then the input and output tensors are provided as (batch, seq, feature)
         :param bidirectional: If True, becomes a bidirectional LSTM
-
+        :param RNN_TYPE: Specify the type of RNN. Input takes two options LSTM and GRU
         """
         super(AudioLSTM, self).__init__()
 
@@ -37,24 +37,24 @@ class AudioLSTM(nn.Module):
         self.num_layer = num_layer
         self.dropout = dropout
 
-        if RNN_TYPE == 'LSTM'
+        if RNN_TYPE == "LSTM":
             self.RNN_TYPE = nn.LSTM(
-                input_size = input_size,
-                hidden_size = hidden_size,
-                num_layers = num_layer,
-                dropout = dropout,
-                batch_first = batch,
-                bidirectional = bidirectional,
+                input_size=input_size,
+                hidden_size=hidden_size,
+                num_layers=num_layer,
+                dropout=dropout,
+                batch_first=batch,
+                bidirectional=bidirectional,
             )
 
-        if RNN_TYPE == 'GRU':
+        if RNN_TYPE == "GRU":
             self.RNN_TYPE = nn.GRU(
-                input_size = input_size,
-                hidden_size = hidden_size,
-                num_layers = num_layer,
-                dropout = dropout,
-                batch_first = batch,
-                bidirectional = bidirectional,
+                input_size=input_size,
+                hidden_size=hidden_size,
+                num_layers=num_layer,
+                dropout=dropout,
+                batch_first=batch,
+                bidirectional=bidirectional,
             )
 
         # dropout layer
@@ -64,7 +64,9 @@ class AudioLSTM(nn.Module):
         self.fc = nn.Linear(hidden_size, output_size)
         self.out = nn.Sigmoid()
 
-    def forward(self, x, hidden):
+    def forward(
+        self, x: torch.Tensor, hidden: tuple[torch.Tensor, torch.Tensor]
+    ) -> tuple[torch.Tensor, tuple[torch.Tensor, torch.Tensor]]:
         """
 
         :param x:
@@ -76,16 +78,15 @@ class AudioLSTM(nn.Module):
         seq_count = x.shape[1]
         x = x.float().view(1, -1, seq_count)
 
-        lstm_out, hidden = self.RNN_TYPE(x)
-
-        # stack up RNN_TYPE outputs
+        lstm_out, hidden = self.RNN_TYPE(x, hidden)
         lstm_out = lstm_out.contiguous().view(-1, self.hidden_size)
 
         # dropout and fully-connected layer
         out = self.dropout(lstm_out)
         out = self.fc(out)
 
-        # sigmoid function
+        # todo: utilize hidden parameter
+
         sig_out = self.out(out)
 
         # reshape to be batch_size first
