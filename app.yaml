@@ -1,4 +1,4 @@
-application: common-voice
+application: commonvoice-voice-voice
 version: 1
 runtime: python27
 api_version: 1

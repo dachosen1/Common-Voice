@@ -19,7 +19,7 @@ long_description = (
     ""
     ""
     "In this modules I will provide an approach to classify in real time a person voice into the three "
-    "broad categories of the common voice data set"
+    "broad categories of the commonvoice-voice-voice data set"
 )
 
 EMAIL = "anderson.nelson1@gmail.com"
@@ -28,20 +28,20 @@ REQUIRES_PYTHON = ">=3.6.0"
 
 
 # What packages are required for this module to be executed?
-def list_reqs(name = "requirements.txt"):
+def list_reqs(name="requirements.txt"):
     with open(name) as fd:
         return fd.read().splitlines()
 
 
 setup(
-    name = NAME,
-    description = DESCRIPTION,
-    long_description = long_description,
-    long_description_content_type = "text/markdown",
-    author = AUTHOR,
-    author_email = EMAIL,
-    python_requires = REQUIRES_PYTHON,
-    install_requires = list_reqs(),
-    include_package_data = True,
-    license = "MIT",
+    name=NAME,
+    description=DESCRIPTION,
+    long_description=long_description,
+    long_description_content_type="text/markdown",
+    author=AUTHOR,
+    author_email=EMAIL,
+    python_requires=REQUIRES_PYTHON,
+    install_requires=list_reqs(),
+    include_package_data=True,
+    license="MIT",
 )
