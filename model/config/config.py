@@ -15,11 +15,11 @@ SEQ_LEN = FRAME_RATE / OBSERVATION_PER_SECOND
 
 
 class Bucket:
-    RAW_DATA = "commonvoice-voice-voice-all"
-    META_DATA = "commonvoice-voice-voice-data"
-    VALIDATION_SET = "commonvoice-voice-voice-dev"
-    TEST_SET = "commonvoice-voice-voice-test"
-    TRAIN_SET = "commonvoice-voice-voice-train"
+    RAW_DATA = "common-voice-voice-all"
+    META_DATA = "common-voice-voice-data"
+    VALIDATION_SET = "common-voice-voice-dev"
+    TEST_SET = "common-voice-voice-test"
+    TRAIN_SET = "common-voice-voice-train"
 
 
 class Model:
@@ -38,10 +38,9 @@ class Train:
 
 
 class GCP_Storage:
-    WAV_PATH = "/home/jupyter/wav"
-    RAW_DATA_PATH = "/home/jupyter/"
-    PARENT_FOLDER_PATH = "/home/jupyter/commonvoice-voice-voice-train"
-    DATA_CLIPS_PATH = r"C:\Users\ander\Documents\common-voice-data\clips"
+    CLIPS_DIR = "/home/jupyter/clips"
+    ROOT_DIR = "/home/jupyter/"
+    DEV_DIR = "/home/jupyter/common-voice-voice-train"
 
 
 class GCP_Train_Pipeline:
@@ -51,10 +50,11 @@ class GCP_Train_Pipeline:
 
 
 class Local_Storage:
-    WAV_PATH = r"C:\Users\ander\Documents\common-voice-data\wav"
-    RAW_DATA_PATH = r"C:\Users\ander\Documents\common-voice-data"
-    PARENT_FOLDER_PATH = r"C:\Users\ander\Documents\common-voice-dev"
-    DATA_CLIPS_PATH = r"C:\Users\ander\Documents\common-voice-data\clips"
+    WAV_DIR = r"C:\Users\ander\Documents\common-voice-data\wav"
+    ROOT_DIR = r"C:\Users\ander\Documents\common-voice-data"
+    DEV_DIR = r"C:\Users\ander\Documents\common-voice-dev"
+    CLIPS_DIR = r"C:\Users\ander\Documents\common-voice-data\clips"
+    TRAIN_DIR = r"C:\Users\ander\Documents\common-voice-dev"
 
 
 class Local_Train_Pipeline:

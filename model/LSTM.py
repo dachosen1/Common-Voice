@@ -64,9 +64,7 @@ class AudioLSTM(nn.Module):
         self.fc = nn.Linear(hidden_size, output_size)
         self.out = nn.Sigmoid()
 
-    def forward(
-        self, x: torch.Tensor, hidden: tuple[torch.Tensor, torch.Tensor]
-    ) -> tuple[torch.Tensor, tuple[torch.Tensor, torch.Tensor]]:
+    def forward(self, x, hidden):
         """
 
         :param x:

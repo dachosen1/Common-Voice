@@ -10,7 +10,12 @@ from tqdm import tqdm
 from model import __version__
 from model.LSTM import AudioLSTM
 from model.config import config
-from model.config.config import MODEL_NAME, Model, TRAINED_MODEL_DIR, Train_Pipeline
+from model.config.config import (
+    GENDER_MODEL_NAME,
+    Local_Train_Pipeline,
+    Model,
+    TRAINED_MODEL_DIR,
+)
 from model.model_manager import train
 from model.preprocessing.mp3_converter import MP3_Parser
 from utils.utlis import csv_loader
@@ -46,26 +51,50 @@ def run_training(model: type, train_dir: str, val_dir: str) -> None:
     _logger.info("Save RNN_TYPE in directory")
     torch.save(
         trained_model.state_dict(),
-        os.path.join(TRAINED_MODEL_DIR, MODEL_NAME + __version__),
+        os.path.join(TRAINED_MODEL_DIR, GENDER_MODEL_NAME + __version__),
     )
+
+
+def mp3_data(method="dev"):
+    clips_path = config.Local_Storage.CLIPS_DIR
+    mp3_list = os.listdir(clips_path)
+
+    if method == "dev":
+        mp3_list = mp3_list[0 : round(len(mp3_list) * 0.001)]
+
+        mp3_list = set(mp3_list)
+
+        parser = MP3_Parser(
+            data_path=config.Local_Storage.ROOT_DIR,
+            clips_dir=config.Local_Storage.CLIPS_DIR,
+            document_path=config.Local_Storage.DEV_DIR,
+        )
+
+        with futures.ThreadPoolExecutor() as executor:
+            tqdm(executor.map(parser.convert_to_wav, mp3_list))
+
+    elif method == "train":
+        mp3_list = set(mp3_list)
+        parser = MP3_Parser(
+            data_path=config.Local_Storage.ROOT_DIR,
+            clips_dir=config.Local_Storage.CLIPS_DIR,
+            document_path=config.Local_Storage.TRAIN_DIR,
+        )
+
+        with futures.ThreadPoolExecutor() as executor:
+            tqdm(executor.map(parser.convert_to_wav, mp3_list))
+
+    else:
+        return print("Skipping developing pipeline")
+
+    print("Done Uploading Data for training")
 
 
 if __name__ == "__main__":
-    clips_path = config.Local_Storage.DATA_CLIPS_PATH
-    mp3_list = os.listdir(clips_path)
-    mp3_list = set(mp3_list)
-
-    parser = MP3_Parser(
-        data_path=config.Local_Storage.RAW_DATA_PATH,
-        clips_dir=config.Local_Storage.DATA_CLIPS_PATH,
-        document_path=config.Local_Storage.PARENT_FOLDER_PATH,
-    )
-
-    with futures.ThreadPoolExecutor() as executor:
-        tqdm(executor.map(parser.convert_to_wav, mp3_list))
+    mp3_data(method="dev")
 
     run_training(
         model=AudioLSTM,
-        train_dir=Train_Pipeline.TRAIN_DIR,
-        val_dir=Train_Pipeline.VAL_DIR,
+        train_dir=Local_Train_Pipeline.TRAIN_DIR,
+        val_dir=Local_Train_Pipeline.VAL_DIR,
     )

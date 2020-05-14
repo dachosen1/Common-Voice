@@ -31,8 +31,8 @@ class MP3_Parser:
     def __init__(
         self,
         data_path,
-        clips_dir=config.GCP_Storage.DATA_CLIPS_PATH,
-        document_path=config.GCP_Storage.PARENT_FOLDER_PATH,
+        clips_dir,
+        document_path,
         mel_seq_count=512,
         data_label="gender",
     ):
