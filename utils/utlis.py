@@ -2,14 +2,17 @@ from __future__ import unicode_literals
 
 import itertools
 import os
+import shutil
 
 import matplotlib
 import matplotlib.pyplot as plt
-import numpy
 import numpy as np
 import pandas as pd
 import torch
+import tqdm
 from pydub import AudioSegment
+
+from model.config import config
 
 
 def csv_loader(path: str) -> torch.Tensor:
@@ -42,31 +45,21 @@ def envelope(*, y: object, signal_rate: object, threshold: object):
     return signal_clean
 
 
-def clean_data(filename, rate, signal, new_file_path):
-    seq_count = signal.shape[0] // rate
-    flatten_data = signal[0 : seq_count * rate].reshape(seq_count, -1)
-    flatten_data = pd.DataFrame(flatten_data)
-    for row in range(flatten_data.shape[0]):
-        flatten_data.iloc[row].to_csv(
-            "{}{}_{}.csv".format(new_file_path, filename, row),
-            header=False,
-            index=False,
-        )
-
-
-def convert_mp3_to_wav():
+def remove_un_label_files(clips_names: list) -> None:
     """
-    Converts all mp3  in the clips folder to wav and removes them from the folder
-    :return: None
-    """
+    Remove a list of list of files that do not contain any labels
+    :param clips_names: list of of mp3 names
 
-    for mp3 in os.listdir():
-        path = os.path.join(os.getcwd(), mp3)
-        file = AudioSegment.from_mp3(mp3)
-        new_file_name = "{}.wav".format(mp3.split(".")[0])
-        wav_path = os.path.join(os.getcwd(), new_file_name)
-        file.export(wav_path, format="wav")
-        os.remove(path)
+    """
+    data = pd.read_csv("Development/data.csv")
+    data_path = set(data.path)
+    clips_path = config.Local_Storage.DATA_CLIPS_PATH
+
+    delete_path = r"C:\Users\ander\Documents\delete"
+
+    for mp3 in tqdm(clips_names):
+        if mp3 not in data_path:
+            shutil.move(os.path.join(clips_path, mp3), os.path.join(delete_path, mp3))
 
 
 def calc_fft(*, y, rate):
@@ -78,7 +71,7 @@ def calc_fft(*, y, rate):
 
 
 def plot_confusion_matrix(
-    cm: numpy.ndarray, class_names: list()
+    cm: np.ndarray, class_names: list
 ) -> matplotlib.figure.Figure:
     """
   Returns a matplotlib figure containing the plotted confusion matrix.

@@ -111,7 +111,7 @@ def delete_extra_file(name: chr, bucket: str) -> None:
 
     The files in the deleted bucket are saved in one of 6 folders.'validated', 'train', 'test', 'dev', 'other', 'invalidated'
 
-    They represent the original folders in common voice dataset
+    They represent the original folders in commonvoice-voice-voice dataset
 
     :param name: File name to upload
     :param bucket: Bucket name
@@ -138,9 +138,10 @@ def delete_extra_file(name: chr, bucket: str) -> None:
     delete_mp3_from_bucket(file_list=mp3_to_remove, bucket=bucket)
 
 
+# noinspection PyTypeChecker
 def upload_blob(
     bucket_name: str, source_file_name: str, destination_blob_name: str
-) -> object:
+) -> None:
     """
 
     Upload file to a google cloud cloud bucket
@@ -176,7 +177,7 @@ def clean_bucket(bucket: str, name: str, project: str) -> None:
     file_list = ['validated', 'train', 'test', 'dev', 'other', 'invalidated']
 
     for file in file_list:
-        clean_bucket(bucket = config.Bucket.META_DATA, name = file, project = 'common-voice-270516')
+        clean_bucket(bucket = config.Bucket.META_DATA, name = file, project = 'commonvoice-voice-voice-270516')
     """
 
     fs = gcsfs.GCSFileSystem(project=project)

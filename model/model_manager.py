@@ -1,6 +1,5 @@
 import logging
 
-import numpy
 import numpy as np
 import torch
 import torch.nn as nn
@@ -14,13 +13,13 @@ from sklearn.metrics import (
 from torch.utils.tensorboard import SummaryWriter
 
 from model import __version__
-from model.config.config import Model, Train
+from model.config import config
 from utils.utlis import plot_confusion_matrix
 
 _logger = logging.getLogger(__name__)
 
 
-def metric_summary(pred: numpy.ndarray, label: numpy.ndarray):
+def _metric_summary(pred: np.ndarray, label: np.ndarray):
     acc = accuracy_score(y_true=label, y_pred=pred)
     f1 = f1_score(y_true=label, y_pred=pred)
     pc = precision_score(y_true=label, y_pred=pred)
@@ -87,29 +86,29 @@ def train(
     model: object,
     train_loader: torch.utils.data.dataloader.DataLoader,
     valid_loader: torch.utils.data.dataloader.DataLoader,
-    learning_rate: float = Train.LEARNING_RATE,
+    learning_rate: float = config.Train.LEARNING_RATE,
     print_every: int = 10,
-    epoch: int = Train.EPOCH,
-    gradient_clip: int = Train.GRADIENT_CLIP,
-    batch_size: int = Model.BATCH_SIZE,
+    epoch: int = config.Train.EPOCH,
+    gradient_clip: int = config.Train.GRADIENT_CLIP,
+    batch_size: int = config.Model.BATCH_SIZE,
     early_stopping_threshold: int = 50,
     early_stopping: bool = True,
 ) -> object:
     """
-    :param print_every:
-    :type print_every:
-    :param train_loader:
-    :type train_loader:
-    :param early_stopping_threshold:
-    :param early_stopping:
-    :param epoch:
+
+    :param model:  Torch model to
+    :param train_loader:  Training Folder Datafolder
+    :param valid_loader: Validation Folder Data Folder
+    :param learning_rate: Learning rate to improve loss function
+    :param print_every: Iteration to print model results and validation
+    :param epoch: Number of times to pass though the entire data folder
     :param gradient_clip:
-    :param learning_rate:
-    :param batch_size:
-    :param model:
-    :param valid_loader:
-    :return:
+    :param batch_size: Number of training batches to upload at a given time
+    :param early_stopping_threshold:  threshold to stop running model
+    :param early_stopping: Bool to indicate early stopping
+    :return: a model object
     """
+
     if early_stopping:
         stopping = EarlyStopping(threshold=early_stopping_threshold, verbose=True)
 
@@ -140,7 +139,7 @@ def train(
 
             train_pred = torch.round(train_output.squeeze())
 
-            train_acc, train_f1, train_pr, train_rc = metric_summary(
+            train_acc, train_f1, train_pr, train_rc = _metric_summary(
                 pred=train_pred.cpu().data.numpy(), label=train_labels.cpu().numpy()
             )
 
@@ -198,7 +197,7 @@ def train(
                             print("Early stopping")
                             break
 
-                    val_acc, val_f1, val_pr, val_rc = metric_summary(
+                    val_acc, val_f1, val_pr, val_rc = _metric_summary(
                         pred=val_pred.cpu().data.numpy(), label=val_labels.cpu().numpy()
                     )
 
