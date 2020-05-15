@@ -10,7 +10,7 @@ torchvision==0.6.0
 tqdm==4.46.0
 scikit-learn~=0.23.0
 webapp2~=2.5.2
-setuptools~=46.3.0
+setuptools~=46.3.1
 Flask~=1.1.1
 joblib~=0.14.1
 python_speech_features
