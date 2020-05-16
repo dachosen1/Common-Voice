@@ -6,7 +6,7 @@ from pydub import AudioSegment
 from python_speech_features import mfcc
 
 from model.config import config
-from utils.utlis import envelope
+from utlis import envelope
 
 
 def _set_frame_rate(wav_file, frame_rate=config.FRAME_RATE):
@@ -29,12 +29,12 @@ def data_labels(data_path, label):
 
 class MP3_Parser:
     def __init__(
-        self,
-        data_path,
-        clips_dir,
-        document_path,
-        mel_seq_count=512,
-        data_label="gender",
+            self,
+            data_path,
+            clips_dir,
+            document_path,
+            mel_seq_count=512,
+            data_label="gender",
     ):
         """
 
@@ -69,7 +69,7 @@ class MP3_Parser:
             print(" The label for {} is not in compatible".format(clip_name))
 
     def clean_data(
-        self, filename: str, rate: int, signal: np.ndarray, label: object
+            self, filename: str, rate: int, signal: np.ndarray, label: object
     ) -> None:
         """
         Split an audio signal into windows
@@ -82,7 +82,7 @@ class MP3_Parser:
         seq_count = signal.shape[0] // self.mel_seq_count
 
         try:
-            flatten_data = signal[0 : seq_count * rate].reshape(seq_count, -1)
+            flatten_data = signal[0: seq_count * rate].reshape(seq_count, -1)
             flatten_data = pd.DataFrame(flatten_data)
 
             for row in range(flatten_data.shape[0]):
