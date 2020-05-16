@@ -74,10 +74,8 @@ class AudioLSTM(nn.Module):
         x = x.float().view(1, -1, seq_count)
         lstm_out, hidden = self.RNN_TYPE(x, hidden)
         out = self.dropout(lstm_out)
+        score = F.sigmoid(out)
 
-        out = self.linear(out.view(seq_count, -1))
-
-        score = F.softmax(out, dim=1)
         return score, hidden
 
     def init_hidden(self, batch_size: int):

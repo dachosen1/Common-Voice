@@ -26,8 +26,8 @@ def predict(dir_path):
 
         out, _ = model(data.float().view(1, config.Model.INPUT_SIZE, -1), h)
         # out = out.contiguous().view(-1)
-        pred = torch.round(out.squeeze())
-        prob = out.float().cpu()
+        prob = torch.topk(out, k=1).values
+        pred = torch.topk(out, k=1).indices
         label = config.GENDER_LABEL[int(pred.cpu().data.numpy())]
         print(label, prob.float().cpu().detach().cpu().numpy()[0])
 

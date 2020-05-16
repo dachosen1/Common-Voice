@@ -132,10 +132,9 @@ def train(
                 train_inputs, train_labels = train_inputs.cuda(), train_labels.cuda()
 
             h = tuple([each.data for each in h])
+
             model.zero_grad()
             train_output, h = model(train_inputs, h)
-
-            #            writer.add_histogram("weight/fc", model.fc.weight.data, counter)
 
             train_pred = torch.topk(train_output, k=1).indices
 
@@ -150,8 +149,9 @@ def train(
             figure = plot_confusion_matrix(
                 train_cm, class_names=train_loader.dataset.classes
             )
+
             # cm_image = plot_to_image(figure)
-            #
+
             # writer.add_images("Confusion Matrix", cm_image, counter)
             writer.add_scalar("Accuracy/train", train_acc, counter)
             writer.add_scalar("F1/train", train_f1, counter)
@@ -165,11 +165,13 @@ def train(
                 global_step=counter,
             )
 
-            train_loss = criterion(train_pred.flatten().float(), train_labels.float())
+            train_loss = criterion(torch.topk(train_output, k=1).indices.float().requires_grad_(),
+                                             train_labels.float())
+
             writer.add_scalar("Loss/train", train_loss.item(), counter)
 
             train_loss.backward()
-            nn.utils.clip_grad_norm_(model.parameters(), gradient_clip)
+         #   nn.utils.clip_grad_norm_(model.parameters(), gradient_clip)
             optimizer.step()
 
             if counter % print_every == 0:
@@ -183,8 +185,7 @@ def train(
                         val_inputs, val_labels = val_inputs.cuda(), val_labels.cuda()
 
                     val_output, val_h = model(val_inputs, val_h)
-
-                    val_loss = criterion(val_pred.flatten().float(), val_labels.float())
+                    val_loss = criterion(torch.topk(val_output, k=1).indices.float().requires_grad_(), val_labels.float())
                     val_losses.append(val_loss.item())
                     writer.add_scalar("Loss/val", val_loss.item(), counter)
 
@@ -209,7 +210,8 @@ def train(
                     writer.add_pr_curve(
                         tag="Precision Recall Curve/val",
                         labels=val_labels.cpu().numpy(),
-                        predictions=val_pred.cpu().data.numpy(),
+                        predictions=val_pred
+                            .flatten().cpu().data.numpy(),
                         global_step=counter,
                     )
 

@@ -27,8 +27,8 @@ class Bucket:
 
 class Model:
     OUTPUT_SIZE = 2
-    HIDDEN_DIM = 1
-    NUM_LAYERS = 1
+    HIDDEN_DIM = 5
+    NUM_LAYERS = 5
     DROPOUT = 0.30
     INPUT_SIZE = 512
     BATCH_SIZE = 128

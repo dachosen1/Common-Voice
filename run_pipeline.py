@@ -81,7 +81,7 @@ def generate_training_data(method="dev"):
             tqdm(executor.map(parser.convert_to_wav, mp3_list))
 
     else:
-        return print("Skipping developing pipeline")
+        return print("Skipping Uploading Data. Training will begin shortly")
 
     print("Done Uploading Data for training")
 
