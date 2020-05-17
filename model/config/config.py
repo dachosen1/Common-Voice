@@ -13,8 +13,8 @@ FRAME_RATE = 48000
 OBSERVATION_PER_SECOND = 10
 SEQ_LEN = FRAME_RATE / OBSERVATION_PER_SECOND
 
-GENDER_LABEL = {0: 'male',
-                1: 'female'}
+GENDER_LABEL = {0: 'female',
+                1: 'male'}
 
 
 class Bucket:
@@ -27,16 +27,16 @@ class Bucket:
 
 class Model:
     OUTPUT_SIZE = 2
-    HIDDEN_DIM = 5
-    NUM_LAYERS = 5
+    HIDDEN_DIM = 128
+    NUM_LAYERS = 64
     DROPOUT = 0.30
     INPUT_SIZE = 512
-    BATCH_SIZE = 128
+    BATCH_SIZE = 256
 
 
 class Train:
     LEARNING_RATE = 0.00001
-    GRADIENT_CLIP = 1
+    GRADIENT_CLIP = 15
     EPOCH = 1
 
 

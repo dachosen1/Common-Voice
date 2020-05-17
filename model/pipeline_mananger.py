@@ -52,6 +52,7 @@ def load_model(model_name: str) -> object:
         hidden_size=config.Model.HIDDEN_DIM,
         output_size=config.Model.OUTPUT_SIZE,
         dropout=config.Model.DROPOUT,
+        batch_size=1
     )
     model.eval()
     file_path = os.path.join(config.TRAINED_MODEL_DIR, model_name + _version + ".pt")

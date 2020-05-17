@@ -1,6 +1,6 @@
 import torch
 import torch.nn as nn
-import torch.nn.functional as F
+
 
 class AudioLSTM(nn.Module):
     """
@@ -9,6 +9,7 @@ class AudioLSTM(nn.Module):
 
     def __init__(
             self,
+            batch_size,
             input_size: int,
             hidden_size: int,
             dropout: float,
@@ -19,6 +20,7 @@ class AudioLSTM(nn.Module):
             RNN_TYPE: str = "LSTM",
     ) -> None:
         """
+        :type bidirectional: object
         :param input_size: The number of expected features in the input x
         :param hidden_size:The number of features in the hidden state h
         :param num_layer: Number of recurrent layers. E.g., setting num_layers=2 would mean stacking two LSTMs together
@@ -37,6 +39,7 @@ class AudioLSTM(nn.Module):
         self.num_layer = num_layer
         self.dropout = dropout
         self.output_size = output_size
+        self.batch_size = batch_size
 
         if RNN_TYPE == "LSTM":
             self.RNN_TYPE = nn.LSTM(
@@ -59,24 +62,25 @@ class AudioLSTM(nn.Module):
             )
 
         self.dropout = nn.Dropout(dropout)
-        self.linear = nn.Linear(hidden_size, output_size)
+        self.linear = nn.Linear(input_size, output_size)
         self.out = nn.Sigmoid()
 
-    def forward(self, x, hidden):
+    def forward(self, mfcc, hidden):
         """
 
-        :param x:
-        :param hidden: :
+        :param mfcc: Mel-frequency cepstrum audio sequence
+        :param hidden: Hidden parameters
         :return:
         """
 
-        seq_count = x.shape[1]
-        x = x.float().view(1, -1, seq_count)
-        lstm_out, hidden = self.RNN_TYPE(x, hidden)
-        out = self.dropout(lstm_out)
-        score = F.sigmoid(out)
+        seq_length = mfcc.shape[1]
+        mfcc_reshape = mfcc.float().view(1, -1, seq_length)
+        lstm_out, hidden = self.RNN_TYPE(mfcc_reshape, hidden)
+        lstm_out = self.dropout(lstm_out)
+        final_layer = lstm_out.view(self.batch_size, -1, self.output_size)[:, -1]
+        layer_prob = torch.sigmoid(final_layer)
 
-        return score, hidden
+        return layer_prob, hidden
 
     def init_hidden(self, batch_size: int):
         """

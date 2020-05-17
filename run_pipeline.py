@@ -8,6 +8,7 @@ from torchvision.datasets import DatasetFolder
 from tqdm import tqdm
 
 from model import __version__
+from model import predict
 from model.LSTM import AudioLSTM
 from model.config import config
 from model.model_manager import train
@@ -19,16 +20,16 @@ _logger = logging.getLogger(__name__)
 torch.manual_seed(0)
 
 
-def run_training(model: type, train_dir: str, val_dir: str) -> None:
+def run_training(model: type, train_dir: str, val_dir: str, RNN_TYPE) -> None:
     train_dataset = DatasetFolder(root=train_dir, loader=csv_loader, extensions=".csv")
     val_dataset = DatasetFolder(root=val_dir, loader=csv_loader, extensions=".csv")
 
     train_data_loader = DataLoader(
-        train_dataset, batch_size=config.Model.BATCH_SIZE, shuffle=True, num_workers=4
+        train_dataset, batch_size=config.Model.BATCH_SIZE, shuffle=True, num_workers=4, drop_last=True
     )
 
     val_data_loader = DataLoader(
-        val_dataset, batch_size=config.Model.BATCH_SIZE, shuffle=True, num_workers=4
+        val_dataset, batch_size=config.Model.BATCH_SIZE, shuffle=True, num_workers=4, drop_last=True
     )
 
     model = model(
@@ -37,26 +38,28 @@ def run_training(model: type, train_dir: str, val_dir: str) -> None:
         hidden_size=config.Model.HIDDEN_DIM,
         output_size=config.Model.OUTPUT_SIZE,
         dropout=config.Model.DROPOUT,
+        RNN_TYPE=RNN_TYPE,
+        batch_size = config.Model.BATCH_SIZE
     )
 
     trained_model = train(
         model, train_data_loader, val_data_loader, early_stopping=False
     )
 
-    PATH = os.path.join(
+    trained_model_path = os.path.join(
         config.TRAINED_MODEL_DIR, config.GENDER_MODEL_NAME + __version__ + ".pt"
     )
 
     _logger.info("Save RNN_TYPE in directory")
-    torch.save(trained_model.state_dict(), PATH)
+    torch.save(trained_model.state_dict(), trained_model_path)
 
 
-def generate_training_data(method="dev"):
+def generate_training_data(method, percentage):
     clips_path = config.LocalStorage.CLIPS_DIR
     mp3_list = os.listdir(clips_path)
 
     if method == "dev":
-        mp3_list = mp3_list[0: round(len(mp3_list) * 0.01)]
+        mp3_list = mp3_list[0: round(len(mp3_list) * percentage)]
 
         mp3_list = set(mp3_list)
 
@@ -87,10 +90,14 @@ def generate_training_data(method="dev"):
 
 
 if __name__ == "__main__":
-    generate_training_data(method="None")
+    generate_training_data(method="none", percentage=0.05)
 
     run_training(
         model=AudioLSTM,
         train_dir=config.LocalTrainPipeline.TRAIN_DIR,
         val_dir=config.LocalTrainPipeline.VAL_DIR,
+        RNN_TYPE='LSTM'
+
     )
+
+    predict.predict(r'C:\Users\ander\Documents\common-voice-dev\gender\test_data\female')

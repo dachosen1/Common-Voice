@@ -66,7 +66,8 @@ class MP3_Parser:
                 label=label_name,
             )
         except IndexError:
-            print(" The label for {} is not in compatible".format(clip_name))
+            print(" The label for {} is NA   "
+                  ".......".format(clip_name))
 
     def clean_data(
             self, filename: str, rate: int, signal: np.ndarray, label: object
@@ -98,4 +99,4 @@ class MP3_Parser:
                     index=False,
                 )
         except ValueError:
-            print(" Skipped {} ......".format(filename))
+            print(" Skipped {} ......file is corrupt".format(filename))

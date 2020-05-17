@@ -115,7 +115,7 @@ def train(
     writer = SummaryWriter()
 
     model.train()
-    criterion = nn.BCELoss()
+    criterion = nn.CrossEntropyLoss()
     optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate)
 
     if torch.cuda.is_available():
@@ -146,9 +146,9 @@ def train(
                 y_true=train_labels.cpu().numpy(), y_pred=train_pred.flatten().cpu().data.numpy()
             )
 
-            figure = plot_confusion_matrix(
-                train_cm, class_names=train_loader.dataset.classes
-            )
+           # figure = plot_confusion_matrix(
+            #    train_cm, class_names=train_loader.dataset.classes
+            #)
 
             # cm_image = plot_to_image(figure)
 
@@ -158,21 +158,18 @@ def train(
             writer.add_scalar("Precision/train", train_pr, counter)
             writer.add_scalar("Recall/train", train_rc, counter)
 
+            train_loss = criterion(train_output, train_labels)
+            train_loss.backward()
+            nn.utils.clip_grad_norm_(model.parameters(), gradient_clip)
+            optimizer.step()
+
+            writer.add_scalar("Loss/train", train_loss.item(), counter)
             writer.add_pr_curve(
                 tag="Precision Recall Curve/train",
                 labels=train_labels.cpu().numpy(),
                 predictions=train_pred.flatten().cpu().data.numpy(),
                 global_step=counter,
             )
-
-            train_loss = criterion(torch.topk(train_output, k=1).indices.float().requires_grad_(),
-                                             train_labels.float())
-
-            writer.add_scalar("Loss/train", train_loss.item(), counter)
-
-            train_loss.backward()
-         #   nn.utils.clip_grad_norm_(model.parameters(), gradient_clip)
-            optimizer.step()
 
             if counter % print_every == 0:
                 val_h = model.init_hidden(size)
@@ -185,11 +182,11 @@ def train(
                         val_inputs, val_labels = val_inputs.cuda(), val_labels.cuda()
 
                     val_output, val_h = model(val_inputs, val_h)
-                    val_loss = criterion(torch.topk(val_output, k=1).indices.float().requires_grad_(), val_labels.float())
+                    val_pred = torch.topk(val_output, k=1).indices
+
+                    val_loss = criterion(val_output, val_labels)
                     val_losses.append(val_loss.item())
                     writer.add_scalar("Loss/val", val_loss.item(), counter)
-
-                    val_pred = torch.topk(val_output, k=1).indices
 
                     if early_stopping:
                         stopping(val_loss=val_loss, model=model)
