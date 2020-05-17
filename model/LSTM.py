@@ -8,17 +8,19 @@ class AudioLSTM(nn.Module):
     """
 
     def __init__(
-        self,
-        input_size: int,
-        hidden_size: int,
-        dropout: float,
-        num_layer: int,
-        output_size: int,
-        batch: bool = True,
-        bidirectional: bool = True,
-        RNN_TYPE: str = "LSTM",
+            self,
+            batch_size,
+            input_size: int,
+            hidden_size: int,
+            dropout: float,
+            num_layer: int,
+            output_size: int,
+            batch: bool = True,
+            bidirectional: bool = True,
+            RNN_TYPE: str = "LSTM",
     ) -> None:
         """
+        :type bidirectional: object
         :param input_size: The number of expected features in the input x
         :param hidden_size:The number of features in the hidden state h
         :param num_layer: Number of recurrent layers. E.g., setting num_layers=2 would mean stacking two LSTMs together
@@ -36,6 +38,8 @@ class AudioLSTM(nn.Module):
         self.hidden_size = hidden_size
         self.num_layer = num_layer
         self.dropout = dropout
+        self.output_size = output_size
+        self.batch_size = batch_size
 
         if RNN_TYPE == "LSTM":
             self.RNN_TYPE = nn.LSTM(
@@ -57,70 +61,46 @@ class AudioLSTM(nn.Module):
                 bidirectional=bidirectional,
             )
 
-        # dropout layer
         self.dropout = nn.Dropout(dropout)
-
-        # linear and sigmoid layers
-        self.fc = nn.Linear(hidden_size, output_size)
+        self.linear = nn.Linear(input_size, output_size)
         self.out = nn.Sigmoid()
 
-    def forward(
-        self, x: torch.Tensor, hidden: tuple[torch.Tensor, torch.Tensor]
-    ) -> tuple[torch.Tensor, tuple[torch.Tensor, torch.Tensor]]:
+    def forward(self, mfcc, hidden):
         """
 
-        :param x:
-        :param hidden: :
+        :param mfcc: Mel-frequency cepstrum audio sequence
+        :param hidden: Hidden parameters
         :return:
         """
 
-        batch_size = x.size(0)
-        seq_count = x.shape[1]
-        x = x.float().view(1, -1, seq_count)
+        seq_length = mfcc.shape[1]
+        mfcc_reshape = mfcc.float().view(1, -1, seq_length)
+        lstm_out, hidden = self.RNN_TYPE(mfcc_reshape, hidden)
+        lstm_out = self.dropout(lstm_out)
+        final_layer = lstm_out.view(self.batch_size, -1, self.output_size)[:, -1]
+        # final_layer = self.linear(lstm_out.view(-1, self.input_size))
+        layer_prob = torch.sigmoid(final_layer)
 
-        lstm_out, hidden = self.RNN_TYPE(x, hidden)
-        lstm_out = lstm_out.contiguous().view(-1, self.hidden_size)
-
-        # dropout and fully-connected layer
-        out = self.dropout(lstm_out)
-        out = self.fc(out)
-
-        # todo: utilize hidden parameter
-
-        sig_out = self.out(out)
-
-        # reshape to be batch_size first
-        sig_out = sig_out.view(batch_size, -1)
-        sig_out = sig_out[:, -1]  # get last batch of labels
-
-        return sig_out, hidden
+        return layer_prob, hidden
 
     def init_hidden(self, batch_size: int):
         """
         Initializes hidden state. Create two new tensors with sizes n_layers x batch_size x hidden_dim, initialized to
         zero, for hidden state and cell state of LSTM.
-
-        :return: 
-        :rtype: 
-        :return: 
-        :rtype: 
-        :param batch_size: number of batches
-
-        :return: Tensor for hidden states
         """
 
         weight = next(self.parameters()).data
 
         if torch.cuda.is_available():
             hidden = (
-                weight.new(self.num_layer, batch_size, self.hidden_size).zero_().cuda(),
-                weight.new(self.num_layer, batch_size, self.hidden_size).zero_().cuda(),
+                weight.new(self.num_layer * self.output_size, batch_size, self.hidden_size).zero_().cuda(),
+                weight.new(self.num_layer * self.output_size, batch_size, self.hidden_size).zero_().cuda(),
             )
 
         else:
             hidden = (
-                weight.new(self.num_layer, batch_size, self.hidden_size).zero_(),
-                weight.new(self.num_layer, batch_size, self.hidden_size).zero_(),
+                weight.new(self.num_layer * self.output_size, batch_size, self.hidden_size).zero_(),
+                weight.new(self.num_layer * self.output_size, batch_size, self.hidden_size).zero_(),
             )
 
         return hidden

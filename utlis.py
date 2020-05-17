@@ -53,7 +53,7 @@ def remove_un_label_files(clips_names: list) -> None:
     """
     data = pd.read_csv("Development/data.csv")
     data_path = set(data.path)
-    clips_path = config.Local_Storage.DATA_CLIPS_PATH
+    clips_path = config.LocalStorage.CLIPS_DIR
 
     delete_path = r"C:\Users\ander\Documents\delete"
 
@@ -70,15 +70,13 @@ def calc_fft(*, y, rate):
     return Y, freq
 
 
-def plot_confusion_matrix(
-    cm: np.ndarray, class_names: list
-) -> matplotlib.figure.Figure:
+def plot_confusion_matrix(cm: np.ndarray, class_names: list) -> matplotlib.figure.Figure:
     """
-  Returns a matplotlib figure containing the plotted confusion matrix.
+    Generates a matplotlib figure containing the plotted confusion matrix.
 
-  Args:
-    cm (array, shape = [n, n]): a confusion matrix of integer classes
-    class_names (array, shape = [n]): String names of the integer classes
+    :param cm: cm (array, shape = [n, n]): a confusion matrix of integer classes
+    :param class_names: class_names (array, shape = [n]): String names of the integer classes
+    :return:
   """
     figure = plt.figure(figsize=(8, 8))
     plt.imshow(cm, interpolation="nearest", cmap=plt.cm.Blues)

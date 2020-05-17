@@ -1,22 +1,24 @@
-import logging
+import os
 
 import numpy as np
 import torch
 import torch.nn as nn
+import wandb
 from sklearn.metrics import (
     accuracy_score,
     confusion_matrix,
     f1_score,
     precision_score,
     recall_score,
+    plot_confusion_matrix,
+    plot_roc_curve
 )
-from torch.utils.tensorboard import SummaryWriter
 
 from model import __version__
 from model.config import config
-from utils.utlis import plot_confusion_matrix
+from utlis import plot_confusion_matrix
 
-_logger = logging.getLogger(__name__)
+wandb.init('Common-Voice', config=config.ALL_PARAM)
 
 
 def _metric_summary(pred: np.ndarray, label: np.ndarray):
@@ -33,7 +35,7 @@ class EarlyStopping:
     """
 
     def __init__(
-        self, threshold: int = 50, verbose: bool = False, delta: float = 0
+            self, threshold: int = 50, verbose: bool = False, delta: float = 0
     ) -> None:
         """
         :param threshold: How long to wait after last time validation loss improved. Default: 50
@@ -83,19 +85,17 @@ class EarlyStopping:
 
 
 def train(
-    model: object,
-    train_loader: torch.utils.data.dataloader.DataLoader,
-    valid_loader: torch.utils.data.dataloader.DataLoader,
-    learning_rate: float = config.Train.LEARNING_RATE,
-    print_every: int = 10,
-    epoch: int = config.Train.EPOCH,
-    gradient_clip: int = config.Train.GRADIENT_CLIP,
-    batch_size: int = config.Model.BATCH_SIZE,
-    early_stopping_threshold: int = 50,
-    early_stopping: bool = True,
+        model: object,
+        train_loader: torch.utils.data.dataloader.DataLoader,
+        valid_loader: torch.utils.data.dataloader.DataLoader,
+        learning_rate: float = config.TRAIN_PARAM['LEARNING_RATE'],
+        print_every: int = 10,
+        epoch: int = config.TRAIN_PARAM['EPOCH'],
+        gradient_clip: int = config.TRAIN_PARAM['GRADIENT_CLIP'],
+        early_stopping_threshold: int = 50,
+        early_stopping: bool = True,
 ) -> object:
     """
-
     :param model:  Torch model to
     :param train_loader:  Training Folder Datafolder
     :param valid_loader: Validation Folder Data Folder
@@ -103,19 +103,21 @@ def train(
     :param print_every: Iteration to print model results and validation
     :param epoch: Number of times to pass though the entire data folder
     :param gradient_clip:
-    :param batch_size: Number of training batches to upload at a given time
     :param early_stopping_threshold:  threshold to stop running model
     :param early_stopping: Bool to indicate early stopping
+
     :return: a model object
     """
+    size, _ = next(iter(train_loader))
+    size = size[1].shape[1]
 
     if early_stopping:
         stopping = EarlyStopping(threshold=early_stopping_threshold, verbose=True)
 
-    writer = SummaryWriter()
+    wandb.watch(model)
 
     model.train()
-    criterion = nn.BCELoss()
+    criterion = nn.CrossEntropyLoss()
     optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate)
 
     if torch.cuda.is_available():
@@ -123,7 +125,7 @@ def train(
 
     counter = 0
     for e in range(epoch):
-        h = model.init_hidden(batch_size)
+        h = model.init_hidden(size)
 
         for train_inputs, train_labels in train_loader:
             counter += 1
@@ -132,48 +134,39 @@ def train(
                 train_inputs, train_labels = train_inputs.cuda(), train_labels.cuda()
 
             h = tuple([each.data for each in h])
+
             model.zero_grad()
             train_output, h = model(train_inputs, h)
 
-            writer.add_histogram("weight/fc", model.fc.weight.data, counter)
-
-            train_pred = torch.round(train_output.squeeze())
+            train_pred = torch.topk(train_output, k=1).indices
 
             train_acc, train_f1, train_pr, train_rc = _metric_summary(
-                pred=train_pred.cpu().data.numpy(), label=train_labels.cpu().numpy()
+                pred=train_pred.flatten().cpu().data.numpy(), label=train_labels.cpu().numpy()
             )
 
             train_cm = confusion_matrix(
-                y_true=train_labels.cpu().numpy(), y_pred=train_pred.cpu().data.numpy()
+                y_true=train_labels.cpu().numpy(), y_pred=train_pred.flatten().cpu().data.numpy()
             )
 
-            figure = plot_confusion_matrix(
+            train_figure = plot_confusion_matrix(
                 train_cm, class_names=train_loader.dataset.classes
             )
-            # cm_image = plot_to_image(figure)
-            #
-            # writer.add_images("Confusion Matrix", cm_image, counter)
-            writer.add_scalar("Accuracy/train", train_acc, counter)
-            writer.add_scalar("F1/train", train_f1, counter)
-            writer.add_scalar("Precision/train", train_pr, counter)
-            writer.add_scalar("Recall/train", train_rc, counter)
 
-            writer.add_pr_curve(
-                tag="Precision Recall Curve/train",
-                labels=train_labels.cpu().numpy(),
-                predictions=train_pred.cpu().data.numpy(),
-                global_step=counter,
-            )
+            wandb.log({"Accuracy/train": train_acc}, step=counter)
+            wandb.log({"F1/train": train_f1}, step=counter)
+            wandb.log({"Precision/train": train_pr}, step=counter)
+            wandb.log({"Recall/train": train_rc}, step=counter)
+            wandb.log({"Confusion Matrix/train": train_figure}, step=counter)
 
-            train_loss = criterion(train_output.squeeze(), train_labels.float())
-            writer.add_scalar("Loss/train", train_loss.item(), counter)
-
+            train_loss = criterion(train_output, train_labels)
             train_loss.backward()
             nn.utils.clip_grad_norm_(model.parameters(), gradient_clip)
+
             optimizer.step()
+            wandb.log({"Loss/train": train_loss.item()}, step=counter)
 
             if counter % print_every == 0:
-                val_h = model.init_hidden(batch_size)
+                val_h = model.init_hidden(size)
                 val_losses = []
                 model.eval()
                 for val_inputs, val_labels in valid_loader:
@@ -183,12 +176,10 @@ def train(
                         val_inputs, val_labels = val_inputs.cuda(), val_labels.cuda()
 
                     val_output, val_h = model(val_inputs, val_h)
+                    val_pred = torch.topk(val_output, k=1).indices
 
-                    val_loss = criterion(val_output.squeeze(), val_labels.float())
+                    val_loss = criterion(val_output, val_labels)
                     val_losses.append(val_loss.item())
-                    writer.add_scalar("Loss/val", val_loss.item(), counter)
-
-                    val_pred = torch.round(val_output.squeeze())
 
                     if early_stopping:
                         stopping(val_loss=val_loss, model=model)
@@ -198,20 +189,22 @@ def train(
                             break
 
                     val_acc, val_f1, val_pr, val_rc = _metric_summary(
-                        pred=val_pred.cpu().data.numpy(), label=val_labels.cpu().numpy()
+                        pred=val_pred.flatten().cpu().data.numpy(), label=val_labels.cpu().numpy()
                     )
 
-                    writer.add_scalar("Accuracy/val", val_acc, counter)
-                    writer.add_scalar("F1/val", val_f1, counter)
-                    writer.add_scalar("Precision/val", val_pr, counter)
-                    writer.add_scalar("Recall/val", val_rc, counter)
-
-                    writer.add_pr_curve(
-                        tag="Precision Recall Curve/val",
-                        labels=val_labels.cpu().numpy(),
-                        predictions=val_pred.cpu().data.numpy(),
-                        global_step=counter,
+                    val_cm = confusion_matrix(
+                        y_true=val_labels.cpu().numpy(), y_pred=val_pred.flatten().cpu().data.numpy()
                     )
+                    val_figure = plot_confusion_matrix(
+                        val_cm, class_names=train_loader.dataset.classes
+                    )
+
+                    wandb.log({"Confusion Matrix/test": val_figure}, step=counter)
+
+                    wandb.log({"Accuracy/val": val_acc}, step=counter)
+                    wandb.log({"F1/val": val_f1}, step=counter)
+                    wandb.log({"Precision/val": val_pr}, step=counter)
+                    wandb.log({"Recall/val": val_rc}, step=counter)
 
                 print(
                     "Epoch: {}/{}...".format(e + 1, epoch),
@@ -221,8 +214,9 @@ def train(
                     "Train Accuracy: {:.6f}".format(train_acc),
                     "Test Accuracy: {:.6f}".format(val_acc),
                 )
+
                 model.train()
 
-            writer.add_graph(model, (train_inputs, h))
-
+    model_name = config.GENDER_MODEL_NAME + __version__ + '.pt'
+    torch.save(model.state_dict(), os.path.join(wandb.run.dir, model_name))
     return model

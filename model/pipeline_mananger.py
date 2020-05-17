@@ -3,7 +3,6 @@ import os
 import typing as t
 
 import joblib
-import torch
 
 from model import LSTM
 from model import __version__ as _version
@@ -14,8 +13,9 @@ _logger = logging.getLogger(__name__)
 
 def remove_old_pipelines(*, files_to_keep: t.List[str]) -> None:
     """
-    Remove old model pipelines. This is to ensure there is a simple one-to-one mapping between the package version and the model version to be imported and used by other applications.
-    However, we do also include the immediate previous pipeline version for differential testing purposes.
+    Remove old model pipelines. This is to ensure there is a simple one-to-one mapping between the package version
+    and the model version to be imported and used by other applications. However, we do also include the immediate
+    previous pipeline version for differential testing purposes.
     """
     do_not_delete = files_to_keep + ["__init__.py"]
     for model_file in config.TRAINED_MODEL_DIR.iterdir():
@@ -39,12 +39,21 @@ def save_pipeline(*, pipeline_to_persist) -> None:
     _logger.info(f"saved pipeline: {save_file_name}")
 
 
-def load_pipeline(MODEL_NAME: str) -> object:
+def load_model(model_name: str) -> object:
     """
     Load a saved PyTorch model
-    :param MODEL_NAME:  Name of the model to parse
-    :return:
+    :param model_name:  Name of the model to parse
+    :return: torch model and model path
     """
-    file_path = os.path.join(config.TRAINED_MODEL_DIR, MODEL_NAME + _version + ".pth")
-    trained_model = LSTM.AudioLSTM.load_state_dict(torch.load(file_path))
-    return trained_model
+
+    model = LSTM.AudioLSTM(
+        num_layer=config.MODEL_PARAM['NUM_LAYERS'],
+        input_size=config.MODEL_PARAM['INPUT_SIZE'],
+        hidden_size=config.MODEL_PARAM['HIDDEN_DIM'],
+        output_size=config.MODEL_PARAM['OUTPUT_SIZE'],
+        dropout=config.MODEL_PARAM['DROPOUT'],
+        batch_size=1
+    )
+    model.eval()
+    file_path = os.path.join(config.TRAINED_MODEL_DIR, model_name + _version + ".pt")
+    return model, file_path

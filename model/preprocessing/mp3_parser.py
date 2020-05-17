@@ -6,10 +6,10 @@ from pydub import AudioSegment
 from python_speech_features import mfcc
 
 from model.config import config
-from utils.utlis import envelope
+from utlis import envelope
 
 
-def _set_frame_rate(wav_file, frame_rate=config.FRAME_RATE):
+def _set_frame_rate(wav_file, frame_rate=config.FRAME['FRAME_RATE']):
     wav_file.set_frame_rate(frame_rate=frame_rate)
     return wav_file
 
@@ -29,12 +29,12 @@ def data_labels(data_path, label):
 
 class MP3_Parser:
     def __init__(
-        self,
-        data_path,
-        clips_dir=config.GCP_Storage.DATA_CLIPS_PATH,
-        document_path=config.GCP_Storage.PARENT_FOLDER_PATH,
-        mel_seq_count=512,
-        data_label="gender",
+            self,
+            data_path,
+            clips_dir,
+            document_path,
+            mel_seq_count=512,
+            data_label="gender",
     ):
         """
 
@@ -66,10 +66,11 @@ class MP3_Parser:
                 label=label_name,
             )
         except IndexError:
-            print(" The label for {} is not in compatible".format(clip_name))
+            print(" The label for {} is NA   "
+                  ".......".format(clip_name))
 
     def clean_data(
-        self, filename: str, rate: int, signal: np.ndarray, label: object
+            self, filename: str, rate: int, signal: np.ndarray, label: object
     ) -> None:
         """
         Split an audio signal into windows
@@ -82,7 +83,7 @@ class MP3_Parser:
         seq_count = signal.shape[0] // self.mel_seq_count
 
         try:
-            flatten_data = signal[0 : seq_count * rate].reshape(seq_count, -1)
+            flatten_data = signal[0: seq_count * rate].reshape(seq_count, -1)
             flatten_data = pd.DataFrame(flatten_data)
 
             for row in range(flatten_data.shape[0]):
@@ -98,4 +99,4 @@ class MP3_Parser:
                     index=False,
                 )
         except ValueError:
-            print(" Skipped {} ......".format(filename))
+            print(" Skipped {} ......file is corrupt".format(filename))
