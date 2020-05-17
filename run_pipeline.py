@@ -25,21 +25,21 @@ def run_training(model: type, train_dir: str, val_dir: str, RNN_TYPE) -> None:
     val_dataset = DatasetFolder(root=val_dir, loader=csv_loader, extensions=".csv")
 
     train_data_loader = DataLoader(
-        train_dataset, batch_size=config.Model.BATCH_SIZE, shuffle=True, num_workers=4, drop_last=True
+        train_dataset, batch_size=config.MODEL_PARAM['BATCH_SIZE'], shuffle=True, num_workers=4, drop_last=True
     )
 
     val_data_loader = DataLoader(
-        val_dataset, batch_size=config.Model.BATCH_SIZE, shuffle=True, num_workers=4, drop_last=True
+        val_dataset, batch_size=config.MODEL_PARAM['BATCH_SIZE'], shuffle=True, num_workers=4, drop_last=True
     )
 
     model = model(
-        num_layer=config.Model.NUM_LAYERS,
-        input_size=config.Model.INPUT_SIZE,
-        hidden_size=config.Model.HIDDEN_DIM,
-        output_size=config.Model.OUTPUT_SIZE,
-        dropout=config.Model.DROPOUT,
+        num_layer=config.MODEL_PARAM['NUM_LAYERS'],
+        input_size=config.MODEL_PARAM['INPUT_SIZE'],
+        hidden_size=config.MODEL_PARAM['HIDDEN_DIM'],
+        output_size=config.MODEL_PARAM['OUTPUT_SIZE'],
+        dropout=config.MODEL_PARAM['DROPOUT'],
         RNN_TYPE=RNN_TYPE,
-        batch_size = config.Model.BATCH_SIZE
+        batch_size = config.MODEL_PARAM['BATCH_SIZE']
     )
 
     trained_model = train(
@@ -100,4 +100,4 @@ if __name__ == "__main__":
 
     )
 
-    predict.predict(r'C:\Users\ander\Documents\common-voice-dev\gender\test_data\female')
+    predict.predict(r'C:\Users\ander\Documents\common-voice-dev\gender\test_data\male')

@@ -9,7 +9,7 @@ from model.config import config
 from utlis import envelope
 
 
-def _set_frame_rate(wav_file, frame_rate=config.FRAME_RATE):
+def _set_frame_rate(wav_file, frame_rate=config.FRAME['FRAME_RATE']):
     wav_file.set_frame_rate(frame_rate=frame_rate)
     return wav_file
 

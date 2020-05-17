@@ -9,9 +9,11 @@ GENDER_MODEL_NAME = "model_gender-"
 AGE_MODEL_NAME = "model_age-"
 COUNTRY_MODEL_NAME = "model_country-"
 
-FRAME_RATE = 48000
-OBSERVATION_PER_SECOND = 10
-SEQ_LEN = FRAME_RATE / OBSERVATION_PER_SECOND
+FRAME = dict(FRAME_RATE=48000,
+             OBSERVATION_PER_SECOND=10)
+
+WAV_PARAM = dict(SEQ_LEN=FRAME['FRAME_RATE'] / FRAME['OBSERVATION_PER_SECOND']
+                 )
 
 GENDER_LABEL = {0: 'female',
                 1: 'male'}
@@ -25,19 +27,24 @@ class Bucket:
     TRAIN_SET = "common-voice-voice-train"
 
 
-class Model:
-    OUTPUT_SIZE = 2
-    HIDDEN_DIM = 128
-    NUM_LAYERS = 64
-    DROPOUT = 0.30
-    INPUT_SIZE = 512
-    BATCH_SIZE = 256
+MODEL_PARAM = dict(OUTPUT_SIZE=2,
+                   HIDDEN_DIM=128,
+                   NUM_LAYERS=64,
+                   DROPOUT=0.30,
+                   INPUT_SIZE=512,
+                   BATCH_SIZE=256)
 
+TRAIN_PARAM = dict(
+    LEARNING_RATE=0.00001,
+    GRADIENT_CLIP=15,
+    EPOCH=1)
 
-class Train:
-    LEARNING_RATE = 0.00001
-    GRADIENT_CLIP = 15
-    EPOCH = 1
+ALL_PARAM = dict(Train=MODEL_PARAM,
+                 Model=MODEL_PARAM,
+                 Frame=FRAME,
+                 gender_labels=GENDER_LABEL,
+                 wav_processing=WAV_PARAM
+                 )
 
 
 class GcpStorage:

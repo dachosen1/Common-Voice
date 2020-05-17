@@ -78,6 +78,7 @@ class AudioLSTM(nn.Module):
         lstm_out, hidden = self.RNN_TYPE(mfcc_reshape, hidden)
         lstm_out = self.dropout(lstm_out)
         final_layer = lstm_out.view(self.batch_size, -1, self.output_size)[:, -1]
+        # final_layer = self.linear(lstm_out.view(-1, self.input_size))
         layer_prob = torch.sigmoid(final_layer)
 
         return layer_prob, hidden

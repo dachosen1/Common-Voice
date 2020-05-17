@@ -24,7 +24,7 @@ def predict(dir_path):
             data = data.flatten().cuda()
             model.cuda()
 
-        out, _ = model(data.float().view(1, config.Model.INPUT_SIZE, -1), h)
+        out, _ = model(data.float().view(1, config.MODEL_PARAM['INPUT_SIZE'], -1), h)
         # out = out.contiguous().view(-1)
         prob = torch.topk(out, k=1).values
         pred = torch.topk(out, k=1).indices

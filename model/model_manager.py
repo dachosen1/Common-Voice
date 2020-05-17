@@ -1,22 +1,24 @@
-import logging
+import os
 
 import numpy as np
 import torch
 import torch.nn as nn
+import wandb
 from sklearn.metrics import (
     accuracy_score,
     confusion_matrix,
     f1_score,
     precision_score,
     recall_score,
+    plot_confusion_matrix,
+    plot_roc_curve
 )
-from torch.utils.tensorboard import SummaryWriter
 
 from model import __version__
 from model.config import config
 from utlis import plot_confusion_matrix
 
-_logger = logging.getLogger(__name__)
+wandb.init('Common-Voice', config=config.ALL_PARAM)
 
 
 def _metric_summary(pred: np.ndarray, label: np.ndarray):
@@ -86,10 +88,10 @@ def train(
         model: object,
         train_loader: torch.utils.data.dataloader.DataLoader,
         valid_loader: torch.utils.data.dataloader.DataLoader,
-        learning_rate: float = config.Train.LEARNING_RATE,
+        learning_rate: float = config.TRAIN_PARAM['LEARNING_RATE'],
         print_every: int = 10,
-        epoch: int = config.Train.EPOCH,
-        gradient_clip: int = config.Train.GRADIENT_CLIP,
+        epoch: int = config.TRAIN_PARAM['EPOCH'],
+        gradient_clip: int = config.TRAIN_PARAM['GRADIENT_CLIP'],
         early_stopping_threshold: int = 50,
         early_stopping: bool = True,
 ) -> object:
@@ -112,7 +114,7 @@ def train(
     if early_stopping:
         stopping = EarlyStopping(threshold=early_stopping_threshold, verbose=True)
 
-    writer = SummaryWriter()
+    wandb.watch(model)
 
     model.train()
     criterion = nn.CrossEntropyLoss()
@@ -146,30 +148,22 @@ def train(
                 y_true=train_labels.cpu().numpy(), y_pred=train_pred.flatten().cpu().data.numpy()
             )
 
-           # figure = plot_confusion_matrix(
-            #    train_cm, class_names=train_loader.dataset.classes
-            #)
+            train_figure = plot_confusion_matrix(
+                train_cm, class_names=train_loader.dataset.classes
+            )
 
-            # cm_image = plot_to_image(figure)
-
-            # writer.add_images("Confusion Matrix", cm_image, counter)
-            writer.add_scalar("Accuracy/train", train_acc, counter)
-            writer.add_scalar("F1/train", train_f1, counter)
-            writer.add_scalar("Precision/train", train_pr, counter)
-            writer.add_scalar("Recall/train", train_rc, counter)
+            wandb.log({"Accuracy/train": train_acc}, step=counter)
+            wandb.log({"F1/train": train_f1}, step=counter)
+            wandb.log({"Precision/train": train_pr}, step=counter)
+            wandb.log({"Recall/train": train_rc}, step=counter)
+            wandb.log({"Confusion Matrix/train": train_figure}, step=counter)
 
             train_loss = criterion(train_output, train_labels)
             train_loss.backward()
             nn.utils.clip_grad_norm_(model.parameters(), gradient_clip)
-            optimizer.step()
 
-            writer.add_scalar("Loss/train", train_loss.item(), counter)
-            writer.add_pr_curve(
-                tag="Precision Recall Curve/train",
-                labels=train_labels.cpu().numpy(),
-                predictions=train_pred.flatten().cpu().data.numpy(),
-                global_step=counter,
-            )
+            optimizer.step()
+            wandb.log({"Loss/train": train_loss.item()}, step=counter)
 
             if counter % print_every == 0:
                 val_h = model.init_hidden(size)
@@ -186,7 +180,6 @@ def train(
 
                     val_loss = criterion(val_output, val_labels)
                     val_losses.append(val_loss.item())
-                    writer.add_scalar("Loss/val", val_loss.item(), counter)
 
                     if early_stopping:
                         stopping(val_loss=val_loss, model=model)
@@ -199,18 +192,19 @@ def train(
                         pred=val_pred.flatten().cpu().data.numpy(), label=val_labels.cpu().numpy()
                     )
 
-                    writer.add_scalar("Accuracy/val", val_acc, counter)
-                    writer.add_scalar("F1/val", val_f1, counter)
-                    writer.add_scalar("Precision/val", val_pr, counter)
-                    writer.add_scalar("Recall/val", val_rc, counter)
-
-                    writer.add_pr_curve(
-                        tag="Precision Recall Curve/val",
-                        labels=val_labels.cpu().numpy(),
-                        predictions=val_pred
-                            .flatten().cpu().data.numpy(),
-                        global_step=counter,
+                    val_cm = confusion_matrix(
+                        y_true=val_labels.cpu().numpy(), y_pred=val_pred.flatten().cpu().data.numpy()
                     )
+                    val_figure = plot_confusion_matrix(
+                        val_cm, class_names=train_loader.dataset.classes
+                    )
+
+                    wandb.log({"Confusion Matrix/test": val_figure}, step=counter)
+
+                    wandb.log({"Accuracy/val": val_acc}, step=counter)
+                    wandb.log({"F1/val": val_f1}, step=counter)
+                    wandb.log({"Precision/val": val_pr}, step=counter)
+                    wandb.log({"Recall/val": val_rc}, step=counter)
 
                 print(
                     "Epoch: {}/{}...".format(e + 1, epoch),
@@ -220,8 +214,9 @@ def train(
                     "Train Accuracy: {:.6f}".format(train_acc),
                     "Test Accuracy: {:.6f}".format(val_acc),
                 )
+
                 model.train()
 
-            writer.add_graph(model, (train_inputs, h))
-
+    model_name = config.GENDER_MODEL_NAME + __version__ + '.pt'
+    torch.save(model.state_dict(), os.path.join(wandb.run.dir, model_name))
     return model

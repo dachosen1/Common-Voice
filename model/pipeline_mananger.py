@@ -47,11 +47,11 @@ def load_model(model_name: str) -> object:
     """
 
     model = LSTM.AudioLSTM(
-        num_layer=config.Model.NUM_LAYERS,
-        input_size=config.Model.INPUT_SIZE,
-        hidden_size=config.Model.HIDDEN_DIM,
-        output_size=config.Model.OUTPUT_SIZE,
-        dropout=config.Model.DROPOUT,
+        num_layer=config.MODEL_PARAM['NUM_LAYERS'],
+        input_size=config.MODEL_PARAM['INPUT_SIZE'],
+        hidden_size=config.MODEL_PARAM['HIDDEN_DIM'],
+        output_size=config.MODEL_PARAM['OUTPUT_SIZE'],
+        dropout=config.MODEL_PARAM['DROPOUT'],
         batch_size=1
     )
     model.eval()
