@@ -84,7 +84,7 @@ def generate_training_data(method, percentage):
             tqdm(executor.map(parser.convert_to_wav, mp3_list))
 
     else:
-        return print("Skipping Uploading Data. Training will begin shortly")
+        return print("Skipping MP3 feature engineering. Will use existing mfcc for training")
 
     print("Done Uploading Data for training")
 
@@ -100,4 +100,4 @@ if __name__ == "__main__":
 
     )
 
-    predict.predict(r'C:\Users\ander\Documents\common-voice-dev\gender\test_data\male')
+    # predict.predict(r'C:\Users\ander\Documents\common-voice-dev\gender\test_data\male')

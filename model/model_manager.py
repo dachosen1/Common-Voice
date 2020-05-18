@@ -16,6 +16,7 @@ from sklearn.metrics import (
 
 from model import __version__
 from model.config import config
+
 from utlis import plot_confusion_matrix
 
 wandb.init('Common-Voice', config=config.ALL_PARAM)
@@ -144,24 +145,15 @@ def train(
                 pred=train_pred.flatten().cpu().data.numpy(), label=train_labels.cpu().numpy()
             )
 
-            train_cm = confusion_matrix(
-                y_true=train_labels.cpu().numpy(), y_pred=train_pred.flatten().cpu().data.numpy()
-            )
-
-            train_figure = plot_confusion_matrix(
-                train_cm, class_names=train_loader.dataset.classes
-            )
-
             wandb.log({"Accuracy/train": train_acc}, step=counter)
             wandb.log({"F1/train": train_f1}, step=counter)
             wandb.log({"Precision/train": train_pr}, step=counter)
             wandb.log({"Recall/train": train_rc}, step=counter)
-            wandb.log({"Confusion Matrix/train": train_figure}, step=counter)
 
             train_loss = criterion(train_output, train_labels)
             train_loss.backward()
-            nn.utils.clip_grad_norm_(model.parameters(), gradient_clip)
 
+            nn.utils.clip_grad_norm_(model.parameters(), gradient_clip)
             optimizer.step()
             wandb.log({"Loss/train": train_loss.item()}, step=counter)
 
@@ -179,6 +171,8 @@ def train(
                     val_pred = torch.topk(val_output, k=1).indices
 
                     val_loss = criterion(val_output, val_labels)
+                    wandb.log({"Loss/val": val_loss.item()}, step=counter)
+
                     val_losses.append(val_loss.item())
 
                     if early_stopping:
@@ -191,15 +185,6 @@ def train(
                     val_acc, val_f1, val_pr, val_rc = _metric_summary(
                         pred=val_pred.flatten().cpu().data.numpy(), label=val_labels.cpu().numpy()
                     )
-
-                    val_cm = confusion_matrix(
-                        y_true=val_labels.cpu().numpy(), y_pred=val_pred.flatten().cpu().data.numpy()
-                    )
-                    val_figure = plot_confusion_matrix(
-                        val_cm, class_names=train_loader.dataset.classes
-                    )
-
-                    wandb.log({"Confusion Matrix/test": val_figure}, step=counter)
 
                     wandb.log({"Accuracy/val": val_acc}, step=counter)
                     wandb.log({"F1/val": val_f1}, step=counter)
@@ -217,6 +202,9 @@ def train(
 
                 model.train()
 
+    wandb.sklearn.plot_confusion_matrix(val_labels.cpu().numpy(),
+                                        val_pred.flatten().cpu().data.numpy(),
+                                        valid_loader.dataset.classes)
     model_name = config.GENDER_MODEL_NAME + __version__ + '.pt'
     torch.save(model.state_dict(), os.path.join(wandb.run.dir, model_name))
     return model

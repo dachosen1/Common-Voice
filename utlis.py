@@ -72,7 +72,7 @@ def calc_fft(*, y, rate):
 
 def plot_confusion_matrix(cm: np.ndarray, class_names: list) -> matplotlib.figure.Figure:
     """
-    Generates a matplotlib figure containing the plotted confusion matrix.
+    Generates a Matplotlib figure containing the plotted confusion matrix.
 
     :param cm: cm (array, shape = [n, n]): a confusion matrix of integer classes
     :param class_names: class_names (array, shape = [n]): String names of the integer classes

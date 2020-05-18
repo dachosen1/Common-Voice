@@ -28,11 +28,11 @@ class Bucket:
 
 
 MODEL_PARAM = dict(OUTPUT_SIZE=2,
-                   HIDDEN_DIM=128,
+                   HIDDEN_DIM=64,
                    NUM_LAYERS=64,
                    DROPOUT=0.30,
                    INPUT_SIZE=512,
-                   BATCH_SIZE=256)
+                   BATCH_SIZE=32)
 
 TRAIN_PARAM = dict(
     LEARNING_RATE=0.00001,
