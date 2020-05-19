@@ -13,7 +13,7 @@ from model.LSTM import AudioLSTM
 from model.config import config
 from model.model_manager import train
 from model.preprocessing.mp3_parser import MP3_Parser
-from utlis import csv_loader
+from utlis import csv_loader, sample_weight
 
 _logger = logging.getLogger(__name__)
 
@@ -24,13 +24,18 @@ def run_training(model: type, train_dir: str, val_dir: str, RNN_TYPE) -> None:
     train_dataset = DatasetFolder(root=train_dir, loader=csv_loader, extensions=".csv")
     val_dataset = DatasetFolder(root=val_dir, loader=csv_loader, extensions=".csv")
 
+    train_sample_weight = sample_weight(train_dataset)
+    val_sample_weight = sample_weight(val_dataset)
+
     train_data_loader = DataLoader(
-        train_dataset, batch_size=config.MODEL_PARAM['BATCH_SIZE'], shuffle=True, num_workers=4, drop_last=True
+        train_dataset, batch_size=config.MODEL_PARAM['BATCH_SIZE'], sampler=train_sample_weight, num_workers=4, drop_last=True
     )
 
     val_data_loader = DataLoader(
-        val_dataset, batch_size=config.MODEL_PARAM['BATCH_SIZE'], shuffle=True, num_workers=4, drop_last=True
+        val_dataset, batch_size=config.MODEL_PARAM['BATCH_SIZE'], sampler=val_sample_weight, num_workers=4, drop_last=True
     )
+
+    print('Successfully Uploaded Train and Validation data........ ')
 
     model = model(
         num_layer=config.MODEL_PARAM['NUM_LAYERS'],
@@ -41,6 +46,8 @@ def run_training(model: type, train_dir: str, val_dir: str, RNN_TYPE) -> None:
         RNN_TYPE=RNN_TYPE,
         batch_size = config.MODEL_PARAM['BATCH_SIZE']
     )
+
+    print('LSTM Model has been initialized')
 
     trained_model = train(
         model, train_data_loader, val_data_loader, early_stopping=False
@@ -84,7 +91,7 @@ def generate_training_data(method, percentage):
             tqdm(executor.map(parser.convert_to_wav, mp3_list))
 
     else:
-        return print("Skipping MP3 feature engineering. Will use existing mfcc for training")
+        return print("Skipping MP3 feature engineering. Will use existing mfcc data for training")
 
     print("Done Uploading Data for training")
 
@@ -100,4 +107,4 @@ if __name__ == "__main__":
 
     )
 
-    # predict.predict(r'C:\Users\ander\Documents\common-voice-dev\gender\test_data\male')
+    predict.predict(r'C:\Users\ander\Documents\common-voice-dev\gender\test_data\male')

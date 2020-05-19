@@ -11,7 +11,7 @@ import pandas as pd
 import torch
 import tqdm
 from pydub import AudioSegment
-
+from torch.utils.data import WeightedRandomSampler
 from model.config import config
 
 
@@ -99,3 +99,18 @@ def plot_confusion_matrix(cm: np.ndarray, class_names: list) -> matplotlib.figur
     plt.ylabel("True label")
     plt.xlabel("Predicted label")
     return figure
+
+
+def sample_weight(data_folder):
+    """
+    Return sample weight for stratistifed random sampling
+    :param data_folder: Dataset folder object
+    :return:
+    """
+    class_sample_count = np.array([len([i for i in data_folder.targets if i == t]) for t in range(0, len(data_folder.classes))])
+    weight = 1 / class_sample_count
+    samples_weight = np.array([weight[t] for t in data_folder.targets])
+    samples_weight = torch.from_numpy(samples_weight)
+    samples_weight = samples_weight.double()
+    sampler = WeightedRandomSampler(samples_weight, len(samples_weight))
+    return sampler

@@ -6,18 +6,15 @@ import torch.nn as nn
 import wandb
 from sklearn.metrics import (
     accuracy_score,
-    confusion_matrix,
     f1_score,
     precision_score,
-    recall_score,
-    plot_confusion_matrix,
-    plot_roc_curve
+    recall_score
 )
 
 from model import __version__
 from model.config import config
 
-from utlis import plot_confusion_matrix
+
 
 wandb.init('Common-Voice', config=config.ALL_PARAM)
 
@@ -125,11 +122,13 @@ def train(
         model.cuda()
 
     counter = 0
+    print('Start Training...................')
+
     for e in range(epoch):
-        h = model.init_hidden(size)
 
         for train_inputs, train_labels in train_loader:
             counter += 1
+            h = model.init_hidden(size)
 
             if torch.cuda.is_available():
                 train_inputs, train_labels = train_inputs.cuda(), train_labels.cuda()
@@ -207,4 +206,5 @@ def train(
                                         valid_loader.dataset.classes)
     model_name = config.GENDER_MODEL_NAME + __version__ + '.pt'
     torch.save(model.state_dict(), os.path.join(wandb.run.dir, model_name))
+    print('Done Training')
     return model
