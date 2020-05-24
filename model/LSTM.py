@@ -1,5 +1,6 @@
 import torch
 import torch.nn as nn
+import torch.nn.functional as F
 
 
 class AudioLSTM(nn.Module):
@@ -45,26 +46,21 @@ class AudioLSTM(nn.Module):
             self.RNN_TYPE = nn.LSTM(
                 input_size=input_size,
                 hidden_size=hidden_size,
-                num_layers=num_layer,
-                dropout=dropout,
-                batch_first=batch,
-                bidirectional=bidirectional,
+                num_layers=num_layer
             )
 
         if RNN_TYPE == "GRU":
             self.RNN_TYPE = nn.GRU(
                 input_size=input_size,
                 hidden_size=hidden_size,
-                num_layers=num_layer,
-                dropout=dropout,
-                batch_first=batch,
-                bidirectional=bidirectional,
+                num_layers=num_layer
             )
 
         self.dropout = nn.Dropout(dropout)
+        self.linear = nn.Linear(self.hidden_size, self.output_size)
         self.out = nn.Sigmoid()
 
-    def forward(self, mfcc, hidden):
+    def forward(self, mfcc):
         """
 
         :param mfcc: Mel-frequency cepstrum audio sequence
@@ -72,16 +68,14 @@ class AudioLSTM(nn.Module):
         :return:
         """
 
-        seq_length = mfcc.shape[1]
-        mfcc_reshape = mfcc.float().view(1, -1, seq_length)
-        lstm_out, hidden = self.RNN_TYPE(mfcc_reshape, hidden)
-        lstm_out = self.dropout(lstm_out)
-        final_layer = lstm_out.view(self.batch_size, -1, self.output_size)[:, -1]
-        layer_prob = torch.sigmoid(final_layer)
+        # seq_length = mfcc.shape[1]
+        mfcc_reshape = mfcc.float().permute(1, 0, 2)
+        lstm_out, hidden = self.RNN_TYPE(mfcc_reshape)
+        logits = self.linear(lstm_out[-1])
+        score = F.log_softmax(logits, dim=1)
+        return score
 
-        return layer_prob, hidden
-
-    def init_hidden(self, batch_size: int):
+    def init_hidden(self):
         """
         Initializes hidden state. Create two new tensors with sizes n_layers x batch_size x hidden_dim, initialized to
         zero, for hidden state and cell state of LSTM.
@@ -91,14 +85,22 @@ class AudioLSTM(nn.Module):
 
         if torch.cuda.is_available():
             hidden = (
-                weight.new(self.num_layer * self.output_size, batch_size, self.hidden_size).zero_().cuda(),
-                weight.new(self.num_layer * self.output_size, batch_size, self.hidden_size).zero_().cuda(),
+                weight.new(self.num_layer, self.batch_size, self.hidden_size).zero_().cuda(),
+                weight.new(self.num_layer, self.batch_size, self.hidden_size).zero_().cuda(),
             )
 
         else:
             hidden = (
-                weight.new(self.num_layer * self.output_size, batch_size, self.hidden_size).zero_(),
-                weight.new(self.num_layer * self.output_size, batch_size, self.hidden_size).zero_(),
+                weight.new(self.num_layer, self.batch_size, self.hidden_size).zero_(),
+                weight.new(self.num_layer, self.batch_size, self.hidden_size).zero_(),
             )
 
         return hidden
+
+    def get_accuracy(self, logits, target):
+        """ compute accuracy for training round """
+        corrects = (
+                torch.max(logits, 1)[1].view(target.size()).data == target.data
+        ).sum()
+        accuracy = 100.0 * corrects / self.batch_size
+        return accuracy.item()

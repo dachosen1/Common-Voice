@@ -14,7 +14,9 @@ from model.config import config
 from model.model_manager import train
 from model.preprocessing.mp3_parser import MP3_Parser
 from utlis import csv_loader, sample_weight
+import warnings
 
+warnings.filterwarnings("ignore")
 _logger = logging.getLogger(__name__)
 
 torch.manual_seed(0)
@@ -97,7 +99,10 @@ def generate_training_data(method, percentage):
 
 
 if __name__ == "__main__":
-    generate_training_data(method="none", percentage=0.05)
+    import warnings
+    warnings.filterwarnings("ignore")
+
+    # generate_training_data(method="dev", percentage=0.0008)
 
     run_training(
         model=AudioLSTM,
@@ -107,4 +112,4 @@ if __name__ == "__main__":
 
     )
 
-    predict.predict(r'C:\Users\ander\Documents\common-voice-dev\gender\test_data\male')
+    # predict.predict(r'C:\Users\ander\Documents\common-voice-dev\gender\test_data\male')

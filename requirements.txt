@@ -39,11 +39,14 @@ six==1.14.0
 smmap==3.0.4
 subprocess32==3.5.4
 threadpoolctl==2.0.0
-torch==1.5.0+cu101
-torchvision==0.6.0+cu101
+torch~=1.5.0
+torchvision~=0.6.0
 tqdm==4.46.0
 urllib3==1.25.9
 wandb==0.8.36
 watchdog==0.10.2
 webapp2==2.5.2
 Werkzeug==1.0.1
+
+librosa==0.7.1
+setuptools~=46.3.1

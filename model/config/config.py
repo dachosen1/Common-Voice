@@ -28,16 +28,16 @@ class Bucket:
 
 
 MODEL_PARAM = dict(OUTPUT_SIZE=2,
-                   HIDDEN_DIM=36,
-                   NUM_LAYERS=128,
+                   HIDDEN_DIM=128,
+                   NUM_LAYERS=4,
                    DROPOUT=0.30,
-                   INPUT_SIZE=512,
-                   BATCH_SIZE=1024)
+                   INPUT_SIZE=33,
+                   BATCH_SIZE=128)
 
 TRAIN_PARAM = dict(
-    LEARNING_RATE=0.00001,
+    LEARNING_RATE=0.001,
     GRADIENT_CLIP=15,
-    EPOCH=1)
+    EPOCH=100)
 
 ALL_PARAM = dict(Train=MODEL_PARAM,
                  Model=MODEL_PARAM,
@@ -62,12 +62,12 @@ class GcpTrainPipeline:
 class LocalStorage:
     WAV_DIR = r"C:\Users\ander\Documents\common-voice-data\wav"
     ROOT_DIR = r"C:\Users\ander\Documents\common-voice-data"
-    DEV_DIR = r"C:\Users\ander\Documents\common-voice-dev"
+    DEV_DIR = r"C:\Users\ander\Documents\common-voice-dev-experiment"
     CLIPS_DIR = r"C:\Users\ander\Documents\common-voice-data\clips"
     TRAIN_DIR = r"C:\Users\ander\Documents\common-voice-dev"
 
 
 class LocalTrainPipeline:
-    TRAIN_DIR = r"C:\Users\ander\Documents\common-voice-dev\gender\train_data"
-    VAL_DIR = r"C:\Users\ander\Documents\common-voice-dev\gender\val_data"
-    TEST_DIR = r"C:\Users\ander\Documents\common-voice-dev\gender\test_data"
+    TRAIN_DIR = r"C:\Users\ander\Documents\common-voice-dev-experiment\gender\train_data"
+    VAL_DIR = r"C:\Users\ander\Documents\common-voice-dev-experiment\gender\val_data"
+    TEST_DIR = r"C:\Users\ander\Documents\common-voice-dev-experiment\gender\test_data"
