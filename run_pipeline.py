@@ -102,7 +102,7 @@ if __name__ == "__main__":
     import warnings
     warnings.filterwarnings("ignore")
 
-    # generate_training_data(method="dev", percentage=0.0008)
+    generate_training_data(method="none", percentage=0.01)
 
     run_training(
         model=AudioLSTM,
@@ -112,4 +112,4 @@ if __name__ == "__main__":
 
     )
 
-    # predict.predict(r'C:\Users\ander\Documents\common-voice-dev\gender\test_data\male')
+    predict.predict(r'C:\Users\ander\Documents\common-voice-dev-experiment\gender\test_data\female')

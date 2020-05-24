@@ -12,19 +12,21 @@ def predict(dir_path):
     model.load_state_dict(torch.load(path))
     model.eval()
 
-    h = model.init_hidden(1)
+    model.init_hidden()
     directory = dir_path
     director_list = os.listdir(directory)
 
+    assert os.path.exists(dir_path)
+
     for path in director_list:
         data = pd.read_csv(os.path.join(directory, path), header=None).to_numpy()
-        data = torch.from_numpy(data)
+        data = torch.from_numpy(data).view(1, 128, 33).float()
 
         if torch.cuda.is_available():
-            data = data.flatten().cuda()
             model.cuda()
+            data = data.cuda()
 
-        out, _ = model(data.float().view(1, config.MODEL_PARAM['INPUT_SIZE'], -1), h)
+        out = model(data)
         # out = out.contiguous().view(-1)
         prob = torch.topk(out, k=1).values
         pred = torch.topk(out, k=1).indices

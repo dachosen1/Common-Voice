@@ -136,6 +136,7 @@ def train(
                 train_inputs, train_labels = train_inputs.cuda(), train_labels.cuda()
 
             model.zero_grad()
+            train_inputs = train_inputs.float().permute(1, 0, 2)
             train_output = model(train_inputs)
 
             train_acc = model.get_accuracy(train_output, train_labels)
@@ -161,6 +162,7 @@ def train(
                     if torch.cuda.is_available():
                         val_inputs, val_labels = val_inputs.cuda(), val_labels.cuda()
 
+
                     val_output = model(val_inputs)
                     val_loss = criterion(val_output, val_labels)
                     wandb.log({"Loss/val": val_loss.item()}, step=counter)
@@ -181,14 +183,15 @@ def train(
                     # wandb.log({"Precision/val": val_pr}, step=counter)
                     # wandb.log({"Recall/val": val_rc}, step=counter)
 
-                    print(
-                        "Epoch: {}/{}...".format(e + 1, epoch),
-                        "Step: {}...".format(counter),
-                        "Training Loss: {:.6f}...".format(train_loss.item()),
-                        "Validation Loss: {:.6f}".format(val_loss.item()),
-                        "Train Accuracy: {:.6f}".format(train_acc),
-                        "Test Accuracy: {:.6f}".format(val_acc),
+                print(
+                    "Epoch: {}/{}...".format(e + 1, epoch),
+                    "Step: {}...".format(counter),
+                    "Training Loss: {:.6f}...".format(train_loss.item()),
+                    "Validation Loss: {:.6f}".format(val_loss.item()),
+                    "Train Accuracy: {:.6f}".format(train_acc),
+                    "Test Accuracy: {:.6f}".format(val_acc),
                     )
+
 
                 model.train()
 

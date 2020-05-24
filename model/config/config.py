@@ -37,7 +37,7 @@ MODEL_PARAM = dict(OUTPUT_SIZE=2,
 TRAIN_PARAM = dict(
     LEARNING_RATE=0.001,
     GRADIENT_CLIP=15,
-    EPOCH=100)
+    EPOCH=4)
 
 ALL_PARAM = dict(Train=MODEL_PARAM,
                  Model=MODEL_PARAM,
