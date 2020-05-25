@@ -7,7 +7,7 @@ torchvision~=0.6.0
 tqdm==4.46.0
 wandb==0.8.36
 librosa==0.7.1
-joblib~=0.14.1
+joblib~=0.15.1
 webapp2~=2.5.2
 setuptools~=46.3.1
 pydub~=0.24.0
