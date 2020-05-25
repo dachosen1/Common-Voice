@@ -34,7 +34,6 @@ class MP3_Parser:
             data_path,
             clips_dir,
             document_path,
-            mel_seq_count=512,
             data_label="gender",
     ):
         """
@@ -46,7 +45,6 @@ class MP3_Parser:
         self.data_label = data_label
         self.label_data = data_labels(self.data_path, label=self.data_label)
         self.document_path = document_path
-        self.mel_seq_count = mel_seq_count
 
     def convert_to_wav(self, clips_name: set) -> None:
         path = os.path.join(self.clips_dir, clips_name)
@@ -63,18 +61,19 @@ class MP3_Parser:
                 mfcc = librosa.feature.mfcc(y=signal[start:start+step], sr=sample_rate, hop_length=self.hop_length,
                                             n_mfcc=13)
 
-                assert mfcc.shape[1] == 44
+                assert mfcc.shape[1] == config.MODEL_PARAM['INPUT_SIZE']
 
                 clip_name = f'{clips_name.split(".")[0]}'
                 label_name = self.label_data[self.label_data.name == clip_name][self.data_label].values[0]
                 train_test_choice = np.random.choice(["train_data", "val_data", "test_data"], p=[0.7, 0.2, 0.1])
-                save_path = os.path.join(self.document_path, "gender", train_test_choice, label_name, clip_name + '_' + str(i) + '.csv')
+                save_path = os.path.join(self.document_path, "gender", train_test_choice, label_name, clip_name + '_'
+                                         + str(i) + '.csv')
                 np.savetxt(save_path, mfcc, delimiter=',')
                 start = step * i
 
         except IndexError:
-            print(" The label for {} is NA "
-                  ".......".format(clip_name))
+            print(f" The label for {clip_name} is NA ")
+
         except ValueError:
             print(f" The MP3 for {clip_name} is too short")
 

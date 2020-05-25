@@ -1,6 +1,5 @@
 import torch
 import torch.nn as nn
-import torch.nn.functional as F
 
 
 class AudioLSTM(nn.Module):
@@ -16,12 +15,10 @@ class AudioLSTM(nn.Module):
             dropout: float,
             num_layer: int,
             output_size: int,
-            batch: bool = True,
-            bidirectional: bool = True,
             RNN_TYPE: str = "LSTM",
     ) -> None:
         """
-        :type bidirectional: object
+
         :param input_size: The number of expected features in the input x
         :param hidden_size:The number of features in the hidden state h
         :param num_layer: Number of recurrent layers. E.g., setting num_layers=2 would mean stacking two LSTMs together
@@ -29,8 +26,6 @@ class AudioLSTM(nn.Module):
         :param dropout:f non-zero, introduces a Dropout layer on the outputs of each LSTM layer except the last layer,
         with dropout probability equal to dropout
         :param output_size: Number of label prediction
-        :param batch If True, then the input and output tensors are provided as (batch, seq, feature)
-        :param bidirectional: If True, becomes a bidirectional LSTM
         :param RNN_TYPE: Specify the type of RNN. Input takes two options LSTM and GRU
         """
         super(AudioLSTM, self).__init__()
@@ -62,15 +57,14 @@ class AudioLSTM(nn.Module):
 
     def forward(self, mfcc):
         """
-
         :param mfcc: Mel-frequency cepstrum audio sequence
-        :param hidden: Hidden parameters
-        :return:
+        :return: tensor representing probability of each output
         """
         mfcc_reshape = mfcc.float().permute(1, 0, 2)
-        lstm_out, hidden = self.RNN_TYPE(mfcc_reshape)
+        lstm_out, _ = self.RNN_TYPE(mfcc_reshape)
+        lstm_out = self.dropout(lstm_out)
         logits = self.linear(lstm_out[-1])
-        score = F.sigmoid(logits)
+        score = torch.sigmoid(logits)
         return score
 
     def init_hidden(self):

@@ -27,11 +27,10 @@ def predict(dir_path):
             data = data.cuda()
 
         out = model(data)
-        # out = out.contiguous().view(-1)
         prob = torch.topk(out, k=1).values
         pred = torch.topk(out, k=1).indices
         label = config.GENDER_LABEL[int(pred.cpu().data.numpy())]
-        print(f'Prediction: {label}, Probability: {prob.flatten()[0]}')
+        print(f'Prediction: {label}, Probability: {round(float(prob.flatten()[0]), 5)}')
 
 
 if __name__ == '__main__':
