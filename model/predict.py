@@ -31,7 +31,7 @@ def predict(dir_path):
         prob = torch.topk(out, k=1).values
         pred = torch.topk(out, k=1).indices
         label = config.GENDER_LABEL[int(pred.cpu().data.numpy())]
-        print(label, prob.float().cpu().detach().cpu().numpy()[0])
+        print(f'Prediction: {label}, Probability: {prob.flatten()[0]}')
 
 
 if __name__ == '__main__':

@@ -70,7 +70,7 @@ class AudioLSTM(nn.Module):
         mfcc_reshape = mfcc.float().permute(1, 0, 2)
         lstm_out, hidden = self.RNN_TYPE(mfcc_reshape)
         logits = self.linear(lstm_out[-1])
-        score = F.log_softmax(logits, dim=1)
+        score = F.sigmoid(logits)
         return score
 
     def init_hidden(self):

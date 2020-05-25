@@ -32,12 +32,12 @@ MODEL_PARAM = dict(OUTPUT_SIZE=2,
                    NUM_LAYERS=4,
                    DROPOUT=0.30,
                    INPUT_SIZE=33,
-                   BATCH_SIZE=128)
+                   BATCH_SIZE=528)
 
 TRAIN_PARAM = dict(
     LEARNING_RATE=0.001,
     GRADIENT_CLIP=15,
-    EPOCH=4)
+    EPOCH=10)
 
 ALL_PARAM = dict(Train=MODEL_PARAM,
                  Model=MODEL_PARAM,

@@ -108,8 +108,6 @@ def train(
 
     :return: a model object
     """
-    # size, _ = next(iter(train_loader))
-    size = 1
 
     if early_stopping:
         stopping = EarlyStopping(threshold=early_stopping_threshold, verbose=True)
@@ -117,7 +115,7 @@ def train(
     wandb.watch(model)
 
     model.train()
-    criterion = nn.NLLLoss()
+    criterion = nn.CrossEntropyLoss()
     optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate)
 
     if torch.cuda.is_available():
@@ -136,9 +134,7 @@ def train(
                 train_inputs, train_labels = train_inputs.cuda(), train_labels.cuda()
 
             model.zero_grad()
-            train_inputs = train_inputs.float().permute(1, 0, 2)
             train_output = model(train_inputs)
-
             train_acc = model.get_accuracy(train_output, train_labels)
 
             # wandb.log({"Accuracy/train": train_acc}, step=counter)

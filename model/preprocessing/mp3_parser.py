@@ -79,4 +79,4 @@ class MP3_Parser:
             print(" The label for {} is NA "
                   ".......".format(clip_name))
         except ValueError:
-            print(" The MP3 for {} is too short")
+            print(f" The MP3 for {clip_name} is too short")
