@@ -20,7 +20,7 @@ def predict(dir_path):
 
     for path in director_list:
         data = pd.read_csv(os.path.join(directory, path), header=None).to_numpy()
-        data = torch.from_numpy(data).view(1, 128, 33).float()
+        data = torch.from_numpy(data).view(1, 13, 44).float()
 
         if torch.cuda.is_available():
             model.cuda()

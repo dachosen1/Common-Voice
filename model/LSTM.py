@@ -95,10 +95,3 @@ class AudioLSTM(nn.Module):
 
         return hidden
 
-    def get_accuracy(self, logits, target):
-        """ compute accuracy for training round """
-        corrects = (
-                torch.max(logits, 1)[1].view(target.size()).data == target.data
-        ).sum()
-        accuracy = 100.0 * corrects / self.batch_size
-        return accuracy.item()

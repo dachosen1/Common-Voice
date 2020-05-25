@@ -125,7 +125,6 @@ def train(
     print('Start Training...................')
 
     for e in range(epoch):
-
         for train_inputs, train_labels in train_loader:
             counter += 1
             model.init_hidden()
@@ -135,37 +134,38 @@ def train(
 
             model.zero_grad()
             train_output = model(train_inputs)
-            train_acc = model.get_accuracy(train_output, train_labels)
 
-            # wandb.log({"Accuracy/train": train_acc}, step=counter)
-            # wandb.log({"F1/train": train_f1}, step=counter)
-            # wandb.log({"Precision/train": train_pr}, step=counter)
-            # wandb.log({"Recall/train": train_rc}, step=counter)
+            train_acc, train_f1, train_pr, train_rc = _metric_summary(
+                pred=torch.max(train_output, dim=1).indices.data.cpu().numpy(), label=train_labels.cpu().numpy()
+            )
 
             train_loss = criterion(train_output, train_labels)
             train_loss.backward()
-
             nn.utils.clip_grad_norm_(model.parameters(), gradient_clip)
             optimizer.step()
+
+            wandb.log({"Accuracy/train": train_acc}, step=counter)
+            wandb.log({"F1/train": train_f1}, step=counter)
+            wandb.log({"Precision/train": train_pr}, step=counter)
+            wandb.log({"Recall/train": train_rc}, step=counter)
             wandb.log({"Loss/train": train_loss.item()}, step=counter)
 
             if counter % print_every == 0:
+
                 model.init_hidden()
-                val_losses = []
                 model.eval()
+
                 for val_inputs, val_labels in valid_loader:
 
                     if torch.cuda.is_available():
                         val_inputs, val_labels = val_inputs.cuda(), val_labels.cuda()
 
-
                     val_output = model(val_inputs)
                     val_loss = criterion(val_output, val_labels)
-                    wandb.log({"Loss/val": val_loss.item()}, step=counter)
 
-                    val_acc = model.get_accuracy(val_output, val_labels)
-
-                    val_losses.append(val_loss.item())
+                    val_acc, val_f1, val_pr, val_rc = _metric_summary(
+                        pred=torch.max(val_output, dim=1).indices.data.cpu().numpy(), label=val_labels.cpu().numpy()
+                    )
 
                     if early_stopping:
                         stopping(val_loss=val_loss, model=model)
@@ -175,9 +175,10 @@ def train(
                             break
 
                     wandb.log({"Accuracy/val": val_acc}, step=counter)
-                    # wandb.log({"F1/val": val_f1}, step=counter)
-                    # wandb.log({"Precision/val": val_pr}, step=counter)
-                    # wandb.log({"Recall/val": val_rc}, step=counter)
+                    wandb.log({"F1/val": val_f1}, step=counter)
+                    wandb.log({"Precision/val": val_pr}, step=counter)
+                    wandb.log({"Recall/val": val_rc}, step=counter)
+                    wandb.log({"Loss/val": val_loss.item()}, step=counter)
 
                 print(
                     "Epoch: {}/{}...".format(e + 1, epoch),
@@ -186,14 +187,13 @@ def train(
                     "Validation Loss: {:.6f}".format(val_loss.item()),
                     "Train Accuracy: {:.6f}".format(train_acc),
                     "Test Accuracy: {:.6f}".format(val_acc),
-                    )
-
+                )
 
                 model.train()
 
-    # wandb.sklearn.plot_confusion_matrix(val_labels.cpu().numpy(),
-    #                                     val_pred.flatten().cpu().data.numpy(),
-    #                                     valid_loader.dataset.classes)
+    wandb.sklearn.plot_confusion_matrix(val_labels.cpu().numpy(),
+                                        torch.max(val_output, dim=1).indices.data.cpu().numpy(),
+                                        valid_loader.dataset.classes)
     model_name = config.GENDER_MODEL_NAME + __version__ + '.pt'
     torch.save(model.state_dict(), os.path.join(wandb.run.dir, model_name))
     print('Done Training')

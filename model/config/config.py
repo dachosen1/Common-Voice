@@ -31,7 +31,7 @@ MODEL_PARAM = dict(OUTPUT_SIZE=2,
                    HIDDEN_DIM=128,
                    NUM_LAYERS=4,
                    DROPOUT=0.30,
-                   INPUT_SIZE=33,
+                   INPUT_SIZE=44,
                    BATCH_SIZE=528)
 
 TRAIN_PARAM = dict(
@@ -62,12 +62,12 @@ class GcpTrainPipeline:
 class LocalStorage:
     WAV_DIR = r"C:\Users\ander\Documents\common-voice-data\wav"
     ROOT_DIR = r"C:\Users\ander\Documents\common-voice-data"
-    DEV_DIR = r"C:\Users\ander\Documents\common-voice-dev-experiment"
+    DEV_DIR = r"C:\Users\ander\Documents\common-voice-dev-experiment-mfcc"
     CLIPS_DIR = r"C:\Users\ander\Documents\common-voice-data\clips"
     TRAIN_DIR = r"C:\Users\ander\Documents\common-voice-dev"
 
 
 class LocalTrainPipeline:
-    TRAIN_DIR = r"C:\Users\ander\Documents\common-voice-dev-experiment\gender\train_data"
-    VAL_DIR = r"C:\Users\ander\Documents\common-voice-dev-experiment\gender\val_data"
-    TEST_DIR = r"C:\Users\ander\Documents\common-voice-dev-experiment\gender\test_data"
+    TRAIN_DIR = r"C:\Users\ander\Documents\common-voice-dev-experiment-mfcc\gender\train_data"
+    VAL_DIR = r"C:\Users\ander\Documents\common-voice-dev-experiment-mfcc\gender\val_data"
+    TEST_DIR = r"C:\Users\ander\Documents\common-voice-dev-experiment-mfcc\gender\test_data"

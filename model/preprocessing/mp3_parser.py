@@ -1,18 +1,14 @@
 import os
-
-import numpy as np
-import pandas as pd
-from pydub import AudioSegment
-from python_speech_features import mfcc
-
-import librosa
-from model.config import config
-from utlis import envelope
-
-
 import warnings
 
+import librosa
+import numpy as np
+import pandas as pd
+
+from model.config import config
+
 warnings.filterwarnings("ignore")
+
 
 def _set_frame_rate(wav_file, frame_rate=config.FRAME['FRAME_RATE']):
     wav_file.set_frame_rate(frame_rate=frame_rate)
@@ -51,32 +47,36 @@ class MP3_Parser:
         self.label_data = data_labels(self.data_path, label=self.data_label)
         self.document_path = document_path
         self.mel_seq_count = mel_seq_count
-        self.timeseries_length = 128
 
     def convert_to_wav(self, clips_name: set) -> None:
         path = os.path.join(self.clips_dir, clips_name)
 
+        sample_length_in_seconds = 1
+
         try:
-            y, sr = librosa.load(path)
-            mfcc = librosa.feature.mfcc(y=y, sr=sr, hop_length=self.hop_length, n_mfcc=13)
+            signal, sample_rate = librosa.load(path)
+            duration = len(signal) // sample_rate
+            start = 0
+            step = int(sample_length_in_seconds * sample_rate)
 
-            spectral_center = librosa.feature.spectral_centroid(y=y, sr=sr, hop_length=self.hop_length)
-            chroma = librosa.feature.chroma_stft(y=y, sr=sr, hop_length=self.hop_length)
-            spectral_contrast = librosa.feature.spectral_contrast(y=y, sr=sr, hop_length=self.hop_length)
-            data = np.zeros((self.timeseries_length, 33), dtype=np.float64)
-            data[:, 0:13] = mfcc.T[0:self.timeseries_length, :]
-            data[:, 13:14] = spectral_center.T[0:self.timeseries_length, :]
-            data[:, 14:26] = chroma.T[0:self.timeseries_length, :]
-            data[:, 26:33] = spectral_contrast.T[0:self.timeseries_length, :]
+            for i in range(1, duration+1):
+                mfcc = librosa.feature.mfcc(y=signal[start:start+step], sr=sample_rate, hop_length=self.hop_length,
+                                            n_mfcc=13)
 
-            clip_name = f'{clips_name.split(".")[0]}'
-            label_name = self.label_data[self.label_data.name == clip_name][self.data_label].values[0]
-            train_test_choice = np.random.choice(["train_data", "val_data", "test_data"], p=[0.7, 0.2, 0.1])
-            save_path = os.path.join(self.document_path, "gender", train_test_choice, label_name, clip_name + '.csv')
-            np.savetxt(save_path, data, delimiter=',')
+                assert mfcc.shape[1] == 44
+
+                clip_name = f'{clips_name.split(".")[0]}'
+                label_name = self.label_data[self.label_data.name == clip_name][self.data_label].values[0]
+                train_test_choice = np.random.choice(["train_data", "val_data", "test_data"], p=[0.7, 0.2, 0.1])
+                save_path = os.path.join(self.document_path, "gender", train_test_choice, label_name, clip_name + '_' + str(i) + '.csv')
+                np.savetxt(save_path, mfcc, delimiter=',')
+                start = step * i
 
         except IndexError:
             print(" The label for {} is NA "
                   ".......".format(clip_name))
         except ValueError:
             print(f" The MP3 for {clip_name} is too short")
+
+        except RuntimeError:
+            print(f" The MP3 for {clip_name} is corrupt, can't open it")

@@ -30,11 +30,13 @@ def run_training(model: type, train_dir: str, val_dir: str, RNN_TYPE) -> None:
     val_sample_weight = sample_weight(val_dataset)
 
     train_data_loader = DataLoader(
-        train_dataset, batch_size=config.MODEL_PARAM['BATCH_SIZE'], sampler=train_sample_weight, num_workers=4, drop_last=True
+        train_dataset, batch_size=config.MODEL_PARAM['BATCH_SIZE'], sampler=train_sample_weight, num_workers=4,
+        drop_last=True
     )
 
     val_data_loader = DataLoader(
-        val_dataset, batch_size=config.MODEL_PARAM['BATCH_SIZE'], sampler=val_sample_weight, num_workers=4, drop_last=True
+        val_dataset, batch_size=config.MODEL_PARAM['BATCH_SIZE'], sampler=val_sample_weight, num_workers=4,
+        drop_last=True
     )
 
     print('Successfully Uploaded Train and Validation data........ ')
@@ -46,7 +48,7 @@ def run_training(model: type, train_dir: str, val_dir: str, RNN_TYPE) -> None:
         output_size=config.MODEL_PARAM['OUTPUT_SIZE'],
         dropout=config.MODEL_PARAM['DROPOUT'],
         RNN_TYPE=RNN_TYPE,
-        batch_size = config.MODEL_PARAM['BATCH_SIZE']
+        batch_size=config.MODEL_PARAM['BATCH_SIZE']
     )
 
     print('LSTM Model has been initialized')
@@ -69,7 +71,6 @@ def generate_training_data(method, percentage):
 
     if method == "dev":
         mp3_list = mp3_list[0: round(len(mp3_list) * percentage)]
-
         mp3_list = set(mp3_list)
 
         parser = MP3_Parser(
@@ -94,15 +95,15 @@ def generate_training_data(method, percentage):
 
     else:
         return print("Skipping MP3 feature engineering. Will use existing mfcc data for training")
-
     print("Done Uploading Data for training")
 
 
 if __name__ == "__main__":
     import warnings
+
     warnings.filterwarnings("ignore")
 
-    generate_training_data(method="none", percentage=0.05)
+    # generate_training_data(method="none", percentage=0.005)
 
     run_training(
         model=AudioLSTM,
@@ -112,4 +113,4 @@ if __name__ == "__main__":
 
     )
 
-    predict.predict(r'C:\Users\ander\Documents\common-voice-dev-experiment\gender\test_data\male')
+    predict.predict(r'C:\Users\ander\Documents\common-voice-dev-experiment-mfcc\gender\test_data\female')
