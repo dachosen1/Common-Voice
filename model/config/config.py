@@ -28,7 +28,7 @@ class Bucket:
 
 
 MODEL_PARAM = dict(OUTPUT_SIZE=2,
-                   HIDDEN_DIM=128,
+                   HIDDEN_DIM=28,
                    NUM_LAYERS=4,
                    DROPOUT=0.30,
                    INPUT_SIZE=44,
@@ -37,7 +37,7 @@ MODEL_PARAM = dict(OUTPUT_SIZE=2,
 TRAIN_PARAM = dict(
     LEARNING_RATE=0.001,
     GRADIENT_CLIP=15,
-    EPOCH=10)
+    EPOCH=20)
 
 ALL_PARAM = dict(Train=MODEL_PARAM,
                  Model=MODEL_PARAM,
