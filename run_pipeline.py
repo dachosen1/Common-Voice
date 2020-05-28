@@ -54,7 +54,7 @@ def run_training(model: type, train_dir: str, val_dir: str, RNN_TYPE) -> None:
     print('LSTM Model has been initialized')
 
     trained_model = train(
-        model, train_data_loader, val_data_loader, early_stopping=False
+        model, train_data_loader, val_data_loader, early_stopping=True
     )
 
     trained_model_path = os.path.join(
@@ -103,7 +103,7 @@ if __name__ == "__main__":
 
     warnings.filterwarnings("ignore")
 
-    # generate_training_data(method="none", percentage=0.005)
+    generate_training_data(method="none", percentage=0.10)
 
     run_training(
         model=AudioLSTM,
@@ -113,4 +113,4 @@ if __name__ == "__main__":
 
     )
 
-    predict.predict(r'C:\Users\ander\Documents\common-voice-dev-experiment-mfcc\gender\test_data\female')
+    predict.predict(r'C:\Users\ander\Documents\common-voice-dev\gender\test_data\female')

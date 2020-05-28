@@ -35,7 +35,7 @@ class EarlyStopping:
     """
 
     def __init__(
-            self, threshold: int = 50, verbose: bool = False, delta: float = 0
+            self, threshold: int = 5, verbose: bool = False, delta: float = 0
     ) -> None:
         """
         :param threshold: How long to wait after last time validation loss improved. Default: 50
@@ -57,7 +57,7 @@ class EarlyStopping:
 
         if self.best_score is None:
             self.best_score = score
-            self.save_checkpoint(val_loss, model)
+            self.save_checkpoint(val_loss)
 
         elif score < self.best_score + self.delta:
             self.counter += 1
@@ -67,20 +67,16 @@ class EarlyStopping:
                 self.early_stop = True
         else:
             self.best_score = score
-            self.save_checkpoint(val_loss, model)
+            self.save_checkpoint(val_loss)
             self.counter = 0
 
-    def save_checkpoint(self, val_loss, model):
+    def save_checkpoint(self, val_loss):
         """Saves RNN_TYPE when validation loss decrease."""
         if self.verbose:
             print(
-                f"Validation loss decreased ({self.val_loss_min:.6f} --> {val_loss:.6f}).  Saving RNN_TYPE ..."
+                f"Validation loss decreased ({self.val_loss_min:.6f} --> {val_loss:.6f})"
             )
 
-        torch.save(
-            model.state_dict(),
-            "./trained_model/" + "/model_gender_{}.pt".format(__version__),
-        )
         self.val_loss_min = val_loss
 
 
@@ -92,7 +88,7 @@ def train(
         print_every: int = 10,
         epoch: int = config.TRAIN_PARAM['EPOCH'],
         gradient_clip: int = config.TRAIN_PARAM['GRADIENT_CLIP'],
-        early_stopping_threshold: int = 50,
+        early_stopping_threshold: int = 2,
         early_stopping: bool = True,
 ) -> object:
     """
@@ -125,6 +121,9 @@ def train(
     print('Start Training...................')
 
     for e in range(epoch):
+        if stopping.early_stop:
+            print("Early stopping")
+            break
         for train_inputs, train_labels in train_loader:
             counter += 1
             model.init_hidden()
@@ -167,12 +166,9 @@ def train(
                         pred=torch.max(val_output, dim=1).indices.data.cpu().numpy(), label=val_labels.cpu().numpy()
                     )
 
-                    if early_stopping:
-                        stopping(val_loss=val_loss, model=model)
 
-                        if stopping.early_stop:
-                            print("Early stopping")
-                            break
+
+
 
                     wandb.log({"Accuracy/val": val_acc}, step=counter)
                     wandb.log({"F1/val": val_f1}, step=counter)
@@ -190,6 +186,16 @@ def train(
                 )
 
                 model.train()
+
+                if early_stopping:
+                    stopping(val_loss=val_loss, model=model)
+                    if stopping.early_stop:
+                        print('Tesing')
+                        break
+
+            if stopping.early_stop:
+                print("Early stopping")
+                break
 
     wandb.sklearn.plot_confusion_matrix(val_labels.cpu().numpy(),
                                         torch.max(val_output, dim=1).indices.data.cpu().numpy(),

@@ -60,12 +60,12 @@ class GcpTrainPipeline:
 class LocalStorage:
     WAV_DIR = r"C:\Users\ander\Documents\common-voice-data\wav"
     ROOT_DIR = r"C:\Users\ander\Documents\common-voice-data"
-    DEV_DIR = r"C:\Users\ander\Documents\common-voice-dev-experiment-mfcc"
+    DEV_DIR = r"C:\Users\ander\Documents\common-voice-dev"
     CLIPS_DIR = r"C:\Users\ander\Documents\common-voice-data\clips"
     TRAIN_DIR = r"C:\Users\ander\Documents\common-voice-dev"
 
 
 class LocalTrainPipeline:
-    TRAIN_DIR = r"C:\Users\ander\Documents\common-voice-dev-experiment-mfcc\gender\train_data"
-    VAL_DIR = r"C:\Users\ander\Documents\common-voice-dev-experiment-mfcc\gender\val_data"
-    TEST_DIR = r"C:\Users\ander\Documents\common-voice-dev-experiment-mfcc\gender\test_data"
+    TRAIN_DIR = r"C:\Users\ander\Documents\common-voice-dev\gender\train_data"
+    VAL_DIR = r"C:\Users\ander\Documents\common-voice-dev\gender\val_data"
+    TEST_DIR = r"C:\Users\ander\Documents\common-voice-dev\gender\test_data"
