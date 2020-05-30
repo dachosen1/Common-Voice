@@ -24,6 +24,7 @@ pandas==1.0.4
 pathtools==0.1.2
 promise==2.3
 psutil==5.7.0
+pyaudio~=0.2.11
 pycparser==2.20
 pydub==0.24.0
 pyparsing==2.4.7
