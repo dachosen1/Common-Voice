@@ -54,7 +54,7 @@ def run_training(model: type, train_dir: str, val_dir: str, RNN_TYPE) -> None:
     print('LSTM Model has been initialized')
 
     trained_model = train(
-        model, train_data_loader, val_data_loader, early_stopping=True
+        model, train_data_loader, val_data_loader, early_stopping=False
     )
 
     trained_model_path = os.path.join(

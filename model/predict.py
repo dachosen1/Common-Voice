@@ -33,5 +33,3 @@ def predict(dir_path):
         print(f'Prediction: {label}, Probability: {round(float(prob.flatten()[0]), 5)}')
 
 
-if __name__ == '__main__':
-    predict()

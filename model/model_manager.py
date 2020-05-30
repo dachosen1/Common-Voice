@@ -88,7 +88,7 @@ def train(
         print_every: int = 10,
         epoch: int = config.TRAIN_PARAM['EPOCH'],
         gradient_clip: int = config.TRAIN_PARAM['GRADIENT_CLIP'],
-        early_stopping_threshold: int = 2,
+        early_stopping_threshold: int = 20,
         early_stopping: bool = True,
 ) -> object:
     """
@@ -121,9 +121,6 @@ def train(
     print('Start Training...................')
 
     for e in range(epoch):
-        if stopping.early_stop:
-            print("Early stopping")
-            break
         for train_inputs, train_labels in train_loader:
             counter += 1
             model.init_hidden()
@@ -192,10 +189,6 @@ def train(
                     if stopping.early_stop:
                         print('Tesing')
                         break
-
-            if stopping.early_stop:
-                print("Early stopping")
-                break
 
     wandb.sklearn.plot_confusion_matrix(val_labels.cpu().numpy(),
                                         torch.max(val_output, dim=1).indices.data.cpu().numpy(),
