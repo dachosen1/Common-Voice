@@ -1,0 +1,17 @@
+{
+  "name": "Common-Voice",
+  "version": "0.0.1",
+  "description": "",
+  "keywords": "",
+  "license": "",
+  "author": "",
+  "scripts": {
+    "build": "parcel build ../../../../Projects/Common-Voice/commonvoice/templates/index.html",
+    "dev": "parcel ../../../../Projects/Common-Voice/commonvoice/templates/index.html --open",
+    "start": "npm run build && npm run dev",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "devDependencies": {
+    "parcel-bundler": "^1.12.4"
+  }
+}

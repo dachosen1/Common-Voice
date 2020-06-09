@@ -10,17 +10,18 @@ from tqdm import tqdm
 from model import __version__
 from model import predict
 from model.LSTM import AudioLSTM
-from model.config import config
+from model.config import config, logging_config
 from model.model_manager import train
 from model.preprocessing.mp3_parser import MP3_Parser
 from utlis import csv_loader, sample_weight
 import warnings
 
 warnings.filterwarnings("ignore")
+
+logging_config.get_logger()
 _logger = logging.getLogger(__name__)
 
 torch.manual_seed(0)
-
 
 def run_training(model: type, train_dir: str, val_dir: str, RNN_TYPE) -> None:
     train_dataset = DatasetFolder(root=train_dir, loader=csv_loader, extensions=".csv")
@@ -39,7 +40,7 @@ def run_training(model: type, train_dir: str, val_dir: str, RNN_TYPE) -> None:
         drop_last=True
     )
 
-    print('Successfully Uploaded Train and Validation data........ ')
+    _logger.info('Successfully Uploaded Train and Validation data........ ')
 
     model = model(
         num_layer=config.MODEL_PARAM['NUM_LAYERS'],
@@ -51,7 +52,7 @@ def run_training(model: type, train_dir: str, val_dir: str, RNN_TYPE) -> None:
         batch_size=config.MODEL_PARAM['BATCH_SIZE']
     )
 
-    print('LSTM Model has been initialized')
+    _logger.info('LSTM Model has been initialized')
 
     trained_model = train(
         model, train_data_loader, val_data_loader, early_stopping=False
@@ -61,7 +62,7 @@ def run_training(model: type, train_dir: str, val_dir: str, RNN_TYPE) -> None:
         config.TRAINED_MODEL_DIR, config.GENDER_MODEL_NAME + __version__ + ".pt"
     )
 
-    _logger.info("Save RNN_TYPE in directory")
+    _logger.info(f"Save Model version {__version__} in directory")
     torch.save(trained_model.state_dict(), trained_model_path)
 
 
@@ -80,7 +81,7 @@ def generate_training_data(method, percentage):
         )
 
         with futures.ThreadPoolExecutor() as executor:
-            tqdm(executor.map(parser.convert_to_wav, mp3_list))
+            tqdm(executor.map(parser.convert_to_mfcc, mp3_list))
 
     elif method == "train":
         mp3_list = set(mp3_list)
@@ -91,11 +92,11 @@ def generate_training_data(method, percentage):
         )
 
         with futures.ThreadPoolExecutor() as executor:
-            tqdm(executor.map(parser.convert_to_wav, mp3_list))
+            tqdm(executor.map(parser.convert_to_mfcc, mp3_list))
 
     else:
-        return print("Skipping MP3 feature engineering. Will use existing mfcc data for training")
-    print("Done Uploading Data for training")
+        _logger.info("Skipping MP3 feature engineering. Will use existing mfcc data for training")
+    _logger.info("Done Uploading Data for training")
 
 
 if __name__ == "__main__":
@@ -103,7 +104,7 @@ if __name__ == "__main__":
 
     warnings.filterwarnings("ignore")
 
-    generate_training_data(method="none", percentage=0.10)
+    generate_training_data(method="none", percentage=0.01)
 
     run_training(
         model=AudioLSTM,
