@@ -44,7 +44,7 @@ subprocess32==3.5.4
 threadpoolctl==2.1.0
 tqdm==4.46.0
 urllib3==1.25.9
-wandb==0.8.36
+wandb==0.9.0
 watchdog==0.10.2
 
 torchvision~=0.6.0
