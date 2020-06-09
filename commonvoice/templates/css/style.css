@@ -1,0 +1,114 @@
+@import url('https://fonts.googleapis.com/css?family=Ramaraja:400,500,700');
+
+*, *::before, *::after {
+    box-sizing: border-box;
+}
+
+body {
+    padding: 0;
+    margin: 0;
+    position: relative;
+    background: rgba(237, 210, 210, 0.14);
+    min-height: 100vh;
+}
+
+.main-header {
+    height: 140px;
+}
+
+.main-nav ul, .footer-nav ul {
+    display: flex;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.main-nav a, .footer-nav a {
+    color: inherit;
+    text-decoration: none;
+    padding: 1em;
+}
+
+.main-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.main-header img{
+    width: 3rem;
+}
+
+.brand-logo-name {
+    margin-left: 1rem;
+    font-family: Ramaraja,sans-serif;
+    font-style: normal;
+    font-weight: normal;
+    line-height: 60px;
+    display: flex;
+    align-items: center;
+    color: #000000;
+}
+
+.container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 40px;
+    flex-grow: 1;
+}
+
+.brand-logo {
+    display: flex;
+    align-items: center;
+    font-size: 1.25em;
+    color: inherit;
+    text-decoration: none;
+}
+
+.audio-mic {
+    display: flex;
+    position: absolute;
+    width: 200px;
+    height: 200px;
+    left: 585px;
+    top: 320px;
+}
+.audio-mic button{
+    border: 0;
+    background: transparent
+}
+
+
+.audio-mic img{
+    width: 9em;
+}
+
+.call-to-action{
+    position: absolute;
+    justify-content: space-between;
+    width: 954px;
+    height: 155px;
+    left: 254px;
+    top: 233px;
+    font-family: Ramaraja,sans-serif;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 25px;
+    line-height: 96px;
+    display: flex;
+    align-items: center;
+    text-align: center;
+    border-radius: 25px;
+    color: #000000;
+}
+
+.main-footer{
+  position: absolute;
+  width: 1420px;
+  height: 57px;
+  left: 15px;
+  top: 935px;
+
+  background: #C4C4C4;
+
+}

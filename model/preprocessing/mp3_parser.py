@@ -4,11 +4,12 @@ import warnings
 import librosa
 import numpy as np
 import pandas as pd
-
+import logging
 from model.config import config
 
 warnings.filterwarnings("ignore")
 
+_logger = logging.getLogger(__name__)
 
 def _set_frame_rate(wav_file, frame_rate=config.FRAME['FRAME_RATE']):
     wav_file.set_frame_rate(frame_rate=frame_rate)
@@ -46,13 +47,17 @@ class MP3_Parser:
         self.label_data = data_labels(self.data_path, label=self.data_label)
         self.document_path = document_path
 
-    def convert_to_wav(self, clips_name: set) -> None:
+    def convert_to_mfcc(self, clips_name: set) -> None:
         path = os.path.join(self.clips_dir, clips_name)
 
         sample_length_in_seconds = 1
 
         try:
             signal, sample_rate = librosa.load(path)
+
+            # Strip out moments of silence
+            signal = signal[np.abs(signal) > 0.02]
+
             duration = len(signal) // sample_rate
             start = 0
             step = int(sample_length_in_seconds * sample_rate)
@@ -72,10 +77,10 @@ class MP3_Parser:
                 start = step * i
 
         except IndexError:
-            print(f" The label for {clip_name} is NA ")
+            _logger.info(f" The label for {clip_name} is NA ")
 
         except ValueError:
-            print(f" The MP3 for {clip_name} is too short")
+            _logger.info(f" The MP3 for {clip_name} is too short")
 
         except RuntimeError:
-            print(f" The MP3 for {clip_name} is corrupt, can't open it")
+            _logger.info(f" The MP3 for {clip_name} is corrupt, can't open it")
