@@ -17,7 +17,7 @@ kiwisolver==1.2.0
 librosa==0.7.2
 llvmlite==0.32.1
 matplotlib==3.2.1
-numba==0.49.1
+numba==0.50.0
 numpy==1.18.4
 nvidia-ml-py3==7.352.0
 pandas~=1.0.3
