@@ -4,12 +4,13 @@ import warnings
 import librosa
 import numpy as np
 import pandas as pd
-
+import logging
 from model.config import config
 from utlis import envelope, convert_to_mel_db
 
 warnings.filterwarnings("ignore")
 
+_logger = logging.getLogger(__name__)
 
 def check_dir(path):
     if os.path.exists(path) is False:
@@ -52,10 +53,11 @@ class MP3_Parser:
     def convert_to_wav(self, clips_name: set) -> None:
         path = os.path.join(self.clips_dir, clips_name)
 
-        sample_length_in_seconds = 1
-
         try:
             signal, sample_rate = librosa.load(path, sr=config.FRAME['SAMPLE_RATE'])
+
+            # Strip out moments of silence
+            signal = signal[np.abs(signal) > 0.02]
             duration = len(signal) // sample_rate
             wrap = envelope(y=signal, signal_rate=sample_rate, threshold=config.FRAME['MASK_THRESHOLD'])
             signal = signal[wrap]
@@ -80,12 +82,12 @@ class MP3_Parser:
                 save_path = os.path.join(dir_path, clip_name + '_' + str(i) + '.csv')
                 np.savetxt(save_path, melspectrogram_DB.T, delimiter=',')
                 start = step * i
-
+                
         except IndexError:
-            print(f" The label for {clip_name} is NA ")
+            _logger.info(f" The label for {clip_name} is NA ")
 
         except ValueError:
-            print(f" The MP3 for {clip_name} is too short")
+            _logger.info(f" The MP3 for {clip_name} is too short")
 
         except RuntimeError:
-            print(f" The MP3 for {clip_name} is corrupt, can't open it")
+            _logger.info(f" The MP3 for {clip_name} is corrupt, can't open it")

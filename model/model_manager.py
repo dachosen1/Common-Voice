@@ -14,8 +14,11 @@ from sklearn.metrics import (
 
 from model import __version__
 from model.config import config
+import logging
+
 
 warnings.filterwarnings("ignore")
+_logger = logging.getLogger(__name__)
 
 wandb.init('Common-Voice', config=config.ALL_PARAM)
 
@@ -117,7 +120,7 @@ def train(
         model.cuda()
 
     counter = 0
-    print('Start Training...................')
+    _logger.info('Start Training...................')
 
     for e in range(epoch):
         for train_inputs, train_labels in train_loader:
@@ -161,20 +164,15 @@ def train(
                     val_acc, val_f1, val_pr, val_rc = _metric_summary(
                         pred=torch.max(val_output, dim=1).indices.data.cpu().numpy(), label=val_labels.cpu().numpy()
                     )
-                    wandb.log({"Accuracy/val": val_acc}, step=counter)
-                    wandb.log({"F1/val": val_f1}, step=counter)
-                    wandb.log({"Precision/val": val_pr}, step=counter)
-                    wandb.log({"Recall/val": val_rc}, step=counter)
-                    wandb.log({"Loss/val": val_loss.item()}, step=counter)
 
-                print(
-                    "Epoch: {}/{}...".format(e + 1, epoch),
-                    "Step: {}...".format(counter),
-                    "Training Loss: {:.6f}...".format(train_loss.item()),
-                    "Validation Loss: {:.6f}".format(val_loss.item()),
-                    "Train Accuracy: {:.6f}".format(train_acc),
-                    "Test Accuracy: {:.6f}".format(val_acc),
-                )
+                    _logger.info(
+                        "Epoch: {}/{}...".format(e + 1, epoch),
+                        "Step: {}...".format(counter),
+                        "Training Loss: {:.6f}...".format(train_loss.item()),
+                        "Validation Loss: {:.6f}".format(val_loss.item()),
+                        "Train Accuracy: {:.6f}".format(train_acc),
+                        "Test Accuracy: {:.6f}".format(val_acc),
+                    )
 
                 model.train()
 
@@ -189,5 +187,5 @@ def train(
                                         valid_loader.dataset.classes)
     model_name = config.GENDER_MODEL_NAME + __version__ + '.pt'
     torch.save(model.state_dict(), os.path.join(wandb.run.dir, model_name))
-    print('Done Training')
+    _logger.info('Done Training')
     return model
