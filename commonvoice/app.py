@@ -1,19 +1,20 @@
 import time
 import warnings
 
-import librosa
+
 import numpy as np
 import pyaudio
 import torch
 
 from model.config import config
 from model.pipeline_mananger import load_model
+from utlis import convert_to_mel_db, generate_pred
 
 warnings.filterwarnings("ignore")
 
 FORMAT = pyaudio.paFloat32
 CHANNELS = 1
-RATE = 22050
+RATE = 16000
 
 model, path = load_model(config.GENDER_MODEL_NAME)
 model.load_state_dict(torch.load(path))
@@ -58,24 +59,12 @@ stream.start_stream()
 while True:
     try:
 
-        if len(frames) >= 21:
+        if len(frames) >= 32:
             signal = np.concatenate(tuple(frames))
             wave_period = signal[-RATE:].astype(np.float)
-            mffc = librosa.feature.mfcc(wave_period, n_mfcc=13, hop_length=512, sr=RATE)
-
-            data = torch.from_numpy(mffc).view(1, 13, 44).float()
-
-            if torch.cuda.is_available():
-                model.cuda()
-                data = data.cuda()
-
-            out = model(data)
-            prob = torch.topk(out, k=1).values
-            pred = torch.topk(out, k=1).indices
-            label = config.GENDER_LABEL[int(pred.cpu().data.numpy())]
-            print(f'Prediction: {label}, Probability: {round(float(prob.flatten()[0]), 5)}')
-
-        time.sleep(0.1)
+            melspectrogram_DB = convert_to_mel_db(wave_period)
+            generate_pred(melspectrogram_DB, model, config.GENDER_LABEL)
+        time.sleep(1)
 
     except KeyboardInterrupt:
         break

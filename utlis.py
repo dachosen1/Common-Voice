@@ -3,6 +3,7 @@ from __future__ import unicode_literals
 import itertools
 import os
 import shutil
+import warnings
 
 import matplotlib
 import matplotlib.pyplot as plt
@@ -10,9 +11,14 @@ import numpy as np
 import pandas as pd
 import torch
 import tqdm
+from librosa import power_to_db
+from librosa.feature import melspectrogram
 from pydub import AudioSegment
 from torch.utils.data import WeightedRandomSampler
+
 from model.config import config
+
+warnings.filterwarnings("ignore")
 
 
 def csv_loader(path: str) -> torch.Tensor:
@@ -107,10 +113,45 @@ def sample_weight(data_folder):
     :param data_folder: Dataset folder object
     :return:
     """
-    class_sample_count = np.array([len([i for i in data_folder.targets if i == t]) for t in range(0, len(data_folder.classes))])
+    class_sample_count = np.array(
+        [len([i for i in data_folder.targets if i == t]) for t in range(0, len(data_folder.classes))])
     weight = 1 / class_sample_count
     samples_weight = np.array([weight[t] for t in data_folder.targets])
     samples_weight = torch.from_numpy(samples_weight)
     samples_weight = samples_weight.double()
     sampler = WeightedRandomSampler(samples_weight, len(samples_weight))
     return sampler
+
+
+def convert_to_mel_db(mel: object) -> np.ndarray:
+    """
+    convert a floating point time series to decibel (dB) units
+    :param mel: floating point time series
+    :return:
+    """
+    specto = melspectrogram(y=mel, sr=config.FRAME['SAMPLE_RATE'], n_mels=config.FRAME['N_MELS'],
+                            fmax=config.FRAME['FMAX'])
+    specto_db = power_to_db(specto, ref=np.max)
+
+    return specto_db
+
+
+def generate_pred(mel, model, label):
+    """
+    Generates audio prediction and label
+    :param mel: decibel (dB) units
+    :param model: torch model
+    :param label: label dictionary
+    :return: prints prediction label and probability
+    """
+    mel = torch.from_numpy(mel).view(1, -1, config.FRAME['N_MELS']).float()
+
+    if torch.cuda.is_available():
+        model.cuda()
+        mel = mel.cuda()
+
+    out = model(mel)
+    prob = torch.topk(out, k=1).values
+    pred = torch.topk(out, k=1).indices
+    label_name = label[int(pred.cpu().data.numpy())]
+    print(f'Prediction: {label_name}, Probability: {round(float(prob.flatten()[0]), 5)}')

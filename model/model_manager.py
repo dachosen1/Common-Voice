@@ -1,4 +1,5 @@
 import os
+import warnings
 
 import numpy as np
 import torch
@@ -13,8 +14,6 @@ from sklearn.metrics import (
 
 from model import __version__
 from model.config import config
-
-import warnings
 
 warnings.filterwarnings("ignore")
 
@@ -92,7 +91,7 @@ def train(
         early_stopping: bool = True,
 ) -> object:
     """
-    :param model:  Torch model to
+    :param model:  Torch model
     :param train_loader:  Training Folder Datafolder
     :param valid_loader: Validation Folder Data Folder
     :param learning_rate: Learning rate to improve loss function
@@ -162,11 +161,6 @@ def train(
                     val_acc, val_f1, val_pr, val_rc = _metric_summary(
                         pred=torch.max(val_output, dim=1).indices.data.cpu().numpy(), label=val_labels.cpu().numpy()
                     )
-
-
-
-
-
                     wandb.log({"Accuracy/val": val_acc}, step=counter)
                     wandb.log({"F1/val": val_f1}, step=counter)
                     wandb.log({"Precision/val": val_pr}, step=counter)
@@ -187,7 +181,7 @@ def train(
                 if early_stopping:
                     stopping(val_loss=val_loss, model=model)
                     if stopping.early_stop:
-                        print('Tesing')
+                        print('Stopping Model Early')
                         break
 
     wandb.sklearn.plot_confusion_matrix(val_labels.cpu().numpy(),

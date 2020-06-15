@@ -1,5 +1,5 @@
 import pathlib
-
+import numpy as np
 import model
 
 PACKAGE_ROOT = pathlib.Path(model.__file__).resolve().parent
@@ -9,11 +9,10 @@ GENDER_MODEL_NAME = "model_gender-"
 AGE_MODEL_NAME = "model_age-"
 COUNTRY_MODEL_NAME = "model_country-"
 
-FRAME = dict(FRAME_RATE=48000,
-             OBSERVATION_PER_SECOND=10)
-
-WAV_PARAM = dict(SEQ_LEN=FRAME['FRAME_RATE'] / FRAME['OBSERVATION_PER_SECOND']
-                 )
+FRAME = dict(SAMPLE_RATE=16000,
+             FMAX=8000,
+             N_MELS=128,
+             MASK_THRESHOLD=0.01)
 
 GENDER_LABEL = {0: 'female',
                 1: 'male'}
@@ -29,15 +28,15 @@ class Bucket:
 
 MODEL_PARAM = dict(OUTPUT_SIZE=2,
                    HIDDEN_DIM=128,
-                   NUM_LAYERS=5,
+                   NUM_LAYERS=2,
                    DROPOUT=0.30,
-                   INPUT_SIZE=44,
-                   BATCH_SIZE=1024)
+                   INPUT_SIZE=FRAME['N_MELS'],
+                   BATCH_SIZE=256)
 
 TRAIN_PARAM = dict(
     LEARNING_RATE=0.001,
     GRADIENT_CLIP=15,
-    EPOCH=15)
+    EPOCH=30)
 
 ALL_PARAM = dict(Train=TRAIN_PARAM,
                  Model=MODEL_PARAM,
