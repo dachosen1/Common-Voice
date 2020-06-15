@@ -120,7 +120,6 @@ def train(
         model.cuda()
 
     counter = 0
-    _logger.info('Start Training...................')
 
     for e in range(epoch):
         for train_inputs, train_labels in train_loader:
@@ -164,15 +163,11 @@ def train(
                     val_acc, val_f1, val_pr, val_rc = _metric_summary(
                         pred=torch.max(val_output, dim=1).indices.data.cpu().numpy(), label=val_labels.cpu().numpy()
                     )
-
-                    _logger.info(
-                        "Epoch: {}/{}...".format(e + 1, epoch),
-                        "Step: {}...".format(counter),
-                        "Training Loss: {:.6f}...".format(train_loss.item()),
-                        "Validation Loss: {:.6f}".format(val_loss.item()),
-                        "Train Accuracy: {:.6f}".format(train_acc),
-                        "Test Accuracy: {:.6f}".format(val_acc),
-                    )
+                    wandb.log({"Accuracy/val": val_acc}, step=counter)
+                    wandb.log({"F1/val": val_f1}, step=counter)
+                    wandb.log({"Precision/val": val_pr}, step=counter)
+                    wandb.log({"Recall/val": val_rc}, step=counter)
+                    wandb.log({"Loss/val": val_loss.item()}, step=counter)
 
                 model.train()
 

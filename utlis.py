@@ -127,7 +127,7 @@ def convert_to_mel_db(mel: object) -> np.ndarray:
     """
     convert a floating point time series to decibel (dB) units
     :param mel: floating point time series
-    :return:
+    :return: np.ndarray
     """
     specto = melspectrogram(y=mel, sr=config.FRAME['SAMPLE_RATE'], n_mels=config.FRAME['N_MELS'],
                             fmax=config.FRAME['FMAX'])

@@ -23,6 +23,7 @@ _logger = logging.getLogger(__name__)
 
 torch.manual_seed(0)
 
+
 def run_training(model: type, train_dir: str, val_dir: str, RNN_TYPE) -> None:
     train_dataset = DatasetFolder(root=train_dir, loader=csv_loader, extensions=".csv")
     val_dataset = DatasetFolder(root=val_dir, loader=csv_loader, extensions=".csv")
@@ -101,7 +102,7 @@ def generate_training_data(method, percentage):
 
 if __name__ == "__main__":
     warnings.filterwarnings("ignore")
-    
+
     generate_training_data(method="none", percentage=0.01)
 
     run_training(

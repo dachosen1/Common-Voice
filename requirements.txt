@@ -10,3 +10,4 @@ webapp2~=2.5.2
 setuptools~=46.4.0
 matplotlib~=3.2.1
 pydub~=0.24.0
+numba==0.50.0

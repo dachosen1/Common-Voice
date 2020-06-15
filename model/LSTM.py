@@ -55,12 +55,12 @@ class AudioLSTM(nn.Module):
         self.linear = nn.Linear(self.hidden_size, self.output_size)
         self.out = nn.Sigmoid()
 
-    def forward(self, mfcc):
+    def forward(self, sequence):
         """
-        :param mfcc: Mel-frequency cepstrum audio sequence
+        :param sequence: audio sequence
         :return: tensor representing probability of each output
         """
-        mfcc_reshape = mfcc.float().permute(1, 0, 2)
+        mfcc_reshape = sequence.float().permute(1, 0, 2)
         lstm_out, _ = self.RNN_TYPE(mfcc_reshape)
         lstm_out = self.dropout(lstm_out)
         logits = self.linear(lstm_out[-1])

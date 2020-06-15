@@ -1,5 +1,4 @@
 import pathlib
-import numpy as np
 import model
 
 PACKAGE_ROOT = pathlib.Path(model.__file__).resolve().parent

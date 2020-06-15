@@ -14,7 +14,6 @@ warnings.filterwarnings("ignore")
 
 FORMAT = pyaudio.paFloat32
 CHANNELS = 1
-RATE = 16000
 
 model, path = load_model(config.GENDER_MODEL_NAME)
 model.load_state_dict(torch.load(path))
@@ -33,7 +32,7 @@ start_t = time.time()
 
 stream = p.open(format=FORMAT,
                 channels=CHANNELS,
-                rate=RATE,
+                rate=config.FRAME['SAMPLE_RATE'],
                 input=True)
 max_frames = 50
 frames = []
@@ -50,7 +49,7 @@ start_t = time.time()
 
 stream = p.open(format=FORMAT,
                 channels=CHANNELS,
-                rate=RATE,
+                rate=config.FRAME['SAMPLE_RATE'],
                 input=True,
                 stream_callback=callback)
 
@@ -61,7 +60,7 @@ while True:
 
         if len(frames) >= 32:
             signal = np.concatenate(tuple(frames))
-            wave_period = signal[-RATE:].astype(np.float)
+            wave_period = signal[-config.FRAME['SAMPLE_RATE']:].astype(np.float)
             melspectrogram_DB = convert_to_mel_db(wave_period)
             generate_pred(melspectrogram_DB, model, config.GENDER_LABEL)
         time.sleep(1)
