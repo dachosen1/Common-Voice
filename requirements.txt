@@ -1,7 +1,7 @@
 pandas~=1.0.3
 librosa~=0.7.2
 numpy~=1.18.4
-tqdm~=4.46.0
+tqdm~=4.46.1
 wandb~=0.8.36
 scikit-learn~=0.23.0
 joblib~=0.14.1
