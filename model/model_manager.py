@@ -1,4 +1,5 @@
 import os
+import warnings
 
 import numpy as np
 import torch
@@ -15,8 +16,6 @@ from model import __version__
 from model.config import config
 import logging
 
-
-import warnings
 
 warnings.filterwarnings("ignore")
 _logger = logging.getLogger(__name__)
@@ -95,7 +94,7 @@ def train(
         early_stopping: bool = True,
 ) -> object:
     """
-    :param model:  Torch model to
+    :param model:  Torch model
     :param train_loader:  Training Folder Datafolder
     :param valid_loader: Validation Folder Data Folder
     :param learning_rate: Learning rate to improve loss function
@@ -166,12 +165,6 @@ def train(
                         pred=torch.max(val_output, dim=1).indices.data.cpu().numpy(), label=val_labels.cpu().numpy()
                     )
 
-                    wandb.log({"Accuracy/val": val_acc}, step=counter)
-                    wandb.log({"F1/val": val_f1}, step=counter)
-                    wandb.log({"Precision/val": val_pr}, step=counter)
-                    wandb.log({"Recall/val": val_rc}, step=counter)
-                    wandb.log({"Loss/val": val_loss.item()}, step=counter)
-
                     _logger.info(
                         "Epoch: {}/{}...".format(e + 1, epoch),
                         "Step: {}...".format(counter),
@@ -186,7 +179,7 @@ def train(
                 if early_stopping:
                     stopping(val_loss=val_loss, model=model)
                     if stopping.early_stop:
-                        print('Tesing')
+                        print('Stopping Model Early')
                         break
 
     wandb.sklearn.plot_confusion_matrix(val_labels.cpu().numpy(),

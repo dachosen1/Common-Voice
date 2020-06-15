@@ -1,5 +1,6 @@
 import logging
 import os
+import warnings
 from concurrent import futures
 
 import torch
@@ -14,7 +15,6 @@ from model.config import config, logging_config
 from model.model_manager import train
 from model.preprocessing.mp3_parser import MP3_Parser
 from utlis import csv_loader, sample_weight
-import warnings
 
 warnings.filterwarnings("ignore")
 
@@ -100,10 +100,8 @@ def generate_training_data(method, percentage):
 
 
 if __name__ == "__main__":
-    import warnings
-
     warnings.filterwarnings("ignore")
-
+    
     generate_training_data(method="none", percentage=0.01)
 
     run_training(
@@ -111,7 +109,6 @@ if __name__ == "__main__":
         train_dir=config.LocalTrainPipeline.TRAIN_DIR,
         val_dir=config.LocalTrainPipeline.VAL_DIR,
         RNN_TYPE='LSTM'
-
     )
 
     predict.predict(r'C:\Users\ander\Documents\common-voice-dev\gender\test_data\female')
