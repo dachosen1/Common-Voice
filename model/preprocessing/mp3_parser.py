@@ -6,13 +6,14 @@ import numpy as np
 import pandas as pd
 
 from model.config import config
+from utlis import envelope, convert_to_mel_db
 
 warnings.filterwarnings("ignore")
 
 
-def _set_frame_rate(wav_file, frame_rate=config.FRAME['FRAME_RATE']):
-    wav_file.set_frame_rate(frame_rate=frame_rate)
-    return wav_file
+def check_dir(path):
+    if os.path.exists(path) is False:
+        os.mkdir(path)
 
 
 def data_labels(data_path, label):
@@ -46,29 +47,38 @@ class MP3_Parser:
         self.label_data = data_labels(self.data_path, label=self.data_label)
         self.document_path = document_path
 
+        check_dir(os.path.join(self.document_path, self.data_label))
+
     def convert_to_wav(self, clips_name: set) -> None:
         path = os.path.join(self.clips_dir, clips_name)
 
         sample_length_in_seconds = 1
 
         try:
-            signal, sample_rate = librosa.load(path)
+            signal, sample_rate = librosa.load(path, sr=config.FRAME['SAMPLE_RATE'])
             duration = len(signal) // sample_rate
+            wrap = envelope(y=signal, signal_rate=sample_rate, threshold=config.FRAME['MASK_THRESHOLD'])
+            signal = signal[wrap]
             start = 0
             step = int(sample_length_in_seconds * sample_rate)
 
-            for i in range(1, duration+1):
-                mfcc = librosa.feature.mfcc(y=signal[start:start+step], sr=sample_rate, hop_length=self.hop_length,
-                                            n_mfcc=13)
+            for i in range(1, duration + 1):
+                data = signal[start:start + step]
 
-                assert mfcc.shape[1] == config.MODEL_PARAM['INPUT_SIZE']
+                melspectrogram_DB = convert_to_mel_db(data)
+
+                assert melspectrogram_DB.shape[0] == 128
+                assert melspectrogram_DB.shape[1] == 32
 
                 clip_name = f'{clips_name.split(".")[0]}'
                 label_name = self.label_data[self.label_data.name == clip_name][self.data_label].values[0]
                 train_test_choice = np.random.choice(["train_data", "val_data", "test_data"], p=[0.7, 0.2, 0.1])
-                save_path = os.path.join(self.document_path, "gender", train_test_choice, label_name, clip_name + '_'
-                                         + str(i) + '.csv')
-                np.savetxt(save_path, mfcc, delimiter=',')
+                dir_path = os.path.join(self.document_path, self.data_label, train_test_choice)
+                check_dir(dir_path)
+                dir_path = os.path.join(self.document_path, self.data_label, train_test_choice, label_name)
+                check_dir(dir_path)
+                save_path = os.path.join(dir_path, clip_name + '_' + str(i) + '.csv')
+                np.savetxt(save_path, melspectrogram_DB.T, delimiter=',')
                 start = step * i
 
         except IndexError:
