@@ -59,7 +59,7 @@ def remove_un_label_files(clips_names: list) -> None:
     """
     data = pd.read_csv("Development/data.csv")
     data_path = set(data.path)
-    clips_path = config.LocalStorage.CLIPS_DIR
+    clips_path = config.Storage.CLIPS_DIR
 
     delete_path = r"C:\Users\ander\Documents\delete"
 

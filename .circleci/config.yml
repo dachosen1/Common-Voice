@@ -4,18 +4,36 @@ orbs:
   python: circleci/python@0.2.1
 
 jobs:
-  build-and-test:
-    executor: python/default
+  Model Building Envnvironment:
+    docker:
+      - image: circleci/python:3.7.2
     steps:
       - checkout
-      - python/load-cache
-      - python/install-deps
-      - python/save-cache
-#       - run:
-#           command: ./manage.py test
-#           name: Test
+      - run:
+          name: Install Python Model Dependencies
+          command: |
+            pip install --upgrade pip --user
+            pip install -r model/requirements.txt
+            pip install wheel
+            pip install torch===1.5.1 torchvision===0.6.1 -f https://download.pytorch.org/whl/torch_stable.html --user
+
+  Model Deployment Environment:
+    docker:
+      - image: circleci/python:3.7.2
+    steps:
+    - checkout
+    - run:
+        name: Install Python Deployment Dependencies
+        command: |
+          pip install --upgrade pip --user
+          pip install -r commonvoice/requirements.txt
+          pip install torch===1.5.1 torchvision===0.6.1 -f https://download.pytorch.org/whl/torch_stable.html --user
+          pip install wheel
+          pip install commonvoice/PyAudio-0.2.11-cp37-cp37m-win_amd64.whl --user
 
 workflows:
-  main:
+  version: 2.1
+  build-env:
     jobs:
-      - build-and-test
+      - Model Building Envnvironment
+      - Model Deployment Environment

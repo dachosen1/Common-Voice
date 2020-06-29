@@ -10,7 +10,8 @@ from utlis import envelope, convert_to_mel_db
 
 warnings.filterwarnings("ignore")
 
-_logger = logging.getLogger(__name__)
+_logger = logging.getLogger('model')
+
 
 def check_dir(path):
     if os.path.exists(path) is False:
@@ -28,6 +29,22 @@ def data_labels(data_path, label):
     label_data = label_data[label_data[label].notna()]
     label_data = label_data[label_data[label] != "other"]
     return label_data
+
+
+def remove_silence(*, signal, sample_rate, threshold):
+    """
+    strip out dead audio space
+    :param signal: Audio sample signal
+    :param sample_rate: Audio Sample rate
+    :param threshold: silence threshold
+    :return:
+
+    """
+
+    signal = signal[np.abs(signal) > threshold]
+    wrap = envelope(y=signal, signal_rate=sample_rate, threshold=config.FRAME['MASK_THRESHOLD'])
+    signal = signal[wrap]
+    return signal
 
 
 class MP3_Parser:
@@ -52,15 +69,15 @@ class MP3_Parser:
 
     def convert_to_wav(self, clips_name: set) -> None:
         path = os.path.join(self.clips_dir, clips_name)
+        sample_length_in_seconds = 1
 
         try:
             signal, sample_rate = librosa.load(path, sr=config.FRAME['SAMPLE_RATE'])
+            duration = len(signal) // sample_rate
 
             # Strip out moments of silence
-            signal = signal[np.abs(signal) > 0.02]
-            duration = len(signal) // sample_rate
-            wrap = envelope(y=signal, signal_rate=sample_rate, threshold=config.FRAME['MASK_THRESHOLD'])
-            signal = signal[wrap]
+            signal = remove_silence(signal=signal, sample_rate=sample_rate, threshold=0.02)
+
             start = 0
             step = int(sample_length_in_seconds * sample_rate)
 
@@ -82,7 +99,7 @@ class MP3_Parser:
                 save_path = os.path.join(dir_path, clip_name + '_' + str(i) + '.csv')
                 np.savetxt(save_path, melspectrogram_DB.T, delimiter=',')
                 start = step * i
-                
+
         except IndexError:
             _logger.info(f" The label for {clip_name} is NA ")
 

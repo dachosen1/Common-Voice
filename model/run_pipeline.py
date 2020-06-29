@@ -11,15 +11,14 @@ from tqdm import tqdm
 from model import __version__
 from model import predict
 from model.LSTM import AudioLSTM
-from model.config import config, logging_config
+from model.config import config
 from model.model_manager import train
 from model.preprocessing.mp3_parser import MP3_Parser
 from utlis import csv_loader, sample_weight
 
 warnings.filterwarnings("ignore")
 
-logging_config.get_logger()
-_logger = logging.getLogger(__name__)
+_logger = logging.getLogger('model')
 
 torch.manual_seed(0)
 
@@ -68,7 +67,7 @@ def run_training(model: type, train_dir: str, val_dir: str, RNN_TYPE) -> None:
 
 
 def generate_training_data(method, percentage):
-    clips_path = config.LocalStorage.CLIPS_DIR
+    clips_path = config.Storage.CLIPS_DIR
     mp3_list = os.listdir(clips_path)
 
     if method == "dev":
@@ -76,24 +75,24 @@ def generate_training_data(method, percentage):
         mp3_list = set(mp3_list)
 
         parser = MP3_Parser(
-            data_path=config.LocalStorage.ROOT_DIR,
-            clips_dir=config.LocalStorage.CLIPS_DIR,
-            document_path=config.LocalStorage.DEV_DIR,
+            data_path=config.Storage.ROOT_DIR,
+            clips_dir=config.Storage.CLIPS_DIR,
+            document_path=config.Storage.DEV_DIR,
         )
 
         with futures.ThreadPoolExecutor() as executor:
-            tqdm(executor.map(parser.convert_to_mfcc, mp3_list))
+            tqdm(executor.map(parser.convert_to_wav(), mp3_list))
 
     elif method == "train":
         mp3_list = set(mp3_list)
         parser = MP3_Parser(
-            data_path=config.LocalStorage.ROOT_DIR,
-            clips_dir=config.LocalStorage.CLIPS_DIR,
-            document_path=config.LocalStorage.TRAIN_DIR,
+            data_path=config.Storage.ROOT_DIR,
+            clips_dir=config.Storage.CLIPS_DIR,
+            document_path=config.Storage.TRAIN_DIR,
         )
 
         with futures.ThreadPoolExecutor() as executor:
-            tqdm(executor.map(parser.convert_to_mfcc, mp3_list))
+            tqdm(executor.map(parser.convert_to_wav(), mp3_list))
 
     else:
         _logger.info("Skipping MP3 feature engineering. Will use existing mfcc data for training")
@@ -107,9 +106,9 @@ if __name__ == "__main__":
 
     run_training(
         model=AudioLSTM,
-        train_dir=config.LocalTrainPipeline.TRAIN_DIR,
-        val_dir=config.LocalTrainPipeline.VAL_DIR,
+        train_dir=config.Pipeline.TRAIN_DIR,
+        val_dir=config.Pipeline.VAL_DIR,
         RNN_TYPE='LSTM'
     )
 
-    predict.predict(r'C:\Users\ander\Documents\common-voice-dev\gender\test_data\female')
+    predict.directory_predict(r'C:\Users\ander\Documents\common-voice-dev\gender\test_data\female')

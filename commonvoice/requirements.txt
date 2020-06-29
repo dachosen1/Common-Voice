@@ -1,2 +1,3 @@
-pyaudio
-flask
+Flask==1.1.2
+numpy==1.18.5
+wheel
