@@ -5,7 +5,6 @@ orbs:
 
 jobs:
   test_commonvoice_model:
-    working_directory: ~/project
     docker:
       - image: circleci/python:3.7.2
     steps:
@@ -18,7 +17,6 @@ jobs:
             pip install torch===1.5.1 torchvision===0.6.1 -f https://download.pytorch.org/whl/torch_stable.html
 
   test_commonvoice_flask:
-    working_directory: ~/project
     docker:
       - image: circleci/python:3.7.2
     steps:
