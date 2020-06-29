@@ -33,5 +33,5 @@ workflows:
   version: 2.1
   test-all:
     jobs:
-      test_commonvoice_model
-      test_commonvoice_flask
+      - test_commonvoice_model
+      - test_commonvoice_flask
