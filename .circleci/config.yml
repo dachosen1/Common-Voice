@@ -29,7 +29,7 @@ jobs:
           pip install torch===1.5.1 torchvision===0.6.1 -f https://download.pytorch.org/whl/torch_stable.html
           pip install commonvoice/PyAudio-0.2.11-cp37-cp37m-win_amd64.whl
 
-workflow:
+workflows:
   version: 2.1
   test-all:
     jobs:
