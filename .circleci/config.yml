@@ -4,18 +4,36 @@ orbs:
   python: circleci/python@0.2.1
 
 jobs:
-  build-and-test:
-    executor: python/default
+  test_commonvoice_model:
+    working_directory: ~/project
+    docker:
+      - image: circleci/python:3.7.2
     steps:
       - checkout
-      - python/load-cache
-      - python/install-deps
-      - python/save-cache
-#       - run:
-#           command: ./manage.py test
-#           name: Test
+      - run:
+          name: Install Python Dependencies
+          command: |
+            pip install --upgrade pip
+            pip install -r model/requirements.txt
+            pip install torch===1.5.1 torchvision===0.6.1 -f https://download.pytorch.org/whl/torch_stable.html
 
-workflows:
-  main:
+  test_commonvoice_flask:
+    working_directory: ~/project
+    docker:
+      - image: circleci/python:3.7.2
+    steps:
+      -checkout
+    - run:
+        name: Test Flask Environment
+        command: |
+          pip install --upgrade pip
+          pip install -r commonvoice/requirements.txt
+          pip install torch===1.5.1 torchvision===0.6.1 -f https://download.pytorch.org/whl/torch_stable.html
+          pip install commonvoice/PyAudio-0.2.11-cp37-cp37m-win_amd64.whl
+
+workflow:
+  version: 2.1
+  test-all:
     jobs:
-      - build-and-test
+      test_commonvoice_model
+      test_commonvoice_flask

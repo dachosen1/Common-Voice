@@ -43,20 +43,7 @@ ALL_PARAM = dict(Train=TRAIN_PARAM,
                  )
 
 
-class GcpStorage:
-    CLIPS_DIR = "/home/jupyter/clips"
-    ROOT_DIR = "/home/jupyter/"
-    DEV_DIR = "/home/jupyter/common-voice-voice-train"
-
-
-class GcpTrainPipeline:
-    TRAIN_DIR = "/home/jupyter/wav/gender/train_data"
-    VAL_DIR = "/home/jupyter/wav/gender/val_data"
-    TEST_DIR = "/home/jupyter/wav/gender/test_data"
-
-
 class LocalStorage:
-    WAV_DIR = r"C:\Users\ander\Documents\common-voice-data\wav"
     ROOT_DIR = r"C:\Users\ander\Documents\common-voice-data"
     DEV_DIR = r"C:\Users\ander\Documents\common-voice-dev"
     CLIPS_DIR = r"C:\Users\ander\Documents\common-voice-data\clips"
