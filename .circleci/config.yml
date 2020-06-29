@@ -20,7 +20,7 @@ jobs:
     docker:
       - image: circleci/python:3.7.2
     steps:
-      -checkout
+    - checkout
     - run:
         name: Test Flask Environment
         command: |
