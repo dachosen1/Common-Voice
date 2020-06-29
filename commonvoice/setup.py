@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from setuptools import setup
-from pathlib import Path
+from model.config.config import PACKAGE_ROOT
 
 # Package meta-data.
 NAME = "Common voice classifier"
@@ -37,10 +37,9 @@ def list_reqs(name="requirements.txt"):
 
 
 # Load the package's __version__.py module as a dictionary.
-ROOT_DIR = Path(__file__).resolve().parent
-PACKAGE_DIR = ROOT_DIR / 'regression_model'
+
 about = {}
-with open(PACKAGE_DIR / 'VERSION') as f:
+with open(PACKAGE_ROOT / 'VERSION') as f:
     _version = f.read().strip()
     about['__version__'] = _version
 
@@ -58,3 +57,5 @@ setup(
     include_package_data=True,
     license="MIT",
 )
+
+
