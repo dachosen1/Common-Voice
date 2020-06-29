@@ -4,26 +4,26 @@ orbs:
   python: circleci/python@0.2.1
 
 jobs:
-  test_commonvoice_model:
+  Model Building Envnvironment:
     docker:
       - image: circleci/python:3.7.2
     steps:
       - checkout
       - run:
-          name: Install Python Dependencies
+          name: Install Python Model Dependencies
           command: |
             pip install --upgrade pip --user
             pip install -r model/requirements.txt
             pip install wheel
             pip install torch===1.5.1 torchvision===0.6.1 -f https://download.pytorch.org/whl/torch_stable.html --user
 
-  test_commonvoice_flask:
+  Model Deployment Environment:
     docker:
       - image: circleci/python:3.7.2
     steps:
     - checkout
     - run:
-        name: Test Flask Environment
+        name: Install Python Deployment Dependencies
         command: |
           pip install --upgrade pip --user
           pip install -r commonvoice/requirements.txt
@@ -33,7 +33,7 @@ jobs:
 
 workflows:
   version: 2.1
-  test-all:
+  build-env:
     jobs:
-      - test_commonvoice_model
-      - test_commonvoice_flask
+      - Model Building Envnvironment
+      - Model Deployment Environment

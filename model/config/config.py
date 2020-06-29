@@ -43,14 +43,14 @@ ALL_PARAM = dict(Train=TRAIN_PARAM,
                  )
 
 
-class LocalStorage:
+class Storage:
     ROOT_DIR = r"C:\Users\ander\Documents\common-voice-data"
     DEV_DIR = r"C:\Users\ander\Documents\common-voice-dev"
     CLIPS_DIR = r"C:\Users\ander\Documents\common-voice-data\clips"
-    TRAIN_DIR = r"C:\Users\ander\Documents\common-voice-dev"
+    TRAIN_DIR = r"C:\Users\ander\Documents\common-voice-train"
 
 
-class LocalTrainPipeline:
+class Pipeline:
     TRAIN_DIR = r"C:\Users\ander\Documents\common-voice-dev\gender\train_data"
     VAL_DIR = r"C:\Users\ander\Documents\common-voice-dev\gender\val_data"
     TEST_DIR = r"C:\Users\ander\Documents\common-voice-dev\gender\test_data"

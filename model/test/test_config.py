@@ -1,19 +1,19 @@
 import os
 
-from model.config.config import LocalStorage, LocalTrainPipeline, PACKAGE_ROOT, TRAINED_MODEL_DIR
+from model.config.config import Storage, Pipeline, PACKAGE_ROOT, TRAINED_MODEL_DIR
 
 
 def test_model_config_storage_path():
-    assert os.path.exists(LocalStorage.CLIPS_DIR)
-    assert os.path.exists(LocalStorage.DEV_DIR)
-    assert os.path.exists(LocalStorage.ROOT_DIR)
-    assert os.path.exists(LocalStorage.TRAIN_DIR)
+    assert os.path.exists(Storage.CLIPS_DIR)
+    assert os.path.exists(Storage.DEV_DIR)
+    assert os.path.exists(Storage.ROOT_DIR)
+    assert os.path.exists(Storage.TRAIN_DIR)
 
 
 def test_gender_train_path():
-    assert os.path.exists(LocalTrainPipeline.TRAIN_DIR)
-    assert os.path.exists(LocalTrainPipeline.TEST_DIR)
-    assert os.path.exists(LocalTrainPipeline.VAL_DIR)
+    assert os.path.exists(Pipeline.TRAIN_DIR)
+    assert os.path.exists(Pipeline.TEST_DIR)
+    assert os.path.exists(Pipeline.VAL_DIR)
 
 
 def test_package_directory():

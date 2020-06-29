@@ -3,7 +3,7 @@ import random
 
 from numpy import genfromtxt
 
-from model.config.config import GENDER_LABEL, LocalTrainPipeline, MODEL_PARAM
+from model.config.config import GENDER_LABEL, Pipeline, MODEL_PARAM
 
 
 def check_directory(directory, sample_size=random.randint(1, 1000), input_size=MODEL_PARAM['INPUT_SIZE']):
@@ -17,12 +17,12 @@ def check_directory(directory, sample_size=random.randint(1, 1000), input_size=M
 
 
 def test_val_data_dimensions():
-    check_directory(directory=LocalTrainPipeline.TEST_DIR)
+    check_directory(directory=Pipeline.TEST_DIR)
 
 
 def test_train_data_dimensions():
-    check_directory(directory=LocalTrainPipeline.TRAIN_DIR)
+    check_directory(directory=Pipeline.TRAIN_DIR)
 
 
 def test_test_data_dimensions():
-    check_directory(directory=LocalTrainPipeline.TEST_DIR)
+    check_directory(directory=Pipeline.TEST_DIR)
