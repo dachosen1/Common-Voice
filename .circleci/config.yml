@@ -12,9 +12,9 @@ jobs:
       - run:
           name: Install Python Dependencies
           command: |
-            pip install --upgrade pip
-            pip install -r model/requirements.txt
-            pip install torch===1.5.1 torchvision===0.6.1 -f https://download.pytorch.org/whl/torch_stable.html
+            pip install --upgrade pip --user
+            pip install -r model/requirements.txt --user
+            pip install torch===1.5.1 torchvision===0.6.1 -f https://download.pytorch.org/whl/torch_stable.html --user
 
   test_commonvoice_flask:
     docker:
@@ -24,10 +24,10 @@ jobs:
     - run:
         name: Test Flask Environment
         command: |
-          pip install --upgrade pip
-          pip install -r commonvoice/requirements.txt
-          pip install torch===1.5.1 torchvision===0.6.1 -f https://download.pytorch.org/whl/torch_stable.html
-          pip install commonvoice/PyAudio-0.2.11-cp37-cp37m-win_amd64.whl
+          pip install --upgrade pip --user
+          pip install -r commonvoice/requirements.txt--user
+          pip install torch===1.5.1 torchvision===0.6.1 -f https://download.pytorch.org/whl/torch_stable.html --user
+          pip install commonvoice/PyAudio-0.2.11-cp37-cp37m-win_amd64.whl --user
 
 workflows:
   version: 2.1
