@@ -11,15 +11,14 @@ from tqdm import tqdm
 from model import __version__
 from model import predict
 from model.LSTM import AudioLSTM
-from model.config import config, logging_config
+from model.config import config
 from model.model_manager import train
 from model.preprocessing.mp3_parser import MP3_Parser
 from utlis import csv_loader, sample_weight
 
 warnings.filterwarnings("ignore")
 
-logging_config.get_logger()
-_logger = logging.getLogger(__name__)
+_logger = logging.getLogger('model')
 
 torch.manual_seed(0)
 
@@ -112,4 +111,4 @@ if __name__ == "__main__":
         RNN_TYPE='LSTM'
     )
 
-    predict.predict(r'C:\Users\ander\Documents\common-voice-dev\gender\test_data\female')
+    predict.directory_predict(r'C:\Users\ander\Documents\common-voice-dev\gender\test_data\female')

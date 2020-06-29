@@ -10,6 +10,18 @@ from model.config import config
 from model.pipeline_mananger import load_model
 from utlis import convert_to_mel_db, generate_pred
 
+from flask import Flask, render_template
+
+
+app = Flask(__name__)
+
+
+@app.route('/')
+def index():
+    return render_template('index.html')
+
+
+
 warnings.filterwarnings("ignore")
 
 FORMAT = pyaudio.paFloat32
@@ -20,6 +32,8 @@ model.load_state_dict(torch.load(path))
 model.eval()
 
 model.init_hidden()
+
+
 
 if torch.cuda.is_available():
     model.cuda()
@@ -45,32 +59,34 @@ def callback(in_data, frame_count, time_info, status):
     return in_data, pyaudio.paContinue
 
 
-start_t = time.time()
+def stream_audio_prediction():
+    global stream, signal
+    stream = p.open(format=FORMAT,
+                    channels=CHANNELS,
+                    rate=config.FRAME['SAMPLE_RATE'],
+                    input=True,
+                    stream_callback=callback)
+    stream.start_stream()
+    while True:
+        try:
 
-stream = p.open(format=FORMAT,
-                channels=CHANNELS,
-                rate=config.FRAME['SAMPLE_RATE'],
-                input=True,
-                stream_callback=callback)
+            if len(frames) >= 32:
+                signal = np.concatenate(tuple(frames))
+                wave_period = signal[-config.FRAME['SAMPLE_RATE']:].astype(np.float)
+                melspectrogram_DB = convert_to_mel_db(wave_period)
+                generate_pred(melspectrogram_DB, model, config.GENDER_LABEL)
+            time.sleep(1)
 
-stream.start_stream()
+        except KeyboardInterrupt:
+            break
+    print("stop stream")
+    # stop stream (6)
+    stream.stop_stream()
+    stream.close()
+    p.terminate()
 
-while True:
-    try:
 
-        if len(frames) >= 32:
-            signal = np.concatenate(tuple(frames))
-            wave_period = signal[-config.FRAME['SAMPLE_RATE']:].astype(np.float)
-            melspectrogram_DB = convert_to_mel_db(wave_period)
-            generate_pred(melspectrogram_DB, model, config.GENDER_LABEL)
-        time.sleep(1)
+stream_audio_prediction()
 
-    except KeyboardInterrupt:
-        break
-
-print("stop stream")
-
-# stop stream (6)
-stream.stop_stream()
-stream.close()
-p.terminate()
+if __name__ == '__main__':
+    app.run(debug=True)

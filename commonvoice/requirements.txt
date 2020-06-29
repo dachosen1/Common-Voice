@@ -1,2 +1,2 @@
-pyaudio
 flask
+numpy

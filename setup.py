@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from setuptools import setup
+from pathlib import Path
 
 # Package meta-data.
 NAME = "Common voice classifier"
@@ -26,6 +27,8 @@ EMAIL = "anderson.nelson1@gmail.com"
 AUTHOR = "Anderson Nelson"
 REQUIRES_PYTHON = ">=3.6.0"
 
+URL = 'https://github.com/dachosen1/Common-Voice'
+
 
 # What packages are required for this module to be executed?
 def list_reqs(name="requirements.txt"):
@@ -33,14 +36,24 @@ def list_reqs(name="requirements.txt"):
         return fd.read().splitlines()
 
 
+# Load the package's __version__.py module as a dictionary.
+ROOT_DIR = Path(__file__).resolve().parent
+PACKAGE_DIR = ROOT_DIR / 'regression_model'
+about = {}
+with open(PACKAGE_DIR / 'VERSION') as f:
+    _version = f.read().strip()
+    about['__version__'] = _version
+
 setup(
     name=NAME,
+    version=about['__version__'],
     description=DESCRIPTION,
     long_description=long_description,
     long_description_content_type="text/markdown",
     author=AUTHOR,
     author_email=EMAIL,
     python_requires=REQUIRES_PYTHON,
+    url=URL,
     install_requires=list_reqs(),
     include_package_data=True,
     license="MIT",

@@ -8,7 +8,7 @@ from model.pipeline_mananger import load_model
 from utlis import generate_pred
 
 
-def predict(dir_path):
+def directory_predict(dir_path):
     model, path = load_model(config.GENDER_MODEL_NAME)
     model.load_state_dict(torch.load(path))
     model.eval()
