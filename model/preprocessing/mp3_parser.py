@@ -47,7 +47,7 @@ def remove_silence(*, signal, sample_rate, threshold):
     return signal
 
 
-class MP3_Parser:
+class Mp3parser:
     def __init__(
             self,
             data_path,

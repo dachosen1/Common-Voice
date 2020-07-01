@@ -13,7 +13,7 @@ from model import predict
 from model.LSTM import AudioLSTM
 from model.config import config
 from model.model_manager import train
-from model.preprocessing.mp3_parser import MP3_Parser
+from model.preprocessing.mp3_parser import Mp3parser
 from utlis import csv_loader, sample_weight
 
 warnings.filterwarnings("ignore")
@@ -74,7 +74,7 @@ def generate_training_data(method, percentage):
         mp3_list = mp3_list[0: round(len(mp3_list) * percentage)]
         mp3_list = set(mp3_list)
 
-        parser = MP3_Parser(
+        parser = Mp3parser(
             data_path=config.Storage.ROOT_DIR,
             clips_dir=config.Storage.CLIPS_DIR,
             document_path=config.Storage.DEV_DIR,
@@ -85,7 +85,7 @@ def generate_training_data(method, percentage):
 
     elif method == "train":
         mp3_list = set(mp3_list)
-        parser = MP3_Parser(
+        parser = Mp3parser(
             data_path=config.Storage.ROOT_DIR,
             clips_dir=config.Storage.CLIPS_DIR,
             document_path=config.Storage.TRAIN_DIR,

@@ -6,7 +6,7 @@ orbs:
 jobs:
   Model Building Envnvironment:
     docker:
-      - image: circleci/python:3.7.2
+      - image: circleci/python:3.8.1
     steps:
       - checkout
       - run:
@@ -14,12 +14,11 @@ jobs:
           command: |
             pip install --upgrade pip --user
             pip install -r model/requirements.txt
-            pip install wheel
             pip install torch===1.5.1 torchvision===0.6.1 -f https://download.pytorch.org/whl/torch_stable.html --user
 
   Model Deployment Environment:
     docker:
-      - image: circleci/python:3.7.2
+      - image: circleci/python:3.8.1
     steps:
     - checkout
     - run:
@@ -27,9 +26,8 @@ jobs:
         command: |
           pip install --upgrade pip --user
           pip install -r commonvoice/requirements.txt
-          pip install torch===1.5.1 torchvision===0.6.1 -f https://download.pytorch.org/whl/torch_stable.html --user
-          pip install wheel
-          pip install commonvoice/PyAudio-0.2.11-cp37-cp37m-win_amd64.whl --user
+          pip install torch===1.5.1 torchvision===0.6.1 -f https://download.pytorch.org/whl/torch_stable.html
+          pip install commonvoice/PyAudio-0.2.11-cp38-cp38-win_amd64.whl
 
 workflows:
   version: 2.1
