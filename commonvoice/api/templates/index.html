@@ -14,13 +14,13 @@
 <body class="container">
 
   <header class="main-header">
-      <a class="brand-logo" href="index.html">
-        <img src="../static/img/Logo.png" >
+      <a class="brand-logo" href= {{ url_for("index") }} >
+        <img src="../css/img/Logo.png" >
         <div class="brand-logo-name">Common Voice</div>
       </a>
     <nav class="main-nav">
       <ul>
-        <li><a href="about.html"> About </a> </li>
+        <li><a href={{ url_for("about") }}> About </a> </li>
       </ul>
     </nav>
   </header>
@@ -32,7 +32,7 @@
       </div>
       <div class="section-2" >
         <div class="recording-picture">
-          <img src="../static/img/undraw_recording.png">
+          <img src="../css/img/undraw_recording.png">
         </div>
         <div class="main-section-right">
           <div class="call-to-action">
@@ -40,7 +40,7 @@
           </div>
           <div class="audio-mic">
             <button type="submit">
-              <img src="../static/img/mic.png" alt="submit" />
+              <img src="../css/img/mic.png" alt="submit" />
             </button>
           </div>
           <div class="prediction-result">
@@ -107,7 +107,7 @@
         <nav class="footer-nav">
             <ul>
                 <li><a href="https://github.com/dachosen1/Common-Voice" class="social-link">
-                    <img src="../static/img/gihub.png">
+                    <img src="../css/img/gihub.png">
                 </a></li>
             </ul>
         </nav>

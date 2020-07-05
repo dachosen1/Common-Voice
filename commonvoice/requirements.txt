@@ -4,8 +4,10 @@ colorama==0.4.3
 distlib==0.3.1
 filelock==3.0.12
 Flask==1.1.2
+gunicorn==20.0.4
 future==0.18.2
 itsdangerous==1.1.0
+PyAudio @ https://github.com/dachosen1/Common-Voice/blob/master/commonvoice/PyAudio-0.2.11-cp38-cp38-win32.whl
 Jinja2==2.11.2
 MarkupSafe==1.1.1
 numpy==1.19.0
@@ -19,3 +21,4 @@ toml==0.10.1
 tox==3.16.0
 virtualenv==20.0.25
 Werkzeug==1.0.1
+

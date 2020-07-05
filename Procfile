@@ -1,1 +1,1 @@
-web: guinicorn run:app --log-file-
+web: gunicorn --pythonpath . --access-logfile - --error-logfile - run:app
