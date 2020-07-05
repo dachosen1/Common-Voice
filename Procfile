@@ -1,0 +1,1 @@
+web: guinicorn run:app --log-file-
