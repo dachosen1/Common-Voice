@@ -25,7 +25,7 @@ long_description = (
 
 EMAIL = "anderson.nelson1@gmail.com"
 AUTHOR = "Anderson Nelson"
-REQUIRES_PYTHON = ">=3.6.0"
+REQUIRES_PYTHON = ">=3.7.0"
 
 URL = 'https://github.com/dachosen1/Common-Voice'
 

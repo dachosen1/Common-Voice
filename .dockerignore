@@ -1,0 +1,9 @@
+venv/*
+*/venv/*
+/venv/*
+commonvoice/.tox
+model/.tox
+.circleci*
+*.log
+.git
+.gitignore
