@@ -7,10 +7,10 @@ Flask==1.1.2
 gunicorn==20.0.4
 future==0.18.2
 itsdangerous==1.1.0
-PyAudio @ https://github.com/dachosen1/Common-Voice/blob/master/commonvoice/PyAudio-0.2.11-cp38-cp38-win32.whl
 Jinja2==2.11.2
 MarkupSafe==1.1.1
 numpy==1.19.0
+numba==0.48.0
 packaging==20.4
 Pillow==7.2.0
 pluggy==0.13.1
