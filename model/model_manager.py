@@ -170,11 +170,16 @@ def train(
                     wandb.log({"Loss/val": val_loss.item()}, step=counter)
 
                 model.train()
+                _logger.info(f"Epoch: {e + 1}/{epoch}..."
+                             f"Step: {counter}...Training Loss: {train_loss.item():.6f}..."
+                             f"Validation Loss: {val_loss.item():.6f}..."
+                             f"Train Accuracy: {train_acc:.6f}..."
+                             f"Test Accuracy: {val_acc:.6f}")
 
                 if early_stopping:
                     stopping(val_loss=val_loss, model=model)
                     if stopping.early_stop:
-                        print('Stopping Model Early')
+                        _logger.info('Stopping Model Early')
                         break
 
     wandb.sklearn.plot_confusion_matrix(val_labels.cpu().numpy(),

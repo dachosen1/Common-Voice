@@ -101,7 +101,7 @@ class Mp3parser:
                 start = step * i
 
         except IndexError:
-            _logger.info(f" The label for {clip_name} is NA ")
+            _logger.info(f" The {self.data_label} label for {clip_name} is NA ")
 
         except ValueError:
             _logger.info(f" The MP3 for {clip_name} is too short")

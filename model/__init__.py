@@ -3,10 +3,10 @@ import logging
 
 from model.config import logging_config
 
-logging.basicConfig(level=logging.DEBUG)
+logging.basicConfig(level=logging.INFO)
 
 logger = logging.getLogger(__name__)
-logger.setLevel(logging.DEBUG)
+logger.setLevel(logging.INFO)
 logger.addHandler(logging_config.get_console_handler())
 logger.propagate = False
 

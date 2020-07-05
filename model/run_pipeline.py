@@ -34,13 +34,15 @@ def run_training(model: type, train_dir: str, val_dir: str, RNN_TYPE) -> None:
         train_dataset, batch_size=config.MODEL_PARAM['BATCH_SIZE'], sampler=train_sample_weight, num_workers=4,
         drop_last=True
     )
+    _logger.info(f"Uploaded training data to {train_dir} using {config.MODEL_PARAM['BATCH_SIZE']} batch sizes")
 
     val_data_loader = DataLoader(
         val_dataset, batch_size=config.MODEL_PARAM['BATCH_SIZE'], sampler=val_sample_weight, num_workers=4,
         drop_last=True
     )
+    _logger.info(f"Uploaded validation data to {val_dir} using {config.MODEL_PARAM['BATCH_SIZE']} batch sizes")
 
-    _logger.info('Successfully Uploaded Train and Validation data........ ')
+
 
     model = model(
         num_layer=config.MODEL_PARAM['NUM_LAYERS'],
@@ -52,7 +54,12 @@ def run_training(model: type, train_dir: str, val_dir: str, RNN_TYPE) -> None:
         batch_size=config.MODEL_PARAM['BATCH_SIZE']
     )
 
-    _logger.info('LSTM Model has been initialized')
+    _logger.info(f"LSTM Model has been initialized with {config.MODEL_PARAM['NUM_LAYERS']}  layers, "
+                 f" {config.MODEL_PARAM['HIDDEN_DIM']} hidden dimension,"
+                 f"{config.MODEL_PARAM['INPUT_SIZE']} Input size "
+                 f"{config.MODEL_PARAM['OUTPUT_SIZE']} output size "
+                 f"{config.MODEL_PARAM['BATCH_SIZE']} batch size"
+                 f"{config.MODEL_PARAM['DROPOUT']} dropout")
 
     trained_model = train(
         model, train_data_loader, val_data_loader, early_stopping=False
@@ -61,8 +68,8 @@ def run_training(model: type, train_dir: str, val_dir: str, RNN_TYPE) -> None:
     trained_model_path = os.path.join(
         config.TRAINED_MODEL_DIR, config.GENDER_MODEL_NAME + __version__ + ".pt"
     )
+    _logger.info(f"Saved {config.GENDER_MODEL_NAME} version {__version__} in {config.TRAINED_MODEL_DIR}")
 
-    _logger.info(f"Save Model version {__version__} in directory")
     torch.save(trained_model.state_dict(), trained_model_path)
 
 
@@ -80,8 +87,10 @@ def generate_training_data(method, percentage):
             document_path=config.Storage.DEV_DIR,
         )
 
+        _logger.info(f'Uploaded {len(mp3_list)} MP3 files for trainings')
+
         with futures.ThreadPoolExecutor() as executor:
-            tqdm(executor.map(parser.convert_to_wav(), mp3_list))
+            tqdm(executor.map(parser.convert_to_wav, mp3_list))
 
     elif method == "train":
         mp3_list = set(mp3_list)
@@ -92,11 +101,12 @@ def generate_training_data(method, percentage):
         )
 
         with futures.ThreadPoolExecutor() as executor:
-            tqdm(executor.map(parser.convert_to_wav(), mp3_list))
+            tqdm(executor.map(parser.convert_to_wav, mp3_list))
 
+        _logger.info(f'Uploaded {len(mp3_list)} MP3 files for trainings')
     else:
         _logger.info("Skipping MP3 feature engineering. Will use existing mfcc data for training")
-    _logger.info("Done Uploading Data for training")
+
 
 
 if __name__ == "__main__":
@@ -111,4 +121,4 @@ if __name__ == "__main__":
         RNN_TYPE='LSTM'
     )
 
-    predict.directory_predict(r'C:\Users\ander\Documents\common-voice-dev\gender\test_data\female')
+    # predict.directory_predict(r'C:\Users\ander\Documents\common-voice-dev\gender\test_data\female')
