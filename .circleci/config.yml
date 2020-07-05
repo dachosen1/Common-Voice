@@ -1,37 +1,60 @@
 version: 2.1
 
-orbs:
-  python: circleci/python@0.2.1
+defaults: &defaults
+  docker:
+    - image: circleci/python:3.8.0
+  working_directory: ~/project
+
+prepare_tox: &prepare_tox
+  run:
+    name: Install tox
+    command: |
+      sudo pip install --upgrade pip
+      pip install --user tox
 
 jobs:
-  Model Building Envnvironment:
+  Model Training:
     docker:
       - image: circleci/python:3.8.1
+    working_directory: ~/projects/model
+
     steps:
       - checkout
       - run:
           name: Install Python Model Dependencies
           command: |
             pip install --upgrade pip --user
-            pip install -r model/requirements.txt
+            pip install -r requirements.txt
             pip install torch===1.5.1 torchvision===0.6.1 -f https://download.pytorch.org/whl/torch_stable.html --user
+      - run:
+          name: Test LSTM Model
+          command: |
+            tox testenv
+
+      - run:
+          name: build model whl
+          command:
+            tox testenv:install_locally
+
 
   Model Deployment Environment:
     docker:
       - image: circleci/python:3.8.1
+    working_directory: ~/projects/commonvoice
     steps:
     - checkout
     - run:
         name: Install Python Deployment Dependencies
         command: |
           pip install --upgrade pip --user
-          pip install -r commonvoice/requirements.txt
+          pip install -r requirements.txt
           pip install torch===1.5.1 torchvision===0.6.1 -f https://download.pytorch.org/whl/torch_stable.html
-          pip install commonvoice/PyAudio-0.2.11-cp38-cp38-win32.whl
+          pip install PyAudio-0.2.11-cp38-cp38-win32.whl
+          pytest test
 
 workflows:
   version: 2.1
   build-env:
     jobs:
-      - Model Building Envnvironment
+      - Model Training
       - Model Deployment Environment
