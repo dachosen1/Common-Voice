@@ -1,7 +1,16 @@
 version: 2.1
 
-orbs:
-  python: circleci/python@0.2.1
+defaults: &defaults
+  docker:
+    - image: circleci/python:3.5.4
+
+
+prepare_tox: &prepare_tox
+  run:
+    name: Install tox
+    command: |
+      sudo pip install --upgrade pip
+      pip install --user tox
 
 jobs:
   Model Training:
@@ -16,6 +25,7 @@ jobs:
             pip install --upgrade pip --user
             pip install -r model/requirements.txt
             pip install torch===1.5.1 torchvision===0.6.1 -f https://download.pytorch.org/whl/torch_stable.html --user
+            tox -e py35
       - run:
           name: Test LSTM Model
           command: |
@@ -38,7 +48,7 @@ jobs:
           pip install --upgrade pip --user
           pip install -r commonvoice/requirements.txt
           pip install torch===1.5.1 torchvision===0.6.1 -f https://download.pytorch.org/whl/torch_stable.html
-          pytest commonvoice/test
+          tox -e py35
 
 workflows:
   version: 2.1

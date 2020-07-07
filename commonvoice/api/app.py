@@ -11,7 +11,7 @@ from flask import Flask, render_template
 from commonvoice.api.config import PACKAGE_ROOT
 from model.config import config
 from model.pipeline_mananger import load_model
-from utlis import convert_to_mel_db, generate_pred
+from utlis import  generate_pred, audio_mfcc
 
 warnings.filterwarnings("ignore")
 
@@ -69,10 +69,10 @@ def index():
         if len(frames) >= 32:
             signal = np.concatenate(tuple(frames))
             wave_period = signal[-config.FRAME['SAMPLE_RATE']:].astype(np.float)
-            melspectrogram_DB = convert_to_mel_db(wave_period)
+            melspectrogram_DB = audio_mfcc(wave_period)
             name, prob = generate_pred(melspectrogram_DB, model, config.GENDER_LABEL)
 
-            return render_template("index.html", Gender_Prob='{}%'.format(prob.__round__(2) * 100),
+            return render_template("index.html", Gender_Prob='{:.1f}%'.format(prob.__round__(2) * 100),
                                    Age_Prob="82%", Country_Prob="25%", Gender=name,
                                    County="USA",
                                    Age="20-30",
