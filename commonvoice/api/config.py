@@ -8,8 +8,11 @@ PACKAGE_ROOT = pathlib.Path(__file__).resolve().parent.parent
 FORMATTER = logging.Formatter(
     "%(asctime)s — %(name)s — %(levelname)s —"
     "%(funcName)s:%(lineno)d — %(message)s")
+
 LOG_DIR = PACKAGE_ROOT / 'logs'
+
 LOG_DIR.mkdir(exist_ok=True)
+
 LOG_FILE = LOG_DIR / 'ml_api.log'
 UPLOAD_FOLDER = PACKAGE_ROOT / 'uploads'
 UPLOAD_FOLDER.mkdir(exist_ok=True)

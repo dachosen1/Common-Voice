@@ -89,7 +89,7 @@ def run_training(model: type, train_dir: str, val_dir: str, RNN_TYPE) -> None:
     )
 
     trained_model_path = os.path.join(
-        str(config.TRAINED_MODEL_DIR), config.GENDER_MODEL_NAME + __version__ + ".pt"
+        config.TRAINED_MODEL_DIR, config.GENDER_MODEL_NAME + __version__ + ".pt"
     )
     _logger.info(
         "Saved {} version {} in {}".format(

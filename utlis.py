@@ -13,6 +13,12 @@ import torch
 import tqdm
 from pydub import AudioSegment
 from python_speech_features import mfcc
+from sklearn.metrics import (
+    accuracy_score,
+    f1_score,
+    precision_score,
+    recall_score
+)
 from torch.utils.data import WeightedRandomSampler
 
 from model.config import config
@@ -76,7 +82,7 @@ def calc_fft(*, y, rate):
 
 
 def plot_confusion_matrix(
-    cm: np.ndarray, class_names: list
+        cm: np.ndarray, class_names: list
 ) -> matplotlib.figure.Figure:
     """
     Generates a Matplotlib figure containing the plotted confusion matrix.
@@ -127,6 +133,7 @@ def sample_weight(data_folder):
     sampler = WeightedRandomSampler(samples_weight, len(samples_weight))
     return sampler
 
+
 def audio_mfcc(data):
     mff_output = mfcc(
         data,
@@ -137,6 +144,7 @@ def audio_mfcc(data):
     ).T
 
     return mff_output
+
 
 def generate_pred(mel, model, label):
     """
@@ -159,3 +167,11 @@ def generate_pred(mel, model, label):
 
     return label_name, round(float(prob.flatten()[0]), 5)
     # print(f'Prediction: {label_name}, Probability: {round(float(prob.flatten()[0]), 5)}')
+
+
+def _metric_summary(pred: np.ndarray, label: np.ndarray):
+    acc = accuracy_score(y_true=label, y_pred=pred)
+    f1 = f1_score(y_true=label, y_pred=pred)
+    pc = precision_score(y_true=label, y_pred=pred)
+    rs = recall_score(y_true=label, y_pred=pred)
+    return acc, f1, pc, rs

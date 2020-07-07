@@ -1,3 +1,4 @@
+import logging
 import os
 import warnings
 
@@ -5,29 +6,15 @@ import numpy as np
 import torch
 import torch.nn as nn
 import wandb
-from sklearn.metrics import (
-    accuracy_score,
-    f1_score,
-    precision_score,
-    recall_score
-)
 
 from model import __version__
 from model.config import config
-import logging
+from utlis import _metric_summary
 
 warnings.filterwarnings("ignore")
 _logger = logging.getLogger(__name__)
 
 wandb.init('Common-Voice', config=config.ALL_PARAM)
-
-
-def _metric_summary(pred: np.ndarray, label: np.ndarray):
-    acc = accuracy_score(y_true=label, y_pred=pred)
-    f1 = f1_score(y_true=label, y_pred=pred)
-    pc = precision_score(y_true=label, y_pred=pred)
-    rs = recall_score(y_true=label, y_pred=pred)
-    return acc, f1, pc, rs
 
 
 class EarlyStopping:
@@ -161,6 +148,7 @@ def train(
                     val_acc, val_f1, val_pr, val_rc = _metric_summary(
                         pred=torch.max(val_output, dim=1).indices.data.cpu().numpy(), label=val_labels.cpu().numpy()
                     )
+
                     wandb.log({"Accuracy/val": val_acc}, step=counter)
                     wandb.log({"F1/val": val_f1}, step=counter)
                     wandb.log({"Precision/val": val_pr}, step=counter)
@@ -186,5 +174,5 @@ def train(
                                         valid_loader.dataset.classes)
     model_name = config.GENDER_MODEL_NAME + __version__ + '.pt'
     torch.save(model.state_dict(), os.path.join(wandb.run.dir, model_name))
-    _logger.info('Done Training')
+    _logger.info('Done Training, uploaded model to {}'.format(wandb.run.dir))
     return model
