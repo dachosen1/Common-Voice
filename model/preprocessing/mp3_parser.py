@@ -7,9 +7,7 @@ import pandas as pd
 from pydub import AudioSegment
 
 from model.config import config
-from utlis import envelope
-from python_speech_features import mfcc
-
+from utlis import envelope, audio_mfcc
 
 warnings.filterwarnings("ignore")
 
@@ -54,7 +52,7 @@ def remove_silence(*, signal, sample_rate, threshold):
 
 class Mp3parser:
     def __init__(
-        self, data_path, clips_dir, document_path, data_label="gender",
+            self, data_path, clips_dir, document_path, data_label="gender",
     ):
         """
 
@@ -77,8 +75,8 @@ class Mp3parser:
                 frame_rate=config.FRAME["SAMPLE_RATE"]
             )
             signal = (
-                np.array(audio_mp3.normalize().get_array_of_samples(), dtype="int32")
-                / 100000
+                    np.array(audio_mp3.normalize().get_array_of_samples(), dtype="int32")
+                    / 100000
             )
 
             duration = len(signal) // config.FRAME["SAMPLE_RATE"]
@@ -92,15 +90,9 @@ class Mp3parser:
             step = int(sample_length_in_seconds * config.FRAME["SAMPLE_RATE"])
 
             for i in range(1, duration + 1):
-                data = signal[start : start + step]
+                data = signal[start: start + step]
 
-                melspectrogram_DB = mfcc(
-                    data,
-                    samplerate=config.FRAME["SAMPLE_RATE"],
-                    numcep=config.FRAME["NUMCEP"],
-                    nfilt=config.FRAME["NFILT"],
-                    nfft=config.FRAME["NFFT"],
-                ).T
+                melspectrogram_DB = audio_mfcc(data)
 
                 assert melspectrogram_DB.shape[0] == config.MODEL_PARAM["INPUT_SIZE"]
 

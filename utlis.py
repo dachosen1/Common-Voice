@@ -12,6 +12,7 @@ import pandas as pd
 import torch
 import tqdm
 from pydub import AudioSegment
+from python_speech_features import mfcc
 from torch.utils.data import WeightedRandomSampler
 
 from model.config import config
@@ -126,6 +127,16 @@ def sample_weight(data_folder):
     sampler = WeightedRandomSampler(samples_weight, len(samples_weight))
     return sampler
 
+def audio_mfcc(data):
+    mff_output = mfcc(
+        data,
+        samplerate=config.FRAME["SAMPLE_RATE"],
+        numcep=config.FRAME["NUMCEP"],
+        nfilt=config.FRAME["NFILT"],
+        nfft=config.FRAME["NFFT"],
+    ).T
+
+    return mff_output
 
 def generate_pred(mel, model, label):
     """
@@ -135,7 +146,7 @@ def generate_pred(mel, model, label):
     :param label: label dictionary
     :return: prints prediction label and probability
     """
-    mel = torch.from_numpy(mel).view(1, -1, config.FRAME["N_MELS"]).float()
+    mel = torch.from_numpy(mel).reshape(1, -1, config.MODEL_PARAM["INPUT_SIZE"]).float()
 
     if torch.cuda.is_available():
         model.cuda()

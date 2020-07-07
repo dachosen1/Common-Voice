@@ -89,7 +89,7 @@ def run_training(model: type, train_dir: str, val_dir: str, RNN_TYPE) -> None:
     )
 
     trained_model_path = os.path.join(
-        config.TRAINED_MODEL_DIR, config.GENDER_MODEL_NAME + __version__ + ".pt"
+        str(config.TRAINED_MODEL_DIR), config.GENDER_MODEL_NAME + __version__ + ".pt"
     )
     _logger.info(
         "Saved {} version {} in {}".format(
@@ -140,7 +140,7 @@ def generate_training_data(method, percentage):
 if __name__ == "__main__":
     warnings.filterwarnings("ignore")
 
-    generate_training_data(method="dev", percentage=0.01)
+    generate_training_data(method="none", percentage=0.01)
 
     run_training(
         model=AudioLSTM,
