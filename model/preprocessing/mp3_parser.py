@@ -1,16 +1,19 @@
+import logging
 import os
 import warnings
 
-import librosa
 import numpy as np
 import pandas as pd
-import logging
+from pydub import AudioSegment
+
 from model.config import config
-from utlis import envelope, convert_to_mel_db
+from utlis import envelope
+from python_speech_features import mfcc
+
 
 warnings.filterwarnings("ignore")
 
-_logger = logging.getLogger('model')
+_logger = logging.getLogger("model")
 
 
 def check_dir(path):
@@ -42,18 +45,16 @@ def remove_silence(*, signal, sample_rate, threshold):
     """
 
     signal = signal[np.abs(signal) > threshold]
-    wrap = envelope(y=signal, signal_rate=sample_rate, threshold=config.FRAME['MASK_THRESHOLD'])
+    wrap = envelope(
+        y=signal, signal_rate=sample_rate, threshold=config.FRAME["MASK_THRESHOLD"]
+    )
     signal = signal[wrap]
     return signal
 
 
 class Mp3parser:
     def __init__(
-            self,
-            data_path,
-            clips_dir,
-            document_path,
-            data_label="gender",
+        self, data_path, clips_dir, document_path, data_label="gender",
     ):
         """
 
@@ -72,39 +73,63 @@ class Mp3parser:
         sample_length_in_seconds = 1
 
         try:
-            signal, sample_rate = librosa.load(path, sr=config.FRAME['SAMPLE_RATE'])
-            duration = len(signal) // sample_rate
+            audio_mp3 = AudioSegment.from_mp3(file=path).set_frame_rate(
+                frame_rate=config.FRAME["SAMPLE_RATE"]
+            )
+            signal = (
+                np.array(audio_mp3.normalize().get_array_of_samples(), dtype="int32")
+                / 100000
+            )
+
+            duration = len(signal) // config.FRAME["SAMPLE_RATE"]
 
             # Strip out moments of silence
-            signal = remove_silence(signal=signal, sample_rate=sample_rate, threshold=0.02)
+            signal = remove_silence(
+                signal=signal, sample_rate=config.FRAME["SAMPLE_RATE"], threshold=0.02
+            )
 
             start = 0
-            step = int(sample_length_in_seconds * sample_rate)
+            step = int(sample_length_in_seconds * config.FRAME["SAMPLE_RATE"])
 
             for i in range(1, duration + 1):
-                data = signal[start:start + step]
+                data = signal[start : start + step]
 
-                melspectrogram_DB = convert_to_mel_db(data)
+                melspectrogram_DB = mfcc(
+                    data,
+                    samplerate=config.FRAME["SAMPLE_RATE"],
+                    numcep=config.FRAME["NUMCEP"],
+                    nfilt=config.FRAME["NFILT"],
+                    nfft=config.FRAME["NFFT"],
+                ).T
 
-                assert melspectrogram_DB.shape[0] == 128
-                assert melspectrogram_DB.shape[1] == 32
+                assert melspectrogram_DB.shape[0] == config.MODEL_PARAM["INPUT_SIZE"]
 
-                clip_name = f'{clips_name.split(".")[0]}'
-                label_name = self.label_data[self.label_data.name == clip_name][self.data_label].values[0]
-                train_test_choice = np.random.choice(["train_data", "val_data", "test_data"], p=[0.7, 0.2, 0.1])
-                dir_path = os.path.join(self.document_path, self.data_label, train_test_choice)
+                clip_name = "{}".format(clips_name.split(".")[0])
+                label_name = self.label_data[self.label_data.name == clip_name][
+                    self.data_label
+                ].values[0]
+                train_test_choice = np.random.choice(
+                    ["train_data", "val_data", "test_data"], p=[0.7, 0.2, 0.1]
+                )
+                dir_path = os.path.join(
+                    self.document_path, self.data_label, train_test_choice
+                )
                 check_dir(dir_path)
-                dir_path = os.path.join(self.document_path, self.data_label, train_test_choice, label_name)
+                dir_path = os.path.join(
+                    self.document_path, self.data_label, train_test_choice, label_name
+                )
                 check_dir(dir_path)
-                save_path = os.path.join(dir_path, clip_name + '_' + str(i) + '.csv')
-                np.savetxt(save_path, melspectrogram_DB.T, delimiter=',')
+                save_path = os.path.join(dir_path, clip_name + "_" + str(i) + ".csv")
+                np.savetxt(save_path, melspectrogram_DB.T, delimiter=",")
                 start = step * i
 
         except IndexError:
-            _logger.info(f" The {self.data_label} label for {clip_name} is NA ")
+            _logger.info(
+                " The {} label for {} is NA ".format(self.data_label, clip_name)
+            )
 
         except ValueError:
-            _logger.info(f" The MP3 for {clip_name} is too short")
+            _logger.info(" The MP3 for {} is too short".format(clip_name))
 
         except RuntimeError:
-            _logger.info(f" The MP3 for {clip_name} is corrupt, can't open it")
+            _logger.info("The MP3 for {} is corrupt, can't open it".format(clip_name))

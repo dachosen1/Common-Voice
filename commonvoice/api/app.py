@@ -72,7 +72,7 @@ def index():
             melspectrogram_DB = convert_to_mel_db(wave_period)
             name, prob = generate_pred(melspectrogram_DB, model, config.GENDER_LABEL)
 
-            return render_template("index.html", Gender_Prob=f'{prob.__round__(2) * 100}%',
+            return render_template("index.html", Gender_Prob='{}%'.format(prob.__round__(2) * 100),
                                    Age_Prob="82%", Country_Prob="25%", Gender=name,
                                    County="USA",
                                    Age="20-30",

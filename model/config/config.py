@@ -8,9 +8,10 @@ GENDER_MODEL_NAME = "model_gender-"
 AGE_MODEL_NAME = "model_age-"
 COUNTRY_MODEL_NAME = "model_country-"
 
-FRAME = dict(SAMPLE_RATE=16000,
-             FMAX=8000,
-             N_MELS=128,
+FRAME = dict(SAMPLE_RATE=44100,
+             NUMCEP=13,
+             NFILT=26,
+             NFFT=1103,
              MASK_THRESHOLD=0.01)
 
 GENDER_LABEL = {0: 'female',
@@ -29,7 +30,7 @@ MODEL_PARAM = dict(OUTPUT_SIZE=2,
                    HIDDEN_DIM=128,
                    NUM_LAYERS=2,
                    DROPOUT=0.30,
-                   INPUT_SIZE=FRAME['N_MELS'],
+                   INPUT_SIZE=13,
                    BATCH_SIZE=256)
 
 TRAIN_PARAM = dict(
