@@ -1,16 +1,17 @@
-import pathlib
+import os
 import model
 
-PACKAGE_ROOT = pathlib.Path(model.__file__).resolve().parent
-TRAINED_MODEL_DIR = PACKAGE_ROOT / "trained_model"
+PACKAGE_ROOT = os.path.dirname(model.__file__)
+TRAINED_MODEL_DIR = os.path.join(PACKAGE_ROOT, "trained_model")
 
 GENDER_MODEL_NAME = "model_gender-"
 AGE_MODEL_NAME = "model_age-"
 COUNTRY_MODEL_NAME = "model_country-"
 
-FRAME = dict(SAMPLE_RATE=16000,
-             FMAX=8000,
-             N_MELS=128,
+FRAME = dict(SAMPLE_RATE=44100,
+             NUMCEP=13,
+             NFILT=26,
+             NFFT=1103,
              MASK_THRESHOLD=0.01)
 
 GENDER_LABEL = {0: 'female',
@@ -27,15 +28,15 @@ class Bucket:
 
 MODEL_PARAM = dict(OUTPUT_SIZE=2,
                    HIDDEN_DIM=128,
-                   NUM_LAYERS=2,
+                   NUM_LAYERS=8,
                    DROPOUT=0.30,
-                   INPUT_SIZE=FRAME['N_MELS'],
-                   BATCH_SIZE=256)
+                   INPUT_SIZE=13,
+                   BATCH_SIZE=568)
 
 TRAIN_PARAM = dict(
     LEARNING_RATE=0.001,
     GRADIENT_CLIP=15,
-    EPOCH=30)
+    EPOCH=200)
 
 ALL_PARAM = dict(Train=TRAIN_PARAM,
                  Model=MODEL_PARAM,

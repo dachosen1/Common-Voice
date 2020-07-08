@@ -11,9 +11,14 @@ import numpy as np
 import pandas as pd
 import torch
 import tqdm
-from librosa import power_to_db
-from librosa.feature import melspectrogram
 from pydub import AudioSegment
+from python_speech_features import mfcc
+from sklearn.metrics import (
+    accuracy_score,
+    f1_score,
+    precision_score,
+    recall_score
+)
 from torch.utils.data import WeightedRandomSampler
 
 from model.config import config
@@ -76,7 +81,9 @@ def calc_fft(*, y, rate):
     return Y, freq
 
 
-def plot_confusion_matrix(cm: np.ndarray, class_names: list) -> matplotlib.figure.Figure:
+def plot_confusion_matrix(
+        cm: np.ndarray, class_names: list
+) -> matplotlib.figure.Figure:
     """
     Generates a Matplotlib figure containing the plotted confusion matrix.
 
@@ -114,7 +121,11 @@ def sample_weight(data_folder):
     :return:
     """
     class_sample_count = np.array(
-        [len([i for i in data_folder.targets if i == t]) for t in range(0, len(data_folder.classes))])
+        [
+            len([i for i in data_folder.targets if i == t])
+            for t in range(0, len(data_folder.classes))
+        ]
+    )
     weight = 1 / class_sample_count
     samples_weight = np.array([weight[t] for t in data_folder.targets])
     samples_weight = torch.from_numpy(samples_weight)
@@ -123,17 +134,16 @@ def sample_weight(data_folder):
     return sampler
 
 
-def convert_to_mel_db(mel: object) -> np.ndarray:
-    """
-    convert a floating point time series to decibel (dB) units
-    :param mel: floating point time series
-    :return: np.ndarray
-    """
-    specto = melspectrogram(y=mel, sr=config.FRAME['SAMPLE_RATE'], n_mels=config.FRAME['N_MELS'],
-                            fmax=config.FRAME['FMAX'])
-    specto_db = power_to_db(specto, ref=np.max)
+def audio_mfcc(data):
+    mff_output = mfcc(
+        data,
+        samplerate=config.FRAME["SAMPLE_RATE"],
+        numcep=config.FRAME["NUMCEP"],
+        nfilt=config.FRAME["NFILT"],
+        nfft=config.FRAME["NFFT"],
+    ).T
 
-    return specto_db
+    return mff_output
 
 
 def generate_pred(mel, model, label):
@@ -144,7 +154,7 @@ def generate_pred(mel, model, label):
     :param label: label dictionary
     :return: prints prediction label and probability
     """
-    mel = torch.from_numpy(mel).view(1, -1, config.FRAME['N_MELS']).float()
+    mel = torch.from_numpy(mel).reshape(1, -1, config.MODEL_PARAM["INPUT_SIZE"]).float()
 
     if torch.cuda.is_available():
         model.cuda()
@@ -157,3 +167,11 @@ def generate_pred(mel, model, label):
 
     return label_name, round(float(prob.flatten()[0]), 5)
     # print(f'Prediction: {label_name}, Probability: {round(float(prob.flatten()[0]), 5)}')
+
+
+def _metric_summary(pred: np.ndarray, label: np.ndarray):
+    acc = accuracy_score(y_true=label, y_pred=pred)
+    f1 = f1_score(y_true=label, y_pred=pred)
+    pc = precision_score(y_true=label, y_pred=pred)
+    rs = recall_score(y_true=label, y_pred=pred)
+    return acc, f1, pc, rs

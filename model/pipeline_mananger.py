@@ -31,12 +31,12 @@ def save_pipeline(*, pipeline_to_persist) -> None:
     :return:
     """
 
-    save_file_name = f"{config.MODEL_NAME}{_version}.pth"
+    save_file_name = "{}{}.pth".format(config.MODEL_NAME, _version)
     save_path = config.TRAINED_MODEL_DIR / save_file_name
 
     remove_old_pipelines(files_to_keep=[save_file_name])
     joblib.dump(pipeline_to_persist, save_path)
-    _logger.info(f"saved pipeline: {save_file_name}")
+    _logger.info("saved pipeline: {}".format(save_file_name))
 
 
 def load_model(model_name: str) -> object:

@@ -1,3 +1,4 @@
+import logging
 import os
 import warnings
 
@@ -5,30 +6,15 @@ import numpy as np
 import torch
 import torch.nn as nn
 import wandb
-from sklearn.metrics import (
-    accuracy_score,
-    f1_score,
-    precision_score,
-    recall_score
-)
 
 from model import __version__
 from model.config import config
-import logging
-
+from utlis import _metric_summary
 
 warnings.filterwarnings("ignore")
 _logger = logging.getLogger(__name__)
 
 wandb.init('Common-Voice', config=config.ALL_PARAM)
-
-
-def _metric_summary(pred: np.ndarray, label: np.ndarray):
-    acc = accuracy_score(y_true=label, y_pred=pred)
-    f1 = f1_score(y_true=label, y_pred=pred)
-    pc = precision_score(y_true=label, y_pred=pred)
-    rs = recall_score(y_true=label, y_pred=pred)
-    return acc, f1, pc, rs
 
 
 class EarlyStopping:
@@ -63,7 +49,7 @@ class EarlyStopping:
 
         elif score < self.best_score + self.delta:
             self.counter += 1
-            print(f"EarlyStopping counter: {self.counter} out of {self.threshold}")
+            print("EarlyStopping counter: {} out of {}".format(self.counter, self.threshold))
 
             if self.counter >= self.threshold:
                 self.early_stop = True
@@ -76,8 +62,7 @@ class EarlyStopping:
         """Saves RNN_TYPE when validation loss decrease."""
         if self.verbose:
             print(
-                f"Validation loss decreased ({self.val_loss_min:.6f} --> {val_loss:.6f})"
-            )
+                "Validation loss decreased ({:.3f} --> {:.3f})".format(self.val_loss_min, val_loss))
 
         self.val_loss_min = val_loss
 
@@ -163,6 +148,7 @@ def train(
                     val_acc, val_f1, val_pr, val_rc = _metric_summary(
                         pred=torch.max(val_output, dim=1).indices.data.cpu().numpy(), label=val_labels.cpu().numpy()
                     )
+
                     wandb.log({"Accuracy/val": val_acc}, step=counter)
                     wandb.log({"F1/val": val_f1}, step=counter)
                     wandb.log({"Precision/val": val_pr}, step=counter)
@@ -170,11 +156,12 @@ def train(
                     wandb.log({"Loss/val": val_loss.item()}, step=counter)
 
                 model.train()
-                _logger.info(f"Epoch: {e + 1}/{epoch}..."
-                             f"Step: {counter}...Training Loss: {train_loss.item():.6f}..."
-                             f"Validation Loss: {val_loss.item():.6f}..."
-                             f"Train Accuracy: {train_acc:.6f}..."
-                             f"Test Accuracy: {val_acc:.6f}")
+                _logger.info("Epoch: {}/{}...Step: {}..."
+                             "Training Loss: {:.3f}..."
+                             "Validation Loss: {:.3f}..."
+                             "Train Accuracy: {:.3f}..."
+                             "Test Accuracy: {:.3f}".format(e + 1, epoch, counter, train_loss.item(), val_loss.item(),
+                                                            train_acc, val_acc))
 
                 if early_stopping:
                     stopping(val_loss=val_loss, model=model)
@@ -187,5 +174,5 @@ def train(
                                         valid_loader.dataset.classes)
     model_name = config.GENDER_MODEL_NAME + __version__ + '.pt'
     torch.save(model.state_dict(), os.path.join(wandb.run.dir, model_name))
-    _logger.info('Done Training')
+    _logger.info('Done Training, uploaded model to {}'.format(wandb.run.dir))
     return model
