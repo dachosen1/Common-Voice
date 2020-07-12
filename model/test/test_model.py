@@ -2,9 +2,7 @@ import random
 
 import pytest
 import torch
-
 from model.LSTM import AudioLSTM
-from model.config import config
 
 
 @pytest.mark.parametrize(
@@ -22,13 +20,16 @@ from model.config import config
 @pytest.mark.parametrize(
     'INPUT_SIZE', [random.randint(1, 526) for _ in range(1)]
 )
-def test_lstm_model_input_and_output(HIDDEN_DIM, NUMBER_LAYER, BATCH_SIZE, OUTPUT_SIZE, INPUT_SIZE):
+@pytest.mark.parametrize(
+    'DROPOUT', [random.randint(0, 1) for _ in range(1)]
+)
+def test_lstm_model_paramaeters(HIDDEN_DIM, NUMBER_LAYER, BATCH_SIZE, OUTPUT_SIZE, DROPOUT, INPUT_SIZE):
     model = AudioLSTM(
         num_layer=NUMBER_LAYER,
         input_size=INPUT_SIZE,
         hidden_size=HIDDEN_DIM,
         output_size=OUTPUT_SIZE,
-        dropout=config.MODEL_PARAM['DROPOUT'],
+        dropout=DROPOUT,
         batch_size=BATCH_SIZE
     )
     model.init_hidden()

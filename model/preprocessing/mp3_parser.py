@@ -43,17 +43,13 @@ def remove_silence(*, signal, sample_rate, threshold):
     """
 
     signal = signal[np.abs(signal) > threshold]
-    wrap = envelope(
-        y=signal, signal_rate=sample_rate, threshold=config.FRAME["MASK_THRESHOLD"]
-    )
+    wrap = envelope(y=signal, signal_rate=sample_rate, threshold=threshold)
     signal = signal[wrap]
     return signal
 
 
 class Mp3parser:
-    def __init__(
-            self, data_path, clips_dir, document_path, data_label,
-    ):
+    def __init__(self, data_path, clips_dir, document_path, data_label, model):
         """
 
         """
@@ -62,11 +58,13 @@ class Mp3parser:
         self.data_label = data_label
         self.label_data = data_labels(self.data_path, label=self.data_label)
         self.document_path = document_path
+        self.model = model
 
         check_dir(os.path.join(self.document_path, self.data_label))
 
         self.remove_count = 0
         self.add_count = 0
+        self.FRAME_RATE = 44100
 
     def convert_to_wav(self, clips_name: set) -> None:
 
@@ -75,29 +73,27 @@ class Mp3parser:
 
         try:
             audio_mp3 = AudioSegment.from_mp3(file=path).set_frame_rate(
-                frame_rate=config.FRAME["SAMPLE_RATE"]
+                frame_rate=self.FRAME_RATE
             )
+
             signal = (
                     np.array(audio_mp3.normalize().get_array_of_samples(), dtype="int32")
                     / 100000
             )
-
-            duration = len(signal) // config.FRAME["SAMPLE_RATE"]
+            duration = len(signal) // self.FRAME_RATE
 
             # Strip out moments of silence
-            signal = remove_silence(
-                signal=signal, sample_rate=config.FRAME["SAMPLE_RATE"], threshold=0.02
-            )
+            # signal = remove_silence(signal=signal, sample_rate=self.FRAME_RATE, threshold=self.FRAME_RATE['MASK_THRESHOLD'])
 
             start = 0
-            step = int(sample_length_in_seconds * config.FRAME["SAMPLE_RATE"])
+            step = int(sample_length_in_seconds * self.FRAME_RATE)
 
             for i in range(1, duration + 1):
                 data = signal[start: start + step]
 
                 training_mfcc = audio_mfcc(data)
 
-                assert training_mfcc.shape[0] == config.MODEL_PARAM["INPUT_SIZE"]
+                assert training_mfcc.shape[0] == self.model.PARAM["INPUT_SIZE"]
                 assert training_mfcc.shape[1] == 99
 
                 clip_name = "{}".format(clips_name.split(".")[0])
@@ -115,6 +111,7 @@ class Mp3parser:
                     self.document_path, self.data_label, train_test_choice
                 )
                 check_dir(dir_path)
+
                 dir_path = os.path.join(
                     self.document_path, self.data_label, train_test_choice, label_name
                 )

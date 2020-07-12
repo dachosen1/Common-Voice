@@ -27,6 +27,7 @@ class Common_voice_models:
             3: "Thirties",
             4: "Twenties",
         }
+
         NAME = "model_age-"
         PARAM = {'HIDDEN_DIM': 128, 'NUM_LAYERS': 5, 'DROPOUT': 0.30, 'INPUT_SIZE': 13, 'BATCH_SIZE': 125,
                  'OUTPUT_SIZE': 5}
@@ -34,7 +35,7 @@ class Common_voice_models:
 
     class Country(Frame):
         TRAIN_PARAM = {'LEARNING_RATE': 0.001, 'GRADIENT_CLIP': 15, 'EPOCH': 1}
-        OUTPUT = {0: "Female", 1: "Male"}
+        OUTPUT = {0: "Australia", 1: "Canada", 2: "England", 3: "Indian", 4: "New Zealand", 5: "Scotland", 6: "USA"}
         NAME = "model_gender-"
         PARAM = {'HIDDEN_DIM': 128, 'NUM_LAYERS': 5, 'DROPOUT': 0.30, 'INPUT_SIZE': 13, 'BATCH_SIZE': 125,
                  'OUTPUT_SIZE': 2}

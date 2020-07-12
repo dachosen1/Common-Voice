@@ -146,6 +146,7 @@ class Run:
                 clips_dir=DataDirectory.CLIPS_DIR,
                 document_path=DataDirectory.DEV_DIR,
                 data_label=self.label,
+                model=self.model_name
             )
 
             with futures.ThreadPoolExecutor() as executor:
@@ -164,7 +165,7 @@ class Run:
 
 if __name__ == "__main__":
     with mlflow.start_run():
-        run = Run(Common_voice_models.Gender)
+        run = Run(Common_voice_models.Country)
         run.load_data(method="train", percentage=0.05)
         run.train_model(model=AudioLSTM, RNN_TYPE="LSTM")
 
