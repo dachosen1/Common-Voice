@@ -48,7 +48,11 @@ class EarlyStopping:
 
         elif score < self.best_score + self.delta:
             self.counter += 1
-            print("EarlyStopping counter: {} out of {}".format(self.counter, self.threshold))
+            print(
+                "EarlyStopping counter: {} out of {}".format(
+                    self.counter, self.threshold
+                )
+            )
 
             if self.counter >= self.threshold:
                 self.early_stop = True
@@ -61,7 +65,10 @@ class EarlyStopping:
         """Saves RNN_TYPE when validation loss decrease."""
         if self.verbose:
             print(
-                "Validation loss decreased ({:.3f} --> {:.3f})".format(self.val_loss_min, val_loss))
+                "Validation loss decreased ({:.3f} --> {:.3f})".format(
+                    self.val_loss_min, val_loss
+                )
+            )
 
         self.val_loss_min = val_loss
 
@@ -117,7 +124,8 @@ def train(
             train_output = model(train_inputs)
 
             train_acc, train_pr, train_rc = _metric_summary(
-                pred=torch.max(train_output, dim=1).indices.data.cpu().numpy(), label=train_labels.cpu().numpy()
+                pred=torch.max(train_output, dim=1).indices.data.cpu().numpy(),
+                label=train_labels.cpu().numpy(),
             )
 
             train_loss = criterion(train_output, train_labels)
@@ -144,7 +152,8 @@ def train(
                     val_loss = criterion(val_output, val_labels)
 
                     val_acc, val_pr, val_rc = _metric_summary(
-                        pred=torch.max(val_output, dim=1).indices.data.cpu().numpy(), label=val_labels.cpu().numpy()
+                        pred=torch.max(val_output, dim=1).indices.data.cpu().numpy(),
+                        label=val_labels.cpu().numpy(),
                     )
 
                     wandb.log({"Accuracy/val": val_acc}, step=counter)
@@ -153,27 +162,38 @@ def train(
                     wandb.log({"Loss/val": val_loss.item()}, step=counter)
 
                 model.train()
-                _logger.info("Epoch: {}/{}...Step: {}..."
-                             "Training Loss: {:.3f}..."
-                             "Validation Loss: {:.3f}..."
-                             "Train Accuracy: {:.3f}..."
-                             "Test Accuracy: {:.3f}".format(e + 1, epoch, counter, train_loss.item(), val_loss.item(),
-                                                            train_acc, val_acc))
+                _logger.info(
+                    "Epoch: {}/{}...Step: {}..."
+                    "Training Loss: {:.3f}..."
+                    "Validation Loss: {:.3f}..."
+                    "Train Accuracy: {:.3f}..."
+                    "Test Accuracy: {:.3f}".format(
+                        e + 1,
+                        epoch,
+                        counter,
+                        train_loss.item(),
+                        val_loss.item(),
+                        train_acc,
+                        val_acc,
+                    )
+                )
 
         if early_stopping:
             stopping(val_loss=val_loss, model=model)
             if stopping.early_stop:
-                _logger.info('Stopping Model Early')
+                _logger.info("Stopping Model Early")
                 break
 
-    wandb.sklearn.plot_confusion_matrix(val_labels.cpu().numpy(),
-                                        torch.max(val_output, dim=1).indices.data.cpu().numpy(),
-                                        valid_loader.dataset.classes)
+    wandb.sklearn.plot_confusion_matrix(
+        val_labels.cpu().numpy(),
+        torch.max(val_output, dim=1).indices.data.cpu().numpy(),
+        valid_loader.dataset.classes,
+    )
 
-    model_name = config.GENDER_MODEL_NAME + __version__ + '.pt'
+    model_name = config.GENDER_MODEL_NAME + __version__ + ".pt"
     torch.save(model.state_dict(), os.path.join(wandb.run.dir, model_name))
     mlflow.pytorch.log_model(model, config.AGE_MODEL_NAME)
     # mlflow.pytorch.save_model(model, config.PACKAGE_ROOT)
 
-    _logger.info('Done Training, uploaded model to {}'.format(wandb.run.dir))
+    _logger.info("Done Training, uploaded model to {}".format(wandb.run.dir))
     return model
