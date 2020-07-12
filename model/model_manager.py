@@ -2,19 +2,18 @@ import logging
 import os
 import warnings
 
+import mlflow.pytorch
 import numpy as np
 import torch
 import torch.nn as nn
 import wandb
-
 from model import __version__
 from model.config import config
-from utlis import _metric_summary
+
+from utlis import _metric_summary, log_scalar
 
 warnings.filterwarnings("ignore")
 _logger = logging.getLogger(__name__)
-
-wandb.init('Common-Voice', config=config.ALL_PARAM)
 
 
 class EarlyStopping:
@@ -49,7 +48,11 @@ class EarlyStopping:
 
         elif score < self.best_score + self.delta:
             self.counter += 1
-            print("EarlyStopping counter: {} out of {}".format(self.counter, self.threshold))
+            print(
+                "EarlyStopping counter: {} out of {}".format(
+                    self.counter, self.threshold
+                )
+            )
 
             if self.counter >= self.threshold:
                 self.early_stop = True
@@ -62,19 +65,22 @@ class EarlyStopping:
         """Saves RNN_TYPE when validation loss decrease."""
         if self.verbose:
             print(
-                "Validation loss decreased ({:.3f} --> {:.3f})".format(self.val_loss_min, val_loss))
+                "Validation loss decreased ({:.3f} --> {:.3f})".format(
+                    self.val_loss_min, val_loss
+                )
+            )
 
         self.val_loss_min = val_loss
 
 
 def train(
         model: object,
+        epoch,
+        gradient_clip,
+        learning_rate,
         train_loader: torch.utils.data.dataloader.DataLoader,
         valid_loader: torch.utils.data.dataloader.DataLoader,
-        learning_rate: float = config.TRAIN_PARAM['LEARNING_RATE'],
         print_every: int = 10,
-        epoch: int = config.TRAIN_PARAM['EPOCH'],
-        gradient_clip: int = config.TRAIN_PARAM['GRADIENT_CLIP'],
         early_stopping_threshold: int = 20,
         early_stopping: bool = True,
 ) -> object:
@@ -117,8 +123,9 @@ def train(
             model.zero_grad()
             train_output = model(train_inputs)
 
-            train_acc, train_f1, train_pr, train_rc = _metric_summary(
-                pred=torch.max(train_output, dim=1).indices.data.cpu().numpy(), label=train_labels.cpu().numpy()
+            train_acc, train_pr, train_rc = _metric_summary(
+                pred=torch.max(train_output, dim=1).indices.data.cpu().numpy(),
+                label=train_labels.cpu().numpy(),
             )
 
             train_loss = criterion(train_output, train_labels)
@@ -126,11 +133,10 @@ def train(
             nn.utils.clip_grad_norm_(model.parameters(), gradient_clip)
             optimizer.step()
 
-            wandb.log({"Accuracy/train": train_acc}, step=counter)
-            wandb.log({"F1/train": train_f1}, step=counter)
-            wandb.log({"Precision/train": train_pr}, step=counter)
-            wandb.log({"Recall/train": train_rc}, step=counter)
-            wandb.log({"Loss/train": train_loss.item()}, step=counter)
+            log_scalar(name="Accuracy/train", value=train_acc, step=counter)
+            log_scalar(name="Precision/train", value=train_rc, step=counter)
+            log_scalar(name="Recall/train", value=train_rc, step=counter)
+            log_scalar(name="Loss/train", value=train_loss.item(), step=counter)
 
             if counter % print_every == 0:
 
@@ -145,34 +151,49 @@ def train(
                     val_output = model(val_inputs)
                     val_loss = criterion(val_output, val_labels)
 
-                    val_acc, val_f1, val_pr, val_rc = _metric_summary(
-                        pred=torch.max(val_output, dim=1).indices.data.cpu().numpy(), label=val_labels.cpu().numpy()
+                    val_acc, val_pr, val_rc = _metric_summary(
+                        pred=torch.max(val_output, dim=1).indices.data.cpu().numpy(),
+                        label=val_labels.cpu().numpy(),
                     )
 
                     wandb.log({"Accuracy/val": val_acc}, step=counter)
-                    wandb.log({"F1/val": val_f1}, step=counter)
                     wandb.log({"Precision/val": val_pr}, step=counter)
                     wandb.log({"Recall/val": val_rc}, step=counter)
                     wandb.log({"Loss/val": val_loss.item()}, step=counter)
 
                 model.train()
-                _logger.info("Epoch: {}/{}...Step: {}..."
-                             "Training Loss: {:.3f}..."
-                             "Validation Loss: {:.3f}..."
-                             "Train Accuracy: {:.3f}..."
-                             "Test Accuracy: {:.3f}".format(e + 1, epoch, counter, train_loss.item(), val_loss.item(),
-                                                            train_acc, val_acc))
+                _logger.info(
+                    "Epoch: {}/{}...Step: {}..."
+                    "Training Loss: {:.3f}..."
+                    "Validation Loss: {:.3f}..."
+                    "Train Accuracy: {:.3f}..."
+                    "Test Accuracy: {:.3f}".format(
+                        e + 1,
+                        epoch,
+                        counter,
+                        train_loss.item(),
+                        val_loss.item(),
+                        train_acc,
+                        val_acc,
+                    )
+                )
 
-                if early_stopping:
-                    stopping(val_loss=val_loss, model=model)
-                    if stopping.early_stop:
-                        _logger.info('Stopping Model Early')
-                        break
+        if early_stopping:
+            stopping(val_loss=val_loss, model=model)
+            if stopping.early_stop:
+                _logger.info("Stopping Model Early")
+                break
 
-    wandb.sklearn.plot_confusion_matrix(val_labels.cpu().numpy(),
-                                        torch.max(val_output, dim=1).indices.data.cpu().numpy(),
-                                        valid_loader.dataset.classes)
-    model_name = config.GENDER_MODEL_NAME + __version__ + '.pt'
+    wandb.sklearn.plot_confusion_matrix(
+        val_labels.cpu().numpy(),
+        torch.max(val_output, dim=1).indices.data.cpu().numpy(),
+        valid_loader.dataset.classes,
+    )
+
+    model_name = config.GENDER_MODEL_NAME + __version__ + ".pt"
     torch.save(model.state_dict(), os.path.join(wandb.run.dir, model_name))
-    _logger.info('Done Training, uploaded model to {}'.format(wandb.run.dir))
+    mlflow.pytorch.log_model(model, config.AGE_MODEL_NAME)
+    # mlflow.pytorch.save_model(model, config.PACKAGE_ROOT)
+
+    _logger.info("Done Training, uploaded model to {}".format(wandb.run.dir))
     return model

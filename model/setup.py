@@ -1,8 +1,9 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+import os
+
 from setuptools import setup
-from model.config.config import PACKAGE_ROOT
 
 # Package meta-data.
 NAME = "Common voice classifier"
@@ -25,7 +26,7 @@ long_description = (
 
 EMAIL = "anderson.nelson1@gmail.com"
 AUTHOR = "Anderson Nelson"
-REQUIRES_PYTHON = "3.5.4"
+REQUIRES_PYTHON = '>=3.5.4'
 
 URL = 'https://github.com/dachosen1/Common-Voice'
 
@@ -38,8 +39,9 @@ def list_reqs(name="requirements.txt"):
 
 # Load the package's __version__.py module as a dictionary.
 
+PACKAGE_ROOT = os.path.join(os.getcwd())
 about = {}
-with open(PACKAGE_ROOT / 'VERSION') as f:
+with open(os.path.join(PACKAGE_ROOT, 'VERSION')) as f:
     _version = f.read().strip()
     about['__version__'] = _version
 
