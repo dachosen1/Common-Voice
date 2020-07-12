@@ -164,14 +164,20 @@ def generate_pred(mel, model, label, model_name):
     pred = torch.topk(out, k=1).indices
     label_name = label[int(pred.cpu().data.numpy())]
 
-    _logger.info('Prediction: {}, Probability: {}'.format(label_name, round(float(prob.flatten()[0]), 5)))
+    _logger.info(
+        "Prediction: {}, Probability: {}".format(
+            label_name, round(float(prob.flatten()[0]), 5)
+        )
+    )
 
     return label_name, round(float(prob.flatten()[0]), 5)
 
 
 def _metric_summary(pred: np.ndarray, label: np.ndarray):
     acc = accuracy_score(y_true=label, y_pred=pred)
-    pc, rc, _, _ = precision_recall_fscore_support(y_true=label, y_pred=pred, average='weighted')
+    pc, rc, _, _ = precision_recall_fscore_support(
+        y_true=label, y_pred=pred, average="weighted"
+    )
     return acc, pc, rc
 
 

@@ -4,9 +4,9 @@ import warnings
 
 import numpy as np
 import pandas as pd
+from model.config import config
 from pydub import AudioSegment
 
-from model.config import config
 from utlis import envelope, audio_mfcc
 
 warnings.filterwarnings("ignore")
@@ -52,12 +52,11 @@ def remove_silence(*, signal, sample_rate, threshold):
 
 class Mp3parser:
     def __init__(
-            self, data_path, clips_dir, document_path, data_label="gender",
+            self, data_path, clips_dir, document_path, data_label,
     ):
         """
 
         """
-        self.hop_length = 512
         self.data_path = data_path
         self.clips_dir = clips_dir
         self.data_label = data_label
@@ -66,7 +65,11 @@ class Mp3parser:
 
         check_dir(os.path.join(self.document_path, self.data_label))
 
+        self.remove_count = 0
+        self.add_count = 0
+
     def convert_to_wav(self, clips_name: set) -> None:
+
         path = os.path.join(self.clips_dir, clips_name)
         sample_length_in_seconds = 1
 
@@ -92,14 +95,19 @@ class Mp3parser:
             for i in range(1, duration + 1):
                 data = signal[start: start + step]
 
-                melspectrogram_DB = audio_mfcc(data)
+                training_mfcc = audio_mfcc(data)
 
-                assert melspectrogram_DB.shape[0] == config.MODEL_PARAM["INPUT_SIZE"]
+                assert training_mfcc.shape[0] == config.MODEL_PARAM["INPUT_SIZE"]
+                assert training_mfcc.shape[1] == 99
 
                 clip_name = "{}".format(clips_name.split(".")[0])
                 label_name = self.label_data[self.label_data.name == clip_name][
                     self.data_label
                 ].values[0]
+
+                if label_name in config.DO_NOT_INCLUDE:
+                    break
+
                 train_test_choice = np.random.choice(
                     ["train_data", "val_data", "test_data"], p=[0.7, 0.2, 0.1]
                 )
@@ -112,16 +120,20 @@ class Mp3parser:
                 )
                 check_dir(dir_path)
                 save_path = os.path.join(dir_path, clip_name + "_" + str(i) + ".csv")
-                np.savetxt(save_path, melspectrogram_DB.T, delimiter=",")
+                np.savetxt(save_path, training_mfcc.T, delimiter=",")
                 start = step * i
+                self.add_count += 1
 
         except IndexError:
+            self.remove_count += 1
             _logger.info(
-                " The {} label for {} is NA ".format(self.data_label, clip_name)
+                "The {} label for {} is NA.".format(self.data_label, clip_name)
             )
 
         except ValueError:
-            _logger.info(" The MP3 for {} is too short".format(clip_name))
+            self.remove_count += 1
+            _logger.info("The MP3 for {} is too short.".format(clip_name))
 
         except RuntimeError:
+            self.remove_count += 1
             _logger.info("The MP3 for {} is corrupt, can't open it".format(clip_name))
