@@ -4,6 +4,13 @@ defaults: &defaults
   docker:
     - image: circleci/python:3.5.4
 
+prepare_venv: &prepare_venv
+  run:
+    name: Create venv
+    command: |
+      python3 -m venv venv
+      source venv/bin/activate
+      pip install --upgrade pip
 
 prepare_tox: &prepare_tox
   run:
@@ -17,38 +24,32 @@ jobs:
     docker:
       - image: circleci/python:3.5.4
 
+    working_directory: ~/project/model
     steps:
-      - checkout
+      - checkout:
+          - path: ~/project
       - run:
           name: Install Python Model Dependencies
           command: |
-            pip install --upgrade pip --user
-            pip install -r model/requirements.txt
-            pip install torch===1.5.1 torchvision===0.6.1 -f https://download.pytorch.org/whl/torch_stable.html --user
+            sudo pip install --upgrade pip
+            pip install --user tox
             tox -e py35
-      - run:
-          name: Test LSTM Model
-          command: |
-            pytest model/test
 
-      - run:
-          name: build model whl
-          command: |
-            tox commonvoice/testenv:install_locally
-
-
-  Model Deployment Environment:
+  Model Deployment:
     docker:
       - image: circleci/python:3.5.4
+
+    working_directory: ~/project/commonvoice
     steps:
-    - checkout
-    - run:
-        name: Install Python Deployment Dependencies
-        command: |
-          pip install --upgrade pip --user
-          pip install -r commonvoice/requirements.txt
-          pip install torch===1.5.1 torchvision===0.6.1 -f https://download.pytorch.org/whl/torch_stable.html
-          tox -e py35
+      - checkout:
+          - path: ~/project
+      - run:
+          name: Install Python Deployment Dependencies
+          command: |
+            sudo pip install --upgrade pip
+            pip install --user tox
+            tox -e py35
+
 
 workflows:
   version: 2.1
