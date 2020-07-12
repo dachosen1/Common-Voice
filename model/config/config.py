@@ -1,21 +1,59 @@
 import os
+
 import model
 
 PACKAGE_ROOT = os.path.dirname(model.__file__)
 TRAINED_MODEL_DIR = os.path.join(PACKAGE_ROOT, "trained_model")
 
-GENDER_MODEL_NAME = "model_gender-"
-AGE_MODEL_NAME = "model_age-"
-COUNTRY_MODEL_NAME = "model_country-"
 
-FRAME = dict(SAMPLE_RATE=44100,
-             NUMCEP=13,
-             NFILT=26,
-             NFFT=1103,
-             MASK_THRESHOLD=0.01)
+class Common_voice_models:
+    class Frame:
+        FRAME = dict(SAMPLE_RATE=44100, NUMCEP=13, NFILT=26, NFFT=1103, MASK_THRESHOLD=0.01)
 
-GENDER_LABEL = {0: 'female',
-                1: 'male'}
+    class Gender(Frame):
+        TRAIN_PARAM = {'LEARNING_RATE': 0.001, 'GRADIENT_CLIP': 15, 'EPOCH': 1}
+        OUTPUT = {0: "Female", 1: "Male"}
+        NAME = "model_gender-"
+        PARAM = {'HIDDEN_DIM': 128, 'NUM_LAYERS': 5, 'DROPOUT': 0.30, 'INPUT_SIZE': 13, 'BATCH_SIZE': 125,
+                 'OUTPUT_SIZE': 2}
+        LABEL = 'gender'
+
+    class Age(Frame):
+        TRAIN_PARAM = {'LEARNING_RATE': 0.001, 'GRADIENT_CLIP': 15, 'EPOCH': 1}
+        OUTPUT = {
+            0: "Fifties",
+            1: "Fourties",
+            2: "Teens",
+            3: "Thirties",
+            4: "Twenties",
+        }
+        NAME = "model_age-"
+        PARAM = {'HIDDEN_DIM': 128, 'NUM_LAYERS': 5, 'DROPOUT': 0.30, 'INPUT_SIZE': 13, 'BATCH_SIZE': 125,
+                 'OUTPUT_SIZE': 5}
+        LABEL = 'age'
+
+    class Country(Frame):
+        TRAIN_PARAM = {'LEARNING_RATE': 0.001, 'GRADIENT_CLIP': 15, 'EPOCH': 1}
+        OUTPUT = {0: "Female", 1: "Male"}
+        NAME = "model_gender-"
+        PARAM = {'HIDDEN_DIM': 128, 'NUM_LAYERS': 5, 'DROPOUT': 0.30, 'INPUT_SIZE': 13, 'BATCH_SIZE': 125,
+                 'OUTPUT_SIZE': 2}
+        LABEL = 'accent'
+
+
+DO_NOT_INCLUDE = [
+    "african",
+    "hongkong",
+    "ireland",
+    "malaysia",
+    "philippines",
+    "singapore",
+    "southatlandtic",
+    "wales",
+    "nineties",
+    "seventies",
+    "sixties",
+]
 
 
 class Bucket:
@@ -26,32 +64,14 @@ class Bucket:
     TRAIN_SET = "common-voice-voice-train"
 
 
-MODEL_PARAM = dict(OUTPUT_SIZE=2,
-                   HIDDEN_DIM=128,
-                   NUM_LAYERS=8,
-                   DROPOUT=0.30,
-                   INPUT_SIZE=13,
-                   BATCH_SIZE=568)
-
-TRAIN_PARAM = dict(
-    LEARNING_RATE=0.001,
-    GRADIENT_CLIP=15,
-    EPOCH=200)
-
-ALL_PARAM = dict(Train=TRAIN_PARAM,
-                 Model=MODEL_PARAM,
-                 Frame=FRAME
-                 )
-
-
-class Storage:
+class DataDirectory:
     ROOT_DIR = r"C:\Users\ander\Documents\common-voice-data"
     DEV_DIR = r"C:\Users\ander\Documents\common-voice-dev"
     CLIPS_DIR = r"C:\Users\ander\Documents\common-voice-data\clips"
     TRAIN_DIR = r"C:\Users\ander\Documents\common-voice-train"
 
 
-class Pipeline:
-    TRAIN_DIR = r"C:\Users\ander\Documents\common-voice-dev\gender\train_data"
-    VAL_DIR = r"C:\Users\ander\Documents\common-voice-dev\gender\val_data"
-    TEST_DIR = r"C:\Users\ander\Documents\common-voice-dev\gender\test_data"
+class TrainingTestingSplitDirectory:
+    TRAIN_DIR = r"train_data"
+    VAL_DIR = r"val_data"
+    TEST_DIR = r"test_data"

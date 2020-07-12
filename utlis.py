@@ -1,27 +1,26 @@
 from __future__ import unicode_literals
 
 import itertools
+import logging
 import os
 import shutil
 import warnings
 
 import matplotlib
 import matplotlib.pyplot as plt
+import mlflow
 import numpy as np
 import pandas as pd
 import torch
 import tqdm
+import wandb
+from model.config.config import Common_voice_models, DataDirectory
 from pydub import AudioSegment
 from python_speech_features import mfcc
-from sklearn.metrics import (
-    accuracy_score,
-    f1_score,
-    precision_score,
-    recall_score
-)
+from sklearn.metrics import accuracy_score, precision_recall_fscore_support
 from torch.utils.data import WeightedRandomSampler
 
-from model.config import config
+_logger = logging.getLogger("model")
 
 warnings.filterwarnings("ignore")
 
@@ -41,7 +40,7 @@ def mp3_loader(path):
     return file
 
 
-def envelope(*, y: object, signal_rate: object, threshold: object):
+def envelope(*, y: int, signal_rate: object, threshold: object):
     signal_clean = []
     y = pd.Series(y).apply(np.abs)
     y_mean = y.rolling(
@@ -64,7 +63,7 @@ def remove_un_label_files(clips_names: list) -> None:
     """
     data = pd.read_csv("Development/data.csv")
     data_path = set(data.path)
-    clips_path = config.Storage.CLIPS_DIR
+    clips_path = DataDirectory.CLIPS_DIR
 
     delete_path = r"C:\Users\ander\Documents\delete"
 
@@ -137,16 +136,16 @@ def sample_weight(data_folder):
 def audio_mfcc(data):
     mff_output = mfcc(
         data,
-        samplerate=config.FRAME["SAMPLE_RATE"],
-        numcep=config.FRAME["NUMCEP"],
-        nfilt=config.FRAME["NFILT"],
-        nfft=config.FRAME["NFFT"],
+        samplerate=Common_voice_models.Frame.FRAME["SAMPLE_RATE"],
+        numcep=Common_voice_models.Frame.FRAME["NUMCEP"],
+        nfilt=Common_voice_models.Frame.FRAME["NFILT"],
+        nfft=Common_voice_models.Frame.FRAME["NFFT"],
     ).T
 
     return mff_output
 
 
-def generate_pred(mel, model, label):
+def generate_pred(mel, model, label, model_name):
     """
     Generates audio prediction and label
     :param mel: decibel (dB) units
@@ -154,7 +153,7 @@ def generate_pred(mel, model, label):
     :param label: label dictionary
     :return: prints prediction label and probability
     """
-    mel = torch.from_numpy(mel).reshape(1, -1, config.MODEL_PARAM["INPUT_SIZE"]).float()
+    mel = torch.from_numpy(mel).reshape(1, -1, model_name.PARAM["INPUT_SIZE"]).float()
 
     if torch.cuda.is_available():
         model.cuda()
@@ -165,13 +164,18 @@ def generate_pred(mel, model, label):
     pred = torch.topk(out, k=1).indices
     label_name = label[int(pred.cpu().data.numpy())]
 
+    _logger.info('Prediction: {}, Probability: {}'.format(label_name, round(float(prob.flatten()[0]), 5)))
+
     return label_name, round(float(prob.flatten()[0]), 5)
-    # print(f'Prediction: {label_name}, Probability: {round(float(prob.flatten()[0]), 5)}')
 
 
 def _metric_summary(pred: np.ndarray, label: np.ndarray):
     acc = accuracy_score(y_true=label, y_pred=pred)
-    f1 = f1_score(y_true=label, y_pred=pred)
-    pc = precision_score(y_true=label, y_pred=pred)
-    rs = recall_score(y_true=label, y_pred=pred)
-    return acc, f1, pc, rs
+    pc, rc, _, _ = precision_recall_fscore_support(y_true=label, y_pred=pred, average='weighted')
+    return acc, pc, rc
+
+
+def log_scalar(name, value, step):
+    """Log a scalar value to both MLflow and TensorBoard"""
+    wandb.log({name: value}, step=step)
+    mlflow.log_metric(name, value)
