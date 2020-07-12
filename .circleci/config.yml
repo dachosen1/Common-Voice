@@ -56,4 +56,4 @@ workflows:
   build-env:
     jobs:
       - Model Training
-      - Model Deployment Environment
+      - Model Deployment
