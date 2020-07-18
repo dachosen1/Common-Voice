@@ -8,7 +8,12 @@ import torch
 import wandb
 from model import __version__
 from model.LSTM import AudioLSTM
-from model.config.config import Common_voice_models, DataDirectory, TrainingTestingSplitDirectory, TRAINED_MODEL_DIR
+from model.config.config import (
+    Common_voice_models,
+    DataDirectory,
+    TrainingTestingSplitDirectory,
+    TRAINED_MODEL_DIR,
+)
 from model.model_manager import train
 from model.preprocessing.mp3_parser import Mp3parser
 from torch.utils.data import DataLoader
@@ -28,25 +33,25 @@ class Run:
     def __init__(self, model_name):
 
         self.model_name = model_name
-        ALL_PARAM = {'Train': self.model_name.TRAIN_PARAM, 'Model': self.model_name.PARAM,
-                     'Frame': self.model_name.FRAME}
+        ALL_PARAM = {
+            "Model": self.model_name.PARAM,
+            "Frame": self.model_name.FRAME,
+        }
 
         self.label = model_name.LABEL
         self.name = model_name.NAME
-        self.train_dir = os.path.join(self.label, DataDirectory.DEV_DIR, TrainingTestingSplitDirectory.TRAIN_DIR)
+        self.train_dir = os.path.join(
+            DataDirectory.DEV_DIR, self.label, TrainingTestingSplitDirectory.TRAIN_DIR
+        )
         self.val_dir = os.path.join(
-            DataDirectory.DEV_DIR,
-            self.label,
-            TrainingTestingSplitDirectory.VAL_DIR,
+            DataDirectory.DEV_DIR, self.label, TrainingTestingSplitDirectory.VAL_DIR,
         )
         self.test_dir = os.path.join(
-            DataDirectory.DEV_DIR,
-            self.label,
-            TrainingTestingSplitDirectory.TEST_DIR,
+            DataDirectory.DEV_DIR, self.label, TrainingTestingSplitDirectory.TEST_DIR,
         )
-        self.output_size = model_name.PARAM['OUTPUT_SIZE']
+        self.output_size = model_name.PARAM["OUTPUT_SIZE"]
 
-        wandb.init('Common-Voice', config=ALL_PARAM)
+        wandb.init("Common-Voice", config=ALL_PARAM)
 
     def train_model(self, model: type, RNN_TYPE) -> None:
         train_dataset = DatasetFolder(
@@ -61,7 +66,7 @@ class Run:
 
         train_data_loader = DataLoader(
             train_dataset,
-            batch_size=self.name.MODEL_PARAM["BATCH_SIZE"],
+            batch_size=self.model_name.PARAM["BATCH_SIZE"],
             sampler=train_sample_weight,
             num_workers=4,
             drop_last=True,
@@ -69,13 +74,13 @@ class Run:
 
         _logger.info(
             "Uploaded training data to {} using {} batch sizes".format(
-                self.train_dir, model.MODEL_PARAM["BATCH_SIZE"]
+                self.train_dir, self.model_name.PARAM["BATCH_SIZE"]
             )
         )
 
         val_data_loader = DataLoader(
             val_dataset,
-            batch_size=model.MODEL_PARAM["BATCH_SIZE"],
+            batch_size=self.model_name.PARAM["BATCH_SIZE"],
             sampler=val_sample_weight,
             num_workers=4,
             drop_last=True,
@@ -83,18 +88,18 @@ class Run:
 
         _logger.info(
             "Uploaded validation data to {} using {} batch sizes".format(
-                self.val_dir, model.MODEL_PARAM["BATCH_SIZE"]
+                self.val_dir, self.model_name.PARAM["BATCH_SIZE"]
             )
         )
 
         model = model(
-            num_layer=self.model_name.MODEL_PARAM["NUM_LAYERS"],
-            input_size=self.model_name.MODEL_PARAM["INPUT_SIZE"],
-            hidden_size=self.model_name.MODEL_PARAM["HIDDEN_DIM"],
-            output_size=self.model_name.MODEL_PARAM["OUTPUT_SIZE"],
-            dropout=self.model_name.MODEL_PARAM["DROPOUT"],
+            num_layer=self.model_name.PARAM["NUM_LAYERS"],
+            input_size=self.model_name.PARAM["INPUT_SIZE"],
+            hidden_size=self.model_name.PARAM["HIDDEN_DIM"],
+            output_size=self.model_name.PARAM["OUTPUT_SIZE"],
+            dropout=self.model_name.PARAM["DROPOUT"],
             RNN_TYPE=RNN_TYPE,
-            batch_size=self.model_name.MODEL_PARAM["BATCH_SIZE"],
+            batch_size=self.model_name.PARAM["BATCH_SIZE"],
         )
 
         _logger.info(
@@ -104,21 +109,24 @@ class Run:
             "{} output size, "
             "{} batch size, "
             "{} dropout".format(
-                self.model_name.MODEL_PARAM["NUM_LAYERS"],
-                self.model_name.MODEL_PARAM["HIDDEN_DIM"],
-                self.model_name.MODEL_PARAM["INPUT_SIZE"],
-                self.model_name.MODEL_PARAM["OUTPUT_SIZE"],
-                self.model_name.MODEL_PARAM["BATCH_SIZE"],
-                self.model_name.MODEL_PARAM["DROPOUT"],
+                self.model_name.PARAM["NUM_LAYERS"],
+                self.model_name.PARAM["HIDDEN_DIM"],
+                self.model_name.PARAM["INPUT_SIZE"],
+                self.model_name.PARAM["OUTPUT_SIZE"],
+                self.model_name.PARAM["BATCH_SIZE"],
+                self.model_name.PARAM["DROPOUT"],
             )
         )
 
-        trained_model = train(model, train_data_loader, val_data_loader,
-                              learning_rate=self.model_name.TRAIN_PARAM['LEARNING_RATE'],
-                              epoch=self.model_name.TRAIN_PARAM['EPOCH'],
-                              gradient_clip=self.model_name.TRAIN_PARAM['GRADIENT_CLIP'],
-                              early_stopping=True
-                              )
+        trained_model = train(
+            model=model,
+            epoch=self.model_name.PARAM["EPOCH"],
+            gradient_clip=self.model_name.PARAM["GRADIENT_CLIP"],
+            learning_rate=self.model_name.PARAM["LEARNING_RATE"],
+            train_loader=train_data_loader,
+            valid_loader=val_data_loader,
+            early_stopping=True,
+        )
 
         trained_model_path = os.path.join(
             TRAINED_MODEL_DIR, self.name + __version__ + ".pt"
@@ -146,7 +154,7 @@ class Run:
                 clips_dir=DataDirectory.CLIPS_DIR,
                 document_path=DataDirectory.DEV_DIR,
                 data_label=self.label,
-                model=self.model_name
+                model=self.model_name,
             )
 
             with futures.ThreadPoolExecutor() as executor:
@@ -166,7 +174,7 @@ class Run:
 if __name__ == "__main__":
     with mlflow.start_run():
         run = Run(Common_voice_models.Country)
-        run.load_data(method="train", percentage=0.05)
+        run.load_data(method="none", percentage=0.075)
         run.train_model(model=AudioLSTM, RNN_TYPE="LSTM")
 
     # TODO: Automate Model Labels and output
