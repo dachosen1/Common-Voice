@@ -11,15 +11,13 @@ class Common_voice_models:
         FRAME = dict(SAMPLE_RATE=44100, NUMCEP=13, NFILT=26, NFFT=1103, MASK_THRESHOLD=0.01)
 
     class Gender(Frame):
-        TRAIN_PARAM = {'LEARNING_RATE': 0.001, 'GRADIENT_CLIP': 15, 'EPOCH': 1}
         OUTPUT = {0: "Female", 1: "Male"}
         NAME = "model_gender-"
-        PARAM = {'HIDDEN_DIM': 128, 'NUM_LAYERS': 5, 'DROPOUT': 0.30, 'INPUT_SIZE': 13, 'BATCH_SIZE': 125,
-                 'OUTPUT_SIZE': 2}
+        PARAM = {'HIDDEN_DIM': 128, 'NUM_LAYERS': 5, 'DROPOUT': 0.30, 'INPUT_SIZE': 13, 'BATCH_SIZE': 1024,
+                 'OUTPUT_SIZE': 2, 'LEARNING_RATE': 0.001, 'GRADIENT_CLIP': 15, 'EPOCH': 1}
         LABEL = 'gender'
 
     class Age(Frame):
-        TRAIN_PARAM = {'LEARNING_RATE': 0.001, 'GRADIENT_CLIP': 15, 'EPOCH': 1}
         OUTPUT = {
             0: "Fifties",
             1: "Fourties",
@@ -30,15 +28,16 @@ class Common_voice_models:
 
         NAME = "model_age-"
         PARAM = {'HIDDEN_DIM': 128, 'NUM_LAYERS': 5, 'DROPOUT': 0.30, 'INPUT_SIZE': 13, 'BATCH_SIZE': 125,
-                 'OUTPUT_SIZE': 5}
+                 'OUTPUT_SIZE': 5, 'LEARNING_RATE': 0.001, 'GRADIENT_CLIP': 15, 'EPOCH': 1}
         LABEL = 'age'
 
     class Country(Frame):
-        TRAIN_PARAM = {'LEARNING_RATE': 0.001, 'GRADIENT_CLIP': 15, 'EPOCH': 1}
-        OUTPUT = {0: "Australia", 1: "Canada", 2: "England", 3: "Indian", 4: "New Zealand", 5: "Scotland", 6: "USA"}
-        NAME = "model_gender-"
-        PARAM = {'HIDDEN_DIM': 128, 'NUM_LAYERS': 5, 'DROPOUT': 0.30, 'INPUT_SIZE': 13, 'BATCH_SIZE': 125,
-                 'OUTPUT_SIZE': 2}
+        OUTPUT = {3: 'Indian', 1: 'Canada', 0: 'Australia', 2: 'England', 4: 'New Zealand',
+                  5: 'American'}
+        NAME = "model_country-"
+        PARAM = {'HIDDEN_DIM': 256, 'NUM_LAYERS': 2, 'DROPOUT': 0.15, 'INPUT_SIZE': 13, 'BATCH_SIZE': 1026,
+                 'OUTPUT_SIZE': 6, 'LEARNING_RATE': 0.0001, 'GRADIENT_CLIP': 35, 'EPOCH': 1}
+
         LABEL = 'accent'
 
 
@@ -54,6 +53,7 @@ DO_NOT_INCLUDE = [
     "nineties",
     "seventies",
     "sixties",
+    'bermuda'
 ]
 
 

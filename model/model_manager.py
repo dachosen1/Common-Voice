@@ -1,14 +1,10 @@
 import logging
-import os
 import warnings
 
-import mlflow.pytorch
 import numpy as np
 import torch
 import torch.nn as nn
 import wandb
-from model import __version__
-from model.config import config
 
 from utlis import _metric_summary, log_scalar
 
@@ -184,16 +180,11 @@ def train(
                 _logger.info("Stopping Model Early")
                 break
 
-    wandb.sklearn.plot_confusion_matrix(
-        val_labels.cpu().numpy(),
-        torch.max(val_output, dim=1).indices.data.cpu().numpy(),
-        valid_loader.dataset.classes,
-    )
-
-    model_name = config.GENDER_MODEL_NAME + __version__ + ".pt"
-    torch.save(model.state_dict(), os.path.join(wandb.run.dir, model_name))
-    mlflow.pytorch.log_model(model, config.AGE_MODEL_NAME)
-    # mlflow.pytorch.save_model(model, config.PACKAGE_ROOT)
+    # wandb.sklearn.plot_confusion_matrix(
+    #     val_labels.cpu().numpy(),
+    #     torch.max(val_output, dim=1).indices.data.cpu().numpy(),
+    #     valid_loader.dataset.classes,
+    # )
 
     _logger.info("Done Training, uploaded model to {}".format(wandb.run.dir))
     return model

@@ -4,13 +4,6 @@ defaults: &defaults
   docker:
     - image: circleci/python:3.5.4
 
-prepare_venv: &prepare_venv
-  run:
-    name: Create venv
-    command: |
-      python3 -m venv venv
-      source venv/bin/activate
-      pip install --upgrade pip
 
 prepare_tox: &prepare_tox
   run:
@@ -18,42 +11,70 @@ prepare_tox: &prepare_tox
     command: |
       sudo pip install --upgrade pip
       pip install --user tox
-
 jobs:
   Model Training:
     docker:
       - image: circleci/python:3.5.4
 
-    working_directory: ~/project/model
     steps:
-      - checkout:
-          - path: ~/project
+      - checkout
       - run:
           name: Install Python Model Dependencies
           command: |
-            sudo pip install --upgrade pip
-            pip install --user tox
-            tox -e py35
+            pip install --upgrade pip --user
+            pip install -U pytest
+            pip install -r model/requirements.txt
+            pip install torch===1.5.1 torchvision===0.6.1 -f https://download.pytorch.org/whl/torch_stable.html --user
+            model/pytest
 
-  Model Deployment:
+  Model Training 2:
     docker:
       - image: circleci/python:3.5.4
 
-    working_directory: ~/project/commonvoice
     steps:
-      - checkout:
-          - path: ~/project
+      - checkout
+      - run:
+          name: Install Python Model Dependencies
+          command: |
+            pip install --upgrade pip --user
+            pip install -U pytest
+            pip install -r model/requirements.txt
+            pip install torch===1.5.1 torchvision===0.6.1 -f https://download.pytorch.org/whl/torch_stable.html --user
+            pytest
+
+  Model Deployment Environment:
+    docker:
+      - image: circleci/python:3.5.4
+    steps:
+      - checkout
       - run:
           name: Install Python Deployment Dependencies
           command: |
-            sudo pip install --upgrade pip
-            pip install --user tox
-            tox -e py35
+            pip install --upgrade pip --user
+            pip install -U pytest
+            pip install -r commonvoice/requirements.txt
+            pip install torch===1.5.1 torchvision===0.6.1 -f https://download.pytorch.org/whl/torch_stable.html
+            pytest
 
+  Model Deployment Environment 2:
+    docker:
+      - image: circleci/python:3.5.4
+    steps:
+      - checkout
+      - run:
+          name: Install Python Deployment Dependencies
+          command: |
+            pip install --upgrade pip --user
+            pip install -U pytest
+            pip install -r commonvoice/requirements.txt
+            pip install torch===1.5.1 torchvision===0.6.1 -f https://download.pytorch.org/whl/torch_stable.html
+            pytest
 
 workflows:
   version: 2.1
   build-env:
     jobs:
       - Model Training
+      - Model Training 2
       - Model Deployment Environment
+      - Model Deployment Environment 2
