@@ -1,11 +1,13 @@
 import logging
 import os
 import warnings
-from concurrent import futures
 
 import mlflow
 import torch
 import wandb
+from torch.utils.data import DataLoader
+from torchvision.datasets import DatasetFolder
+
 from model import __version__
 from model.LSTM import AudioLSTM
 from model.config.config import (
@@ -16,11 +18,7 @@ from model.config.config import (
 )
 from model.model_manager import train
 from model.preprocessing.mp3_parser import Mp3parser
-from torch.utils.data import DataLoader
-from torchvision.datasets import DatasetFolder
-from tqdm import tqdm
-
-from utlis import csv_loader, sample_weight
+from utlis import csv_loader, sample_weight, run_thread_pool
 
 warnings.filterwarnings("ignore")
 
@@ -104,7 +102,7 @@ class Run:
 
         _logger.info(
             "LSTM Model has been initialized with {} "
-            " layers, {} hidden dimension, "
+            "layers, {} hidden dimension, "
             "{} Input size, "
             "{} output size, "
             "{} batch size, "
@@ -128,55 +126,40 @@ class Run:
             early_stopping=True,
         )
 
-        trained_model_path = os.path.join(
-            TRAINED_MODEL_DIR, self.name + __version__ + ".pt"
-        )
-        _logger.info(
-            "Saved {} version {} in {}".format(
-                self.name, __version__, TRAINED_MODEL_DIR
-            )
-        )
+        trained_model_path = os.path.join(TRAINED_MODEL_DIR, self.name + __version__ + ".pt")
+        _logger.info("Saved {} version {} in {}".format(self.name, __version__, TRAINED_MODEL_DIR))
 
         torch.save(trained_model.state_dict(), trained_model_path)
 
     def load_data(self, method, percentage):
-        clips_path = DataDirectory.CLIPS_DIR
-        mp3_list = os.listdir(clips_path)
-
         if method == "train":
-            mp3_list = mp3_list[0: round(len(mp3_list) * percentage)]
-            mp3_list = set(mp3_list)
-
-            _logger.info("Uploaded {} MP3 files for trainings".format(len(mp3_list)))
-
             parser = Mp3parser(
-                data_path=DataDirectory.ROOT_DIR,
+                data_path=DataDirectory.DATA_DIR,
                 clips_dir=DataDirectory.CLIPS_DIR,
                 document_path=DataDirectory.DEV_DIR,
                 data_label=self.label,
                 model=self.model_name,
             )
 
-            with futures.ThreadPoolExecutor() as executor:
-                tqdm(executor.map(parser.convert_to_wav, mp3_list))
+            path_list = parser.label_data.path
+            path_list = path_list[0:round(len(path_list) * percentage)]
+
+            mp3_list = range(len(path_list))
+            _logger.info("Uploaded {} MP3 files for trainings".format(len(mp3_list)))
+
+            run_thread_pool(function=parser.convert_to_wav, my_iter=mp3_list)
 
             _logger.info("Added {} total training examples.".format(parser.add_count))
-            _logger.info(
-                "Removed {} total training examples.".format(parser.remove_count)
-            )
+            _logger.info("Removed {} total training examples.".format(parser.remove_count))
 
         else:
-            _logger.info(
-                "Skipping MP3 feature engineering. Will use existing mfcc data for training"
-            )
+            _logger.info("Skipping MP3 feature engineering. Will use existing mfcc data for training")
 
 
 if __name__ == "__main__":
     with mlflow.start_run():
-        run = Run(Common_voice_models.Country)
-        run.load_data(method="none", percentage=0.075)
+        run = Run(Common_voice_models.Age)
+        run.load_data(method="none", percentage=0.0009)
         run.train_model(model=AudioLSTM, RNN_TYPE="LSTM")
-
-    # TODO: Automate Model Labels and output
 
     # predict.directory_predict(r'C:\Users\ander\Documents\common-voice-dev\gender\test_data\female')

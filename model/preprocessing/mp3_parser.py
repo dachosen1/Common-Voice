@@ -66,8 +66,8 @@ class Mp3parser:
         self.add_count = 0
         self.FRAME_RATE = 44100
 
-    def convert_to_wav(self, clips_name: set) -> None:
-
+    def convert_to_wav(self, index) -> None:
+        clips_name = self.label_data.path.values[index]
         path = os.path.join(self.clips_dir, clips_name)
         sample_length_in_seconds = 1
 
@@ -76,10 +76,7 @@ class Mp3parser:
                 frame_rate=self.FRAME_RATE
             )
 
-            signal = (
-                    np.array(audio_mp3.normalize().get_array_of_samples(), dtype="int32")
-                    / 100000
-            )
+            signal = (np.array(audio_mp3.normalize().get_array_of_samples(), dtype="int32") / 100000)
             duration = len(signal) // self.FRAME_RATE
 
             # Strip out moments of silence
@@ -97,9 +94,7 @@ class Mp3parser:
                 assert training_mfcc.shape[1] == 99
 
                 clip_name = "{}".format(clips_name.split(".")[0])
-                label_name = self.label_data[self.label_data.name == clip_name][
-                    self.data_label
-                ].values[0]
+                label_name = self.label_data[self.label_data.path == clips_name][self.data_label].values[0]
 
                 if label_name in config.DO_NOT_INCLUDE:
                     break
@@ -107,30 +102,19 @@ class Mp3parser:
                 train_test_choice = np.random.choice(
                     ["train_data", "val_data", "test_data"], p=[0.7, 0.2, 0.1]
                 )
-                dir_path = os.path.join(
-                    self.document_path, self.data_label, train_test_choice
-                )
+                dir_path = os.path.join(self.document_path, self.data_label, train_test_choice)
                 check_dir(dir_path)
 
-                dir_path = os.path.join(
-                    self.document_path, self.data_label, train_test_choice, label_name
-                )
+                dir_path = os.path.join(self.document_path, self.data_label, train_test_choice, label_name)
+
                 check_dir(dir_path)
                 save_path = os.path.join(dir_path, clip_name + "_" + str(i) + ".csv")
                 np.savetxt(save_path, training_mfcc.T, delimiter=",")
                 start = step * i
                 self.add_count += 1
 
-        except IndexError:
-            self.remove_count += 1
-            _logger.info(
-                "The {} label for {} is NA.".format(self.data_label, clip_name)
-            )
+        except FileNotFoundError:
+            _logger.info("Can't find the file {}".format(clips_name))
 
-        except ValueError:
-            self.remove_count += 1
-            _logger.info("The MP3 for {} is too short.".format(clip_name))
-
-        except RuntimeError:
-            self.remove_count += 1
-            _logger.info("The MP3 for {} is corrupt, can't open it".format(clip_name))
+        except FileExistsError:
+            _logger.warning("Error in creating folder that's already created")

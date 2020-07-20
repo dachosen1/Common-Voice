@@ -5,20 +5,21 @@ import logging
 import os
 import shutil
 import warnings
-
+import concurrent.futures
 import matplotlib
 import matplotlib.pyplot as plt
 import mlflow
 import numpy as np
 import pandas as pd
 import torch
-import tqdm
+from tqdm import tqdm
 import wandb
-from model.config.config import Common_voice_models, DataDirectory
 from pydub import AudioSegment
 from python_speech_features import mfcc
 from sklearn.metrics import accuracy_score, precision_recall_fscore_support
 from torch.utils.data import WeightedRandomSampler
+
+from model.config.config import Common_voice_models, DataDirectory
 
 _logger = logging.getLogger("model")
 
@@ -115,9 +116,9 @@ def plot_confusion_matrix(
 
 def sample_weight(data_folder):
     """
-    Return sample weight for stratistifed random sampling
+    Return sample weight for stratified random sampling
     :param data_folder: Dataset folder object
-    :return:
+    :return: WeightedRandomSampler class
     """
     class_sample_count = np.array(
         [
@@ -185,3 +186,9 @@ def log_scalar(name, value, step):
     """Log a scalar value to both MLflow and TensorBoard"""
     wandb.log({name: value}, step=step)
     mlflow.log_metric(name, value)
+
+
+def run_thread_pool(function, my_iter):
+    with concurrent.futures.ThreadPoolExecutor() as executor:
+        list(tqdm(executor.map(function, my_iter), total=len(my_iter)))
+

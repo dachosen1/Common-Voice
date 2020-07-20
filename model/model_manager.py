@@ -174,11 +174,11 @@ def train(
                     )
                 )
 
-        if early_stopping:
-            stopping(val_loss=val_loss, model=model)
-            if stopping.early_stop:
-                _logger.info("Stopping Model Early")
-                break
+                if early_stopping:
+                    stopping(val_loss=val_loss, model=model)
+                    if stopping.early_stop:
+                        _logger.info("Stopping Model Early")
+                        break
 
     # wandb.sklearn.plot_confusion_matrix(
     #     val_labels.cpu().numpy(),
