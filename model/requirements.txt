@@ -1,5 +1,5 @@
 matplotlib==3.0.3
-mlflow==1.9.1
+mlflow==1.10.0
 numpy==1.18.5
 pandas==0.25.3
 pydub==0.24.1
