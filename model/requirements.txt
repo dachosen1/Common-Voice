@@ -1,6 +1,6 @@
 matplotlib==3.0.3
 mlflow==1.9.1
-numpy==1.18.5
+numpy==1.19.1
 pandas==0.25.3
 pydub==0.24.1
 pyparsing==2.4.7
