@@ -21,7 +21,7 @@ from model.LSTM import AudioLSTM
     'INPUT_SIZE', [random.randint(1, 526) for _ in range(1)]
 )
 @pytest.mark.parametrize(
-    'DROPOUT', [random.randint(0, 1) for _ in range(1)]
+    'DROPOUT', [random.randint(0, 100) /100 for _ in range(1)]
 )
 def test_lstm_model_paramaeters(HIDDEN_DIM, NUMBER_LAYER, BATCH_SIZE, OUTPUT_SIZE, DROPOUT, INPUT_SIZE):
     model = AudioLSTM(

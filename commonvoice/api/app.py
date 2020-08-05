@@ -6,18 +6,16 @@ import markdown
 import numpy as np
 import pyaudio
 import torch
-from flask import Blueprint, request
-from flask import Flask, render_template, Response
+from flask import Flask, render_template
+
 from model.config.config import Common_voice_models
 from model.pipeline_mananger import load_model
-
-from commonvoice.api import audio_processing
 from utlis import generate_pred, audio_mfcc
+
+app = Flask(__name__)
 
 # _logger = get_logger(logger_name=__name__)
 
-
-prediction_app = Blueprint("prediction_app", __name__)
 
 warnings.filterwarnings("ignore")
 
@@ -55,12 +53,6 @@ p = pyaudio.PyAudio()
 
 start_t = time.time()
 
-stream = p.open(
-    format=FORMAT,
-    channels=CHANNELS,
-    rate=Common_voice_models.Frame.FRAME["SAMPLE_RATE"],
-    input=True,
-)
 max_frames = 50
 frames = []
 
@@ -84,34 +76,23 @@ def index():
     )
 
     stream.start_stream()
+
     while True:
         if len(frames) >= 32:
             signal = np.concatenate(tuple(frames))
-            wave_period = signal[
-                          -Common_voice_models.Frame.FRAME["SAMPLE_RATE"]:
-                          ].astype(np.float)
+            wave_period = signal[-Common_voice_models.Frame.FRAME["SAMPLE_RATE"]:].astype(np.float)
             melspectrogram_DB = audio_mfcc(wave_period)
-            name_gender, prob_gender = generate_pred(
-                mel=melspectrogram_DB,
-                model=model_gender,
-                label=Common_voice_models.Gender.OUTPUT,
-                model_name=Common_voice_models.Gender,
-            )
+            name_gender, prob_gender = generate_pred(mel=melspectrogram_DB, model=model_gender,
+                                                     label=Common_voice_models.Gender.OUTPUT,
+                                                     model_name=Common_voice_models.Gender,
+                                                     )
+            name_age, prob_age = generate_pred(mel=melspectrogram_DB, model=model_age,
+                                               label=Common_voice_models.Age.OUTPUT, model_name=Common_voice_models.Age,
+                                               )
 
-            name_age, prob_age = generate_pred(
-                mel=melspectrogram_DB,
-                model=model_age,
-                label=Common_voice_models.Age.OUTPUT,
-                model_name=Common_voice_models.Age,
+            name_country, prob_country = generate_pred(mel=melspectrogram_DB,model=model_country,
+                                                       label=Common_voice_models.Country.OUTPUT,model_name=Common_voice_models.Country,
             )
-
-            name_country, prob_country = generate_pred(
-                mel=melspectrogram_DB,
-                model=model_country,
-                label=Common_voice_models.Country.OUTPUT,
-                model_name=Common_voice_models.Country,
-            )
-
             return render_template(
                 "index.html",
                 Gender_Prob="{:.1f}%".format(prob_gender.__round__(2) * 100),
@@ -119,7 +100,7 @@ def index():
                 Country_Prob="{:.1f}%".format(prob_country.__round__(2) * 100),
                 Gender=name_gender,
                 County=name_country,
-                Age=name_age,
+                Age=name_age
             )
 
 
@@ -128,16 +109,3 @@ def about():
     with open(os.path.join(os.getcwd(), "README.md"), "r") as markdown_file:
         content = markdown_file.read()
         return markdown.markdown(content)
-
-
-@app.route("/audio_feed")
-def audio_feed():
-    """Audio streaming route. Put this in the src attribute of an audio tag."""
-    return Response(audio_processing.generate_audio_stream(), mimetype="audio/x-wav")
-
-
-@prediction_app.route("/health", methods=["GET"])
-def health():
-    if request.method == "GET":
-        #   _logger.info('health status OK')
-        return "ok"

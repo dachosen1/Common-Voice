@@ -3,7 +3,7 @@ version: 2.1
 defaults: &defaults
   docker:
     - image: circleci/python:3.5.4
-
+  working_directory: ~/project
 
 prepare_tox: &prepare_tox
   run:
@@ -16,8 +16,11 @@ jobs:
     docker:
       - image: circleci/python:3.5.4
 
+    working_directory: ~/project/model
+
     steps:
-      - checkout
+      - checkout:
+          - path: ~/project
       - run:
           name: Install Python Model Dependencies
           command: |
@@ -31,8 +34,11 @@ jobs:
     docker:
       - image: circleci/python:3.5.4
 
+    working_directory: ~/project/model
+
     steps:
-      - checkout
+      - checkout:
+          - path: ~/project
       - run:
           name: Install Python Model Dependencies
           command: |
@@ -46,7 +52,7 @@ jobs:
     docker:
       - image: circleci/python:3.5.4
     steps:
-      - checkout
+      - checkout:
       - run:
           name: Install Python Deployment Dependencies
           command: |
@@ -60,7 +66,7 @@ jobs:
     docker:
       - image: circleci/python:3.5.4
     steps:
-      - checkout
+      - checkout:
       - run:
           name: Install Python Deployment Dependencies
           command: |
