@@ -7,7 +7,7 @@ defaults: &defaults
 
 
 jobs:
-  tox_py35:
+  common-voice-model:
     docker:
       - image: circleci/python:3.5.4
     working_directory: ~/project/model
@@ -23,9 +23,26 @@ jobs:
             sudo pip install --upgrade pip
             pip install tox
             tox
+  common-voice-api:
+    docker:
+      - image: circleci/python:3.5.4
+    working_directory: ~/project/commonvoice
+    steps:
+      - checkout:
+          path: ~/project
+
+      - run:
+          name: Test API
+          command: |
+            python -m venv venv
+            source venv/bin/activate
+            sudo pip install --upgrade pip
+            pip install tox
+            tox
 
 workflows:
   version: 2
   model-testing:
     jobs:
-      - tox_py35
+      - common-voice-model
+      - common-voice-api
