@@ -23,6 +23,7 @@ jobs:
             sudo pip install --upgrade pip
             pip install tox
             tox
+
   common-voice-api:
     docker:
       - image: circleci/python:3.5.4
@@ -38,6 +39,7 @@ jobs:
             source venv/bin/activate
             sudo pip install --upgrade pip
             pip install tox
+            sudo apt-get install portaudio19-dev python-pyaudio python3-pyaudio
             tox
 
 workflows:
