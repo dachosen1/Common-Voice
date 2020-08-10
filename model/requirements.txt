@@ -6,7 +6,7 @@ pydub==0.24.1
 pyparsing==2.4.7
 pytest==5.4.3
 python-speech-features==0.6
-scikit-learn==0.22.2.post1
+scikit-learn==0.23.2
 tox==3.16.1
 tqdm==4.47.0
 wandb
