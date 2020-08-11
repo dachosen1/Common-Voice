@@ -20,7 +20,6 @@ LOG_FILE = os.path.join(LOG_DIR, "ml_api.log")
 # UPLOAD_FOLDER = PACKAGE_ROOT / 'uploads'
 # UPLOAD_FOLDER.mkdir(exist_ok=True)
 
-ALLOWED_EXTENSIONS = set(["png", "jpg", "jpeg"])
 
 
 def get_console_handler():

@@ -1,8 +1,9 @@
 <!doctype html>
-<html>
+<html lang="en">
 
 <head>
   <meta charset="utf-8">
+  <link rel="shortcut icon" href="#"/>
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
   <meta name="description" content="">
 
@@ -14,8 +15,8 @@
 <body class="container">
 
   <header class="main-header">
-      <a class="brand-logo" href= {{ url_for("index") }} >
-        <img src="../css/img/Logo.png" >
+      <a class="brand-logo" href= {{ url_for("index") }}>
+        <img src="../css/img/Logo.png" alt='Logo'>
         <div class="brand-logo-name">Common Voice</div>
       </a>
     <nav class="main-nav">
@@ -25,45 +26,41 @@
     </nav>
   </header>
   <main class="home-main-section">
-      <div class="section-1">
-        <h1>
-          Generating Audio Prediction using Machine Learning
-        </h1>
+    <div class="section-1">
+      <h1>
+        Generating Audio Prediction using Machine Learning
+      </h1>
+    </div>
+    <div class="section-2">
+      <div class="recording-picture">
+        <img src="../css/img/undraw_recording.png" alt="Recording logo">
       </div>
-      <div class="section-2" >
-        <div class="recording-picture">
-          <img src="../css/img/undraw_recording.png">
+      <div class="main-section-right">
+        <div class="call-to-action">
+          <h1 class="title">What does your voice say about you? </h1>
         </div>
-        <div class="main-section-right">
-          <div class="call-to-action">
-            <h1 class="title">What does your voice say about you? </h1>
-          </div>
-          <div class="audio-mic">
-            <button type="submit">
-              <img src="../css/img/mic.png" alt="submit" />
-            </button>
-          </div>
+        <div class="audio-mic">
+          <button type="submit">
+            <img src="../css/img/mic.png" alt="submit"/>
+          </button>
+        </div>
           <div class="prediction-result">
             <div class="category-class">
               <div class="gender-box">
-                <h1>{{ Gender }}</h1>
               </div>
               <div class="country-box">
-                <h1>{{ County }}</h1>
               </div>
               <div class="age-box">
-                <h1>{{ Age }}</h1>
+
               </div>
             </div>
             <div class="category-prob">
               <div class="category-prob-gender">
-                <h1>{{ Gender_Prob}}</h1>
+
               </div>
               <div class="category-prob-age">
-                <h1>{{ Age_Prob }}</h1>
               </div>
               <div class="category-prob-country">
-                <h1>{{ Country_Prob }}</h1>
               </div>
             </div>
           </div>
@@ -92,26 +89,62 @@
                 believes that stifles innovation.  Common Voice is a project to help make voice recognition open and
                 accessible to everyone. </p>
 
-              <p> Now you can donate your voice to help us build an open-source voice database that anyone can use to
-                make innovative apps for devices and the web. Read a sentence to help machines learn how real people
-                speak. Check the work of other contributors to improve the quality. It’s that simple! </p>
+            <p> Now you can donate your voice to help us build an open-source voice database that anyone can use to
+              make innovative apps for devices and the web. Read a sentence to help machines learn how real people
+              speak. Check the work of other contributors to improve the quality. It’s that simple! </p>
 
-             <p> To learn more visit: <a href="https://voice.mozilla.org/en">Common Voice</a>
-                </p>
+            <p> To learn more visit: <a href="https://voice.mozilla.org/en">Common Voice</a>
+            </p>
           </div>
         </div>
       </div>
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="//code.jquery.com/jquery-1.12.4.min.js" integrity="sha256-ZosEbRLbNQzLpnKIkEdrPv7lOy9C27hHQ+Xp8a4MxAQ="
+            crossorigin="anonymous"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js"
+            integrity="sha256-yr4fRk/GU1ehYJPAs8P4JlTgu0Hdsp4ZKrx8bDEDC3I=" crossorigin="anonymous"></script>
+    <script type="text/javascript" charset="utf-8">
+
+      var socket = io.connect('http://' + document.domain + ':' + location.port)
+
+      socket.on('connect', function () {
+        socket.emit('audio-streaming', {})
+        console.log('Connected')
+      })
+
+      socket.on('gender_model', function (ms) {
+        $('div.gender-box').text(ms.pred).html()
+        $('div.category-prob-gender').text(ms.prob).html()
+      })
+
+      socket.on('age_model', function (ms) {
+        $('div.age-box').text(ms.pred).html()
+        $('div.category-prob-age').text(ms.prob).html()
+      })
+
+      socket.on('country_model', function (ms) {
+        $('div.country-box').text(ms.pred).html()
+        $('div.category-prob-country').text(ms.prob).html()
+      })
+
+
+    </script>
   </main>
 </body>
 <footer class="main-footer">
-    <div class="container">
-        <nav class="footer-nav">
-            <ul>
-                <li><a href="https://github.com/dachosen1/Common-Voice" class="social-link">
-                    <img src="../css/img/gihub.png">
-                </a></li>
-            </ul>
-        </nav>
-    </div>
+  <div class="container">
+    <nav class="footer-nav">
+      <ul>
+        <li><a href="https://github.com/dachosen1/Common-Voice" class="social-link">
+          <img src="../css/img/github.png">
+        </a></li>
+      </ul>
+    </nav>
+  </div>
 </footer>
 </html>
+
+
+
+
+
