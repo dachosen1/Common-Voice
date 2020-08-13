@@ -120,6 +120,7 @@ def about():
         return markdown.markdown(content)
 
 
-@socketio.on('testing')
-def my_event():
-    emit('testing_response', 'This is a success')
+@audio_app.route("/health", method=['GET'])
+def health():
+    if requests.method == 'GET':
+        return 'Ok'
