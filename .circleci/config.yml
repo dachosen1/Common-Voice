@@ -16,14 +16,27 @@ jobs:
           path: ~/project
 
       - run:
-          name: Test Model
+          name: Install Dependencies
           command: |
             python -m venv venv
             source venv/bin/activate
             sudo pip install --upgrade pip
             pip install tox
-            ls
+
+      - run:
+          names: Model Unit Testing
+          command: |
             tox
+
+      - run:
+          names: Package Installation
+          command: |
+            tox -e install_locally
+
+      - run:
+          name: Publish model
+          command: |
+            ./scripts/publish_model.sh ./audio_model
 
   common-voice-api:
     docker:
