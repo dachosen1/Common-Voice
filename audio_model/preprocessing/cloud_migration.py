@@ -21,9 +21,9 @@ def upload_from_file(file, bucket, bucket_folder) -> None:
     """
 
     file_name = file.split(".")[0]
-    blob = bucket.blob(f"{bucket_folder}/{file_name}")
+    blob = bucket.blob("{}/{}".format(bucket_folder, file_name))
     blob.upload_from_filename(file)
-    print(f"Uploaded {file} to the {bucket_folder} folder of the {bucket}")
+    print("Uploaded {} to the {} folder of the {bucket}".format(file, bucket_folder))
 
     os.remove(file)
 
@@ -100,7 +100,7 @@ def delete_blob(
     Deletes a blob from the bucket.
     """
 
-    blob = bucket_blob.blob(f"clips/{blob_name}")
+    blob = bucket_blob.blob("clips/{}".format(blob_name))
     blob.delete()
 
 
@@ -130,7 +130,7 @@ def delete_extra_file(name: chr, bucket: str) -> None:
 
     fs = gcsfs.GCSFileSystem(project=project)
 
-    with fs.open(f"{config.Bucket.META_DATA}/delete/{name}") as f:
+    with fs.open("{}/delete/{}".format(config.Bucket.META_DATA, name)) as f:
         data = pd.read_csv(f)
 
     mp3_to_remove = data.iloc[:, 1].to_list()

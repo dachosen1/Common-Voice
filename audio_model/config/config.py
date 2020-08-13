@@ -84,3 +84,8 @@ class TrainingTestingSplitDirectory:
     TRAIN_DIR = r"train_data"
     VAL_DIR = r"val_data"
     TEST_DIR = r"test_data"
+
+
+class GoogleCloud:
+    MODEL_BUCKET_NAME = 'audio_model-version'
+    TRAINED_MODEL_DIR = 'Trained_Models'
