@@ -8,21 +8,21 @@ import wandb
 from torch.utils.data import DataLoader
 from torchvision.datasets import DatasetFolder
 
-from model import __version__
-from model.LSTM import AudioLSTM
-from model.config.config import (
-    Common_voice_models,
+from audio_model import __version__
+from audio_model.LSTM import AudioLSTM
+from audio_model.config.config import (
+    CommonVoiceModels,
     DataDirectory,
     TrainingTestingSplitDirectory,
-    TRAINED_MODEL_DIR,
+    TRAINED_MODEL_DIR
 )
-from model.model_manager import train
-from model.preprocessing.mp3_parser import Mp3parser
+from audio_model.model_manager import train
+from audio_model.preprocessing.mp3_parser import Mp3parser
 from utlis import csv_loader, sample_weight, run_thread_pool
 
 warnings.filterwarnings("ignore")
 
-_logger = logging.getLogger("model")
+_logger = logging.getLogger("audio_model")
 
 torch.manual_seed(0)
 
@@ -158,8 +158,8 @@ class Run:
 
 if __name__ == "__main__":
     with mlflow.start_run():
-        run = Run(Common_voice_models.Age)
-        run.load_data(method="none", percentage=0.0009)
+        run = Run(CommonVoiceModels.Country)
+        run.load_data(method="none", percentage=0.01)
         run.train_model(model=AudioLSTM, RNN_TYPE="LSTM")
 
     # predict.directory_predict(r'C:\Users\ander\Documents\common-voice-dev\gender\test_data\female')

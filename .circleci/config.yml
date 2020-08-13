@@ -7,10 +7,10 @@ defaults:
 
 
 jobs:
-  common-voice-model:
+  common-voice-audio_model:
     docker:
       - image: circleci/python:3.5.4
-    working_directory: ~/project/model
+    working_directory: ~/project/audio_model
     steps:
       - checkout:
           path: ~/project
@@ -47,5 +47,5 @@ workflows:
   version: 2
   model-testing:
     jobs:
-      - common-voice-model
+      - common-voice-audio_model
       - common-voice-api

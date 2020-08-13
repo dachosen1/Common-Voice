@@ -2,7 +2,8 @@
 # -*- coding: utf-8 -*-
 
 from setuptools import setup
-from model.config.config import PACKAGE_ROOT
+
+from audio_model.config.config import PACKAGE_ROOT
 
 # Package meta-data.
 NAME = "Common voice classifier"

@@ -1,12 +1,12 @@
 import os
 
-import model
+import audio_model
 
-PACKAGE_ROOT = os.path.dirname(model.__file__)
+PACKAGE_ROOT = os.path.dirname(audio_model.__file__)
 TRAINED_MODEL_DIR = os.path.join(PACKAGE_ROOT, "trained_model")
 
 
-class Common_voice_models:
+class CommonVoiceModels:
     class Frame:
         FRAME = dict(SAMPLE_RATE=44100, NUMCEP=13, NFILT=26, NFFT=1103, MASK_THRESHOLD=0.01)
 

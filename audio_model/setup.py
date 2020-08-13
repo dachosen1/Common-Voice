@@ -3,7 +3,7 @@
 
 import os
 
-from setuptools import setup
+from setuptools import setup, find_packages
 
 # Package meta-data.
 NAME = "Common voice classifier"
@@ -51,6 +51,8 @@ setup(
     description=DESCRIPTION,
     long_description=long_description,
     long_description_content_type="text/markdown",
+    packages=find_packages(exclude=('tests',)),
+    package_data={'audio_model': ['__version__']},
     author=AUTHOR,
     author_email=EMAIL,
     python_requires=REQUIRES_PYTHON,
@@ -59,5 +61,3 @@ setup(
     include_package_data=True,
     license="MIT",
 )
-
-

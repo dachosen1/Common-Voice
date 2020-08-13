@@ -5,3 +5,6 @@ Markdown==3.2.2
 numpy==1.18.5
 PyAudio==0.2.11
 socketio==0.2.1
+
+# intsall from gemfurry
+audio_model == 0.0.1

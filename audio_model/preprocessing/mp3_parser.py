@@ -4,14 +4,14 @@ import warnings
 
 import numpy as np
 import pandas as pd
-from model.config import config
 from pydub import AudioSegment
 
+from audio_model.config import config
 from utlis import envelope, audio_mfcc
 
 warnings.filterwarnings("ignore")
 
-_logger = logging.getLogger("model")
+_logger = logging.getLogger("audio_model")
 
 
 def check_dir(path):

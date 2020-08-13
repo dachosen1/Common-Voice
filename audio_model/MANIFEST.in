@@ -2,7 +2,7 @@ include *.txt
 include *.md
 include *.cfg
 include *.pkl
-recursive-include ./regression_model/*
+recursive-include ./audio_model/*
 
 include model/VERSION
 

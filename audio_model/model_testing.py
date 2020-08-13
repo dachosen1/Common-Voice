@@ -2,9 +2,9 @@ import os
 
 import pandas as pd
 import torch
-from model.config import config
-from model.pipeline_mananger import load_model
 
+from audio_model.config import config
+from audio_model.pipeline_mananger import load_model
 from utlis import generate_pred
 
 

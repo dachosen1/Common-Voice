@@ -1,27 +1,28 @@
 from __future__ import unicode_literals
 
+import concurrent.futures
 import itertools
 import logging
 import os
 import shutil
 import warnings
-import concurrent.futures
+
 import matplotlib
 import matplotlib.pyplot as plt
 import mlflow
 import numpy as np
 import pandas as pd
 import torch
-from tqdm import tqdm
 import wandb
 from pydub import AudioSegment
 from python_speech_features import mfcc
 from sklearn.metrics import accuracy_score, precision_recall_fscore_support
 from torch.utils.data import WeightedRandomSampler
+from tqdm import tqdm
 
-from model.config.config import Common_voice_models, DataDirectory
+from audio_model.config.config import CommonVoiceModels, DataDirectory
 
-_logger = logging.getLogger("model")
+_logger = logging.getLogger("audio_model")
 
 warnings.filterwarnings("ignore")
 
@@ -137,10 +138,10 @@ def sample_weight(data_folder):
 def audio_mfcc(data):
     mff_output = mfcc(
         data,
-        samplerate=Common_voice_models.Frame.FRAME["SAMPLE_RATE"],
-        numcep=Common_voice_models.Frame.FRAME["NUMCEP"],
-        nfilt=Common_voice_models.Frame.FRAME["NFILT"],
-        nfft=Common_voice_models.Frame.FRAME["NFFT"],
+        samplerate=CommonVoiceModels.Frame.FRAME["SAMPLE_RATE"],
+        numcep=CommonVoiceModels.Frame.FRAME["NUMCEP"],
+        nfilt=CommonVoiceModels.Frame.FRAME["NFILT"],
+        nfft=CommonVoiceModels.Frame.FRAME["NFFT"],
     ).T
 
     return mff_output
@@ -150,7 +151,7 @@ def generate_pred(mel, model, label, model_name):
     """
     Generates audio prediction and label
     :param mel: decibel (dB) units
-    :param model: torch model
+    :param model: torch audio_model
     :param label: label dictionary
     :return: prints prediction label and probability
     """

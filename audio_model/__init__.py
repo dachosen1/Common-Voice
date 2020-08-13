@@ -1,7 +1,7 @@
-import os
 import logging
+import os
 
-from model.config import logging_config
+from audio_model.config import logging_config
 
 logging.basicConfig(level=logging.INFO)
 
