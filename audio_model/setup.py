@@ -6,7 +6,7 @@ import os
 from setuptools import setup, find_packages
 
 # Package meta-data.
-NAME = "Common voice classifier"
+NAME = "audio_model"
 
 DESCRIPTION = "Approach to classify person age, gender country of origin based on voice"
 
@@ -41,7 +41,7 @@ def list_reqs(name="requirements.txt"):
 
 PACKAGE_ROOT = os.path.join(os.getcwd())
 about = {}
-with open(os.path.join(PACKAGE_ROOT, 'VERSION')) as f:
+with open(os.path.join(PACKAGE_ROOT, 'VERSION.txt')) as f:
     _version = f.read().strip()
     about['__version__'] = _version
 

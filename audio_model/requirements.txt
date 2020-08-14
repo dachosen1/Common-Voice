@@ -12,5 +12,5 @@ setuptools==49.3.1
 scikit-learn==0.22.2.post1
 tox==3.19.0
 tqdm==4.47.0
-wandb
+wandb==0.9.4
 wheel==0.34.2

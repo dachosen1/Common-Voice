@@ -4,7 +4,7 @@ include *.cfg
 include *.pkl
 recursive-include ./audio_model/*
 
-include model/VERSION
+include audio_model/VERSION
 
 include ./requirements.txt
 exclude *.log
