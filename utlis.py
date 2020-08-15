@@ -144,10 +144,7 @@ def audio_mfcc(data):
         nfft=CommonVoiceModels.Frame.FRAME["NFFT"],
     ).T
 
-    d_mfcc_feat = delta(mfcc_feat, 2)
-    fbank_feat = logfbank(data, CommonVoiceModels.Frame.FRAME["SAMPLE_RATE"],
-                          nfft=CommonVoiceModels.Frame.FRAME["NFFT"]).T
-    return np.concatenate((fbank_feat, d_mfcc_feat))
+    return mfcc_feat
 
 
 def generate_pred(mel, model, label, model_name):
