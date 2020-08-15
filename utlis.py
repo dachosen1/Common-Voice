@@ -15,7 +15,7 @@ import pandas as pd
 import torch
 import wandb
 from pydub import AudioSegment
-from python_speech_features import mfcc
+from python_speech_features import mfcc, delta, logfbank
 from sklearn.metrics import accuracy_score, precision_recall_fscore_support
 from torch.utils.data import WeightedRandomSampler
 from tqdm import tqdm
@@ -136,7 +136,7 @@ def sample_weight(data_folder):
 
 
 def audio_mfcc(data):
-    mff_output = mfcc(
+    mfcc_feat = mfcc(
         data,
         samplerate=CommonVoiceModels.Frame.FRAME["SAMPLE_RATE"],
         numcep=CommonVoiceModels.Frame.FRAME["NUMCEP"],
@@ -144,12 +144,16 @@ def audio_mfcc(data):
         nfft=CommonVoiceModels.Frame.FRAME["NFFT"],
     ).T
 
-    return mff_output
+    d_mfcc_feat = delta(mfcc_feat, 2)
+    fbank_feat = logfbank(data, CommonVoiceModels.Frame.FRAME["SAMPLE_RATE"],
+                          nfft=CommonVoiceModels.Frame.FRAME["NFFT"]).T
+    return np.concatenate((fbank_feat, d_mfcc_feat))
 
 
 def generate_pred(mel, model, label, model_name):
     """
     Generates audio prediction and label
+    :param model_name:
     :param mel: decibel (dB) units
     :param model: torch audio_model
     :param label: label dictionary
@@ -192,4 +196,3 @@ def log_scalar(name, value, step):
 def run_thread_pool(function, my_iter):
     with concurrent.futures.ThreadPoolExecutor() as executor:
         list(tqdm(executor.map(function, my_iter), total=len(my_iter)))
-
