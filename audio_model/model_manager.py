@@ -180,11 +180,11 @@ def train(
                 _logger.info("Stopping Model Early")
                 break
 
-    # wandb.sklearn.plot_confusion_matrix(
-    #     val_labels.cpu().numpy(),
-    #     torch.max(val_output, dim=1).indices.data.cpu().numpy(),
-    #     valid_loader.dataset.classes,
-    # )
+    wandb.sklearn.plot_confusion_matrix(
+        val_labels.cpu().numpy(),
+        torch.max(val_output, dim=1).indices.data.cpu().numpy(),
+        valid_loader.dataset.classes,
+    )
 
     _logger.info("Done Training, uploaded model to {}".format(wandb.run.dir))
     return model
