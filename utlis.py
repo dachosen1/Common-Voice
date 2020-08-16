@@ -15,7 +15,7 @@ import pandas as pd
 import torch
 import wandb
 from pydub import AudioSegment
-from python_speech_features import mfcc, delta, logfbank
+from python_speech_features import mfcc
 from sklearn.metrics import accuracy_score, precision_recall_fscore_support
 from torch.utils.data import WeightedRandomSampler
 from tqdm import tqdm
@@ -32,7 +32,7 @@ def csv_loader(path: str) -> torch.Tensor:
     :param path:
     :return:
     """
-    data = np.array(pd.read_csv(path, header=None))
+    data = np.array(np.load(path))
     sample = torch.from_numpy(data)
     return sample
 
@@ -192,4 +192,9 @@ def log_scalar(name, value, step):
 
 def run_thread_pool(function, my_iter):
     with concurrent.futures.ThreadPoolExecutor() as executor:
-        list(tqdm(executor.map(function, my_iter), total=len(my_iter)))
+        tqdm(executor.map(function, my_iter), total=len(my_iter))
+
+
+def run_process_pool(function, my_iter):
+    with concurrent.futures.ProcessPoolExecutor() as executor:
+        tqdm(executor.map(function, my_iter), total=len(my_iter))

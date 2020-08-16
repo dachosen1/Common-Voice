@@ -78,19 +78,18 @@ class Mp3parser:
 
             signal = (np.array(audio_mp3.normalize().get_array_of_samples(), dtype="int32") / 100000)
             duration = len(signal) // self.FRAME_RATE
-            
+
             # Strip out moments of silence
 #             signal = remove_silence(signal=signal, sample_rate=self.FRAME_RATE, threshold=self.FRAME_RATE['MASK_THRESHOLD'])
 
             start = 0
             step = int(sample_length_in_seconds * self.FRAME_RATE)
-            
 
             for i in range(1, duration + 1):
                 data = signal[start: start + step]
-    
+
                 training_mfcc = audio_mfcc(data)
-                
+
                 assert training_mfcc.shape[0] == self.model.PARAM["INPUT_SIZE"]
                 assert training_mfcc.shape[1] == 99
 
@@ -110,8 +109,8 @@ class Mp3parser:
                 dir_path = os.path.join(self.document_path, self.data_label, train_test_choice, label_name)
 
                 check_dir(dir_path)
-                save_path = os.path.join(dir_path, clip_name + "_" + str(i) + ".csv")
-                np.savetxt(save_path, training_mfcc.T, delimiter=",")
+                save_path = os.path.join(dir_path, clip_name + "_" + str(i))
+                np.save(save_path, training_mfcc.T)
                 start = step * i
                 self.add_count += 1
 

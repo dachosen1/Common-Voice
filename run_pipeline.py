@@ -52,10 +52,10 @@ class Run:
 
     def train_model(self, model: type, RNN_TYPE) -> None:
         train_dataset = DatasetFolder(
-            root=self.train_dir, loader=csv_loader, extensions=".csv"
+            root=self.train_dir, loader=csv_loader, extensions=".npy"
         )
         val_dataset = DatasetFolder(
-            root=self.val_dir, loader=csv_loader, extensions=".csv"
+            root=self.val_dir, loader=csv_loader, extensions=".npy"
         )
 
         train_sample_weight = sample_weight(train_dataset)
