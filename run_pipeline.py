@@ -1,6 +1,7 @@
 import logging
 import os
 import warnings
+from multiprocessing import Pool
 
 import torch
 import wandb
@@ -17,7 +18,7 @@ from audio_model.config.config import (
 )
 from audio_model.model_manager import train
 from audio_model.preprocessing.mp3_parser import Mp3parser
-from utlis import csv_loader, sample_weight, run_thread_pool
+from utlis import csv_loader, sample_weight
 
 warnings.filterwarnings("ignore")
 
@@ -144,9 +145,10 @@ class Run:
             path_list = path_list[0:round(len(path_list) * percentage)]
 
             mp3_list = range(len(path_list))
-            _logger.info("Uploaded {} MP3 files for trainings".format(len(mp3_list)))
+            p = Pool()
 
-            run_thread_pool(function=parser.convert_to_wav, my_iter=mp3_list)
+            _logger.info("Uploaded {} MP3 files for trainings".format(len(mp3_list)))
+            p.map(parser.convert_to_wav, mp3_list)
 
             _logger.info("Added {} total training examples.".format(parser.add_count))
             _logger.info("Removed {} total training examples.".format(parser.remove_count))
