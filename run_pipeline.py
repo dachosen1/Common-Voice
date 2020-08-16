@@ -48,7 +48,7 @@ class Run:
         )
         self.output_size = model_name.PARAM["OUTPUT_SIZE"]
 
-        wandb.init(project="Common-Voice-", tags=self.label, config=ALL_PARAM)
+        wandb.init(project="Common-Voice", tags=self.label, config=ALL_PARAM)
 
     def train_model(self, model: type, RNN_TYPE) -> None:
         train_dataset = DatasetFolder(
