@@ -74,10 +74,16 @@ class Bucket:
 
 
 class DataDirectory:
-    DATA_DIR = "/home/jupyter/common-voice-data"
-    DEV_DIR = "/home/jupyter/common-voice-dev"
-    CLIPS_DIR = "/home/jupyter/common-voice-data/clips"
+    DATA_DIR = r"C:\Users\ander\Documents\common-voice-data"
+    DEV_DIR = r"C:\Users\ander\Documents\common-voice-dev"
+    CLIPS_DIR = r"C:\Users\ander\Documents\cv-corpus-5.1-2020-06-22\en\clips"
+    TRAIN_DIR = r"C:\Users\ander\Documents\common-voice-train"
 
+
+# class DataDirectory:
+#     DATA_DIR = "/home/jupyter/common-voice-data"
+#     DEV_DIR = "/home/jupyter/common-voice-dev"
+#     CLIPS_DIR = "/home/jupyter/common-voice-data/clips"
 
 class TrainingTestingSplitDirectory:
     TRAIN_DIR = r"train_data"
