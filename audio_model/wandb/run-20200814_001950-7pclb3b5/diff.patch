@@ -1,0 +1,100 @@
+diff --git a/audio_model/config/config.py b/audio_model/config/config.py
+index 8c30fec..c4655fb 100644
+--- a/audio_model/config/config.py
++++ b/audio_model/config/config.py
+@@ -41,8 +41,8 @@ class CommonVoiceModels:
+                   4: 'American'}
+ 
+         NAME = "model_country-"
+-        PARAM = {'HIDDEN_DIM': 256, 'NUM_LAYERS': 2, 'DROPOUT': 0.15, 'INPUT_SIZE': 13, 'BATCH_SIZE': 8,
+-                 'OUTPUT_SIZE': 5, 'LEARNING_RATE': 0.0001, 'GRADIENT_CLIP': 35, 'EPOCH': 1}
++        PARAM = {'HIDDEN_DIM': 128, 'NUM_LAYERS': 128, 'DROPOUT': 0.4, 'INPUT_SIZE': 13, 'BATCH_SIZE': 64,
++                 'OUTPUT_SIZE': 5, 'LEARNING_RATE': 0.001, 'GRADIENT_CLIP': 0, 'EPOCH': 20}
+         LABEL = 'accent'
+ 
+ 
+diff --git a/audio_model/model_manager.py b/audio_model/model_manager.py
+index 31420af..b15df08 100644
+--- a/audio_model/model_manager.py
++++ b/audio_model/model_manager.py
+@@ -76,8 +76,8 @@ def train(
+         learning_rate,
+         train_loader: torch.utils.data.dataloader.DataLoader,
+         valid_loader: torch.utils.data.dataloader.DataLoader,
+-        print_every: int = 10,
+-        early_stopping_threshold: int = 20,
++        print_every: int = 50,
++        early_stopping_threshold: int = 10,
+         early_stopping: bool = True,
+ ) -> object:
+     """
+@@ -100,7 +100,7 @@ def train(
+     wandb.watch(model)
+ 
+     model.train()
+-    criterion = nn.CrossEntropyLoss()
++    criterion = nn.NLLLoss()
+     optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate)
+ 
+     if torch.cuda.is_available():
+@@ -180,11 +180,11 @@ def train(
+                 _logger.info("Stopping Model Early")
+                 break
+ 
+-    # wandb.sklearn.plot_confusion_matrix(
+-    #     val_labels.cpu().numpy(),
+-    #     torch.max(val_output, dim=1).indices.data.cpu().numpy(),
+-    #     valid_loader.dataset.classes,
+-    # )
++    wandb.sklearn.plot_confusion_matrix(
++        val_labels.cpu().numpy(),
++        torch.max(val_output, dim=1).indices.data.cpu().numpy(),
++        valid_loader.dataset.classes,
++    )
+ 
+     _logger.info("Done Training, uploaded model to {}".format(wandb.run.dir))
+     return model
+diff --git a/audio_model/run_pipeline.py b/audio_model/run_pipeline.py
+index d718a77..d78ebda 100644
+--- a/audio_model/run_pipeline.py
++++ b/audio_model/run_pipeline.py
+@@ -49,7 +49,7 @@ class Run:
+         )
+         self.output_size = model_name.PARAM["OUTPUT_SIZE"]
+ 
+-        wandb.init("Common-Voice", config=ALL_PARAM)
++        wandb.init("Common-Voice-" + self.label, config=ALL_PARAM)
+ 
+     def train_model(self, model: type, RNN_TYPE) -> None:
+         train_dataset = DatasetFolder(
+@@ -116,15 +116,10 @@ class Run:
+             )
+         )
+ 
+-        trained_model = train(
+-            model=model,
+-            epoch=self.model_name.PARAM["EPOCH"],
+-            gradient_clip=self.model_name.PARAM["GRADIENT_CLIP"],
+-            learning_rate=self.model_name.PARAM["LEARNING_RATE"],
+-            train_loader=train_data_loader,
+-            valid_loader=val_data_loader,
+-            early_stopping=True,
+-        )
++        trained_model = train(model=model, epoch=self.model_name.PARAM["EPOCH"],
++                              gradient_clip=self.model_name.PARAM["GRADIENT_CLIP"],
++                              learning_rate=self.model_name.PARAM["LEARNING_RATE"], train_loader=train_data_loader,
++                              valid_loader=val_data_loader, early_stopping=True)
+ 
+         trained_model_path = os.path.join(TRAINED_MODEL_DIR, self.name + __version__ + ".pt")
+         _logger.info("Saved {} version {} in {}".format(self.name, __version__, TRAINED_MODEL_DIR))
+diff --git a/commonvoice/api/__init__.py b/commonvoice/api/__init__.py
+index c124832..a2b3256 100644
+--- a/commonvoice/api/__init__.py
++++ b/commonvoice/api/__init__.py
+@@ -2,5 +2,5 @@ import os
+ 
+ from commonvoice.api.config import PACKAGE_ROOT
+ 
+-with open(os.path.join(str(PACKAGE_ROOT), 'VERSION.txt')) as version_file:
++with open(os.path.join(str(PACKAGE_ROOT), 'VERSION')) as version_file:
+     __version__ = version_file.read().strip()

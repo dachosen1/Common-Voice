@@ -1,0 +1,16 @@
+google==3.0.0
+google-cloud-storage==1.30.0
+matplotlib==3.0.3
+mlflow==1.9.1
+numpy==1.18.5
+pandas==0.25.3
+pydub==0.24.1
+pyparsing==2.4.7
+pytest==5.4.3
+python-speech-features==0.6
+setuptools==49.3.1
+scikit-learn==0.22.2.post1
+tox==3.19.0
+tqdm==4.47.0
+wandb==0.9.4
+wheel==0.34.2

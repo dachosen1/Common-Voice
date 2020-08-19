@@ -1,0 +1,31 @@
+wandb_version: 1
+
+Frame:
+  desc: null
+  value:
+    MASK_THRESHOLD: 0.01
+    NFFT: 1103
+    NFILT: 26
+    NUMCEP: 13
+    SAMPLE_RATE: 44100
+Model:
+  desc: null
+  value:
+    BATCH_SIZE: 64
+    DROPOUT: 0.4
+    EPOCH: 20
+    GRADIENT_CLIP: 0
+    HIDDEN_DIM: 128
+    INPUT_SIZE: 13
+    LEARNING_RATE: 0.001
+    NUM_LAYERS: 128
+    OUTPUT_SIZE: 5
+_wandb:
+  desc: null
+  value:
+    cli_version: 0.9.4
+    code_path: code/audio_model/run_pipeline.py
+    framework: torch
+    is_jupyter_run: false
+    is_kaggle_kernel: false
+    python_version: 3.5.4

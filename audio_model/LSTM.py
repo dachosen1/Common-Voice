@@ -52,7 +52,8 @@ class AudioLSTM(nn.Module):
             )
 
         self.dropout = nn.Dropout(dropout)
-        self.linear = nn.Linear(self.hidden_size, self.output_size)
+        self.linear_1 = nn.Linear(self.hidden_size, self.hidden_size)
+        self.linear_2 = nn.Linear(self.hidden_size, self.output_size)
         self.out = nn.Sigmoid()
 
     def forward(self, sequence):
@@ -63,7 +64,8 @@ class AudioLSTM(nn.Module):
         mfcc_reshape = sequence.float().permute(1, 0, 2)
         lstm_out, _ = self.RNN_TYPE(mfcc_reshape)
         lstm_out = self.dropout(lstm_out)
-        logits = self.linear(lstm_out[-1])
+        linear_2 = self.linear_1(lstm_out)
+        logits = self.linear_2(linear_2[-1])
         score = torch.sigmoid(logits)
         return score
 

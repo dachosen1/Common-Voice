@@ -1,0 +1,181 @@
+diff --git a/audio_model/config/config.py b/audio_model/config/config.py
+index 8c30fec..436a2f5 100644
+--- a/audio_model/config/config.py
++++ b/audio_model/config/config.py
+@@ -41,8 +41,8 @@ class CommonVoiceModels:
+                   4: 'American'}
+ 
+         NAME = "model_country-"
+-        PARAM = {'HIDDEN_DIM': 256, 'NUM_LAYERS': 2, 'DROPOUT': 0.15, 'INPUT_SIZE': 13, 'BATCH_SIZE': 8,
+-                 'OUTPUT_SIZE': 5, 'LEARNING_RATE': 0.0001, 'GRADIENT_CLIP': 35, 'EPOCH': 1}
++        PARAM = {'HIDDEN_DIM': 8, 'NUM_LAYERS': 2, 'DROPOUT': 0.15, 'INPUT_SIZE': 13, 'BATCH_SIZE': 512,
++                 'OUTPUT_SIZE': 5, 'LEARNING_RATE': 0.0001, 'GRADIENT_CLIP': 35, 'EPOCH': 2}
+         LABEL = 'accent'
+ 
+ 
+diff --git a/audio_model/model_manager.py b/audio_model/model_manager.py
+index 31420af..7471f7a 100644
+--- a/audio_model/model_manager.py
++++ b/audio_model/model_manager.py
+@@ -5,7 +5,6 @@ import numpy as np
+ import torch
+ import torch.nn as nn
+ import wandb
+-
+ from utlis import _metric_summary, log_scalar
+ 
+ warnings.filterwarnings("ignore")
+@@ -76,7 +75,6 @@ def train(
+         learning_rate,
+         train_loader: torch.utils.data.dataloader.DataLoader,
+         valid_loader: torch.utils.data.dataloader.DataLoader,
+-        print_every: int = 10,
+         early_stopping_threshold: int = 20,
+         early_stopping: bool = True,
+ ) -> object:
+@@ -85,7 +83,6 @@ def train(
+     :param train_loader:  Training Folder Datafolder
+     :param valid_loader: Validation Folder Data Folder
+     :param learning_rate: Learning rate to improve loss function
+-    :param print_every: Iteration to print model results and validation
+     :param epoch: Number of times to pass though the entire data folder
+     :param gradient_clip:
+     :param early_stopping_threshold:  threshold to stop running model
+@@ -107,6 +104,8 @@ def train(
+         model.cuda()
+ 
+     counter = 0
++    running_loss_train= []
++    running_loss_val = []
+ 
+     for e in range(epoch):
+         for train_inputs, train_labels in train_loader:
+@@ -133,46 +132,46 @@ def train(
+             log_scalar(name="Precision/train", value=train_rc, step=counter)
+             log_scalar(name="Recall/train", value=train_rc, step=counter)
+             log_scalar(name="Loss/train", value=train_loss.item(), step=counter)
++            running_loss_train.append(train_loss.item())
++
++        model.init_hidden()
++        model.eval()
++
++        for val_inputs, val_labels in valid_loader:
++
++            if torch.cuda.is_available():
++                val_inputs, val_labels = val_inputs.cuda(), val_labels.cuda()
+ 
+-            if counter % print_every == 0:
+-
+-                model.init_hidden()
+-                model.eval()
+-
+-                for val_inputs, val_labels in valid_loader:
+-
+-                    if torch.cuda.is_available():
+-                        val_inputs, val_labels = val_inputs.cuda(), val_labels.cuda()
+-
+-                    val_output = model(val_inputs)
+-                    val_loss = criterion(val_output, val_labels)
+-
+-                    val_acc, val_pr, val_rc = _metric_summary(
+-                        pred=torch.max(val_output, dim=1).indices.data.cpu().numpy(),
+-                        label=val_labels.cpu().numpy(),
+-                    )
+-
+-                    wandb.log({"Accuracy/val": val_acc}, step=counter)
+-                    wandb.log({"Precision/val": val_pr}, step=counter)
+-                    wandb.log({"Recall/val": val_rc}, step=counter)
+-                    wandb.log({"Loss/val": val_loss.item()}, step=counter)
+-
+-                model.train()
+-                _logger.info(
+-                    "Epoch: {}/{}...Step: {}..."
+-                    "Training Loss: {:.3f}..."
+-                    "Validation Loss: {:.3f}..."
+-                    "Train Accuracy: {:.3f}..."
+-                    "Test Accuracy: {:.3f}".format(
+-                        e + 1,
+-                        epoch,
+-                        counter,
+-                        train_loss.item(),
+-                        val_loss.item(),
+-                        train_acc,
+-                        val_acc,
+-                    )
++            val_output = model(val_inputs)
++            val_loss = criterion(val_output, val_labels)
++            running_loss_val.append(val_loss.item())
++
++            val_acc, val_pr, val_rc = _metric_summary(
++                pred=torch.max(val_output, dim=1).indices.data.cpu().numpy(),
++                label=val_labels.cpu().numpy(),
++            )
++
++            wandb.log({"Accuracy/val": val_acc}, step=counter)
++            wandb.log({"Precision/val": val_pr}, step=counter)
++            wandb.log({"Recall/val": val_rc}, step=counter)
++            wandb.log({"Loss/val": val_loss.item()}, step=counter)
++
++            model.train()
++            _logger.info(
++                "Epoch: {}/{}...Step: {}..."
++                "Training Loss: {:.3f}..."
++                "Validation Loss: {:.3f}..."
++                "Train Accuracy: {:.3f}..."
++                "Test Accuracy: {:.3f}".format(
++                    e + 1,
++                    epoch,
++                    counter,
++                    np.mean(running_loss_train),
++                    np.mean(running_loss_val),
++                    train_acc,
++                    val_acc,
+                 )
++            )
+ 
+         if early_stopping:
+             stopping(val_loss=val_loss, model=model)
+@@ -180,11 +179,14 @@ def train(
+                 _logger.info("Stopping Model Early")
+                 break
+ 
+-    # wandb.sklearn.plot_confusion_matrix(
+-    #     val_labels.cpu().numpy(),
+-    #     torch.max(val_output, dim=1).indices.data.cpu().numpy(),
+-    #     valid_loader.dataset.classes,
+-    # )
++        running_loss_train = []
++        running_loss_val = []
++
++    wandb.sklearn.plot_confusion_matrix(
++        val_labels.cpu().numpy(),
++        torch.max(val_output, dim=1).indices.data.cpu().numpy(),
++        valid_loader.dataset.classes,
++    )
+ 
+     _logger.info("Done Training, uploaded model to {}".format(wandb.run.dir))
+     return model
+diff --git a/audio_model/run_pipeline.py b/audio_model/run_pipeline.py
+index d718a77..6d9f709 100644
+--- a/audio_model/run_pipeline.py
++++ b/audio_model/run_pipeline.py
+@@ -116,15 +116,10 @@ class Run:
+             )
+         )
+ 
+-        trained_model = train(
+-            model=model,
+-            epoch=self.model_name.PARAM["EPOCH"],
+-            gradient_clip=self.model_name.PARAM["GRADIENT_CLIP"],
+-            learning_rate=self.model_name.PARAM["LEARNING_RATE"],
+-            train_loader=train_data_loader,
+-            valid_loader=val_data_loader,
+-            early_stopping=True,
+-        )
++        trained_model = train(model=model, epoch=self.model_name.PARAM["EPOCH"],
++                              gradient_clip=self.model_name.PARAM["GRADIENT_CLIP"],
++                              learning_rate=self.model_name.PARAM["LEARNING_RATE"], train_loader=train_data_loader,
++                              valid_loader=val_data_loader, early_stopping=True)
+ 
+         trained_model_path = os.path.join(TRAINED_MODEL_DIR, self.name + __version__ + ".pt")
+         _logger.info("Saved {} version {} in {}".format(self.name, __version__, TRAINED_MODEL_DIR))

@@ -1,0 +1,81 @@
+diff --git a/audio_model/VERSION.txt b/audio_model/VERSION.txt
+index 8a9ecc2..7bcd0e3 100644
+--- a/audio_model/VERSION.txt
++++ b/audio_model/VERSION.txt
+@@ -1 +1 @@
+-0.0.1
+\ No newline at end of file
++0.0.2
+\ No newline at end of file
+diff --git a/audio_model/config/config.py b/audio_model/config/config.py
+index 8c30fec..436a2f5 100644
+--- a/audio_model/config/config.py
++++ b/audio_model/config/config.py
+@@ -41,8 +41,8 @@ class CommonVoiceModels:
+                   4: 'American'}
+ 
+         NAME = "model_country-"
+-        PARAM = {'HIDDEN_DIM': 256, 'NUM_LAYERS': 2, 'DROPOUT': 0.15, 'INPUT_SIZE': 13, 'BATCH_SIZE': 8,
+-                 'OUTPUT_SIZE': 5, 'LEARNING_RATE': 0.0001, 'GRADIENT_CLIP': 35, 'EPOCH': 1}
++        PARAM = {'HIDDEN_DIM': 8, 'NUM_LAYERS': 2, 'DROPOUT': 0.15, 'INPUT_SIZE': 13, 'BATCH_SIZE': 512,
++                 'OUTPUT_SIZE': 5, 'LEARNING_RATE': 0.0001, 'GRADIENT_CLIP': 35, 'EPOCH': 2}
+         LABEL = 'accent'
+ 
+ 
+diff --git a/audio_model/model_manager.py b/audio_model/model_manager.py
+index 31420af..57ae4a0 100644
+--- a/audio_model/model_manager.py
++++ b/audio_model/model_manager.py
+@@ -5,7 +5,6 @@ import numpy as np
+ import torch
+ import torch.nn as nn
+ import wandb
+-
+ from utlis import _metric_summary, log_scalar
+ 
+ warnings.filterwarnings("ignore")
+@@ -76,7 +75,7 @@ def train(
+         learning_rate,
+         train_loader: torch.utils.data.dataloader.DataLoader,
+         valid_loader: torch.utils.data.dataloader.DataLoader,
+-        print_every: int = 10,
++        print_every: int = 20,
+         early_stopping_threshold: int = 20,
+         early_stopping: bool = True,
+ ) -> object:
+@@ -107,6 +106,8 @@ def train(
+         model.cuda()
+ 
+     counter = 0
++    running_loss_train= []
++    running_loss_val = []
+ 
+     for e in range(epoch):
+         for train_inputs, train_labels in train_loader:
+@@ -133,6 +134,7 @@ def train(
+             log_scalar(name="Precision/train", value=train_rc, step=counter)
+             log_scalar(name="Recall/train", value=train_rc, step=counter)
+             log_scalar(name="Loss/train", value=train_loss.item(), step=counter)
++            running_loss_train.append(train_loss)
+ 
+             if counter % print_every == 0:
+ 
+@@ -146,6 +148,7 @@ def train(
+ 
+                     val_output = model(val_inputs)
+                     val_loss = criterion(val_output, val_labels)
++                    running_loss_val.append(val_loss)
+ 
+                     val_acc, val_pr, val_rc = _metric_summary(
+                         pred=torch.max(val_output, dim=1).indices.data.cpu().numpy(),
+@@ -167,8 +170,8 @@ def train(
+                         e + 1,
+                         epoch,
+                         counter,
+-                        train_loss.item(),
+-                        val_loss.item(),
++                        np.mean(running_loss_train),
++                        np.mean(running_loss_val),
+                         train_acc,
+                         val_acc,
+                     )

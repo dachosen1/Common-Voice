@@ -7,16 +7,17 @@ TRAINED_MODEL_DIR = os.path.join(PACKAGE_ROOT, "trained_model")
 
 
 class CommonVoiceModels:
+
     class Frame:
-        FRAME = dict(SAMPLE_RATE=44100, NUMCEP=13, NFILT=26, NFFT=1103, MASK_THRESHOLD=0.01)
+        FRAME = dict(SAMPLE_RATE=22050, NUMCEP=13, NFILT=26, NFFT=2048, TOP_DB=10, FMAX=8000, N_MELS=128)
 
     class Gender(Frame):
         OUTPUT = {0: "Female",
                   1: "Male"}
 
         NAME = "model_gender-"
-        PARAM = {'HIDDEN_DIM': 128, 'NUM_LAYERS': 5, 'DROPOUT': 0.30, 'INPUT_SIZE': 13, 'BATCH_SIZE': 1024,
-                 'OUTPUT_SIZE': 2, 'LEARNING_RATE': 0.001, 'GRADIENT_CLIP': 15, 'EPOCH': 1}
+        PARAM = {'HIDDEN_DIM': 256, 'NUM_LAYERS': 4, 'DROPOUT': 0, 'INPUT_SIZE': 128, 'BATCH_SIZE': 525,
+                 'OUTPUT_SIZE': 2, 'LEARNING_RATE': 0.001, 'GRADIENT_CLIP': 15, 'EPOCH': 5}
         LABEL = 'gender'
 
     class Age(Frame):
@@ -29,8 +30,8 @@ class CommonVoiceModels:
         }
 
         NAME = "model_age-"
-        PARAM = {'HIDDEN_DIM': 64, 'NUM_LAYERS': 64, 'DROPOUT': 0.30, 'INPUT_SIZE': 13, 'BATCH_SIZE': 256,
-                 'OUTPUT_SIZE': 5, 'LEARNING_RATE': 0.001, 'GRADIENT_CLIP': 15, 'EPOCH': 1}
+        PARAM = {'HIDDEN_DIM': 128, 'NUM_LAYERS': 5, 'DROPOUT': 0, 'INPUT_SIZE': 128, 'BATCH_SIZE': 128,
+                 'OUTPUT_SIZE': 5, 'LEARNING_RATE': 0.01, 'GRADIENT_CLIP': 0, 'EPOCH': 1}
         LABEL = 'age'
 
     class Country(Frame):
@@ -41,8 +42,8 @@ class CommonVoiceModels:
                   4: 'American'}
 
         NAME = "model_country-"
-        PARAM = {'HIDDEN_DIM': 256, 'NUM_LAYERS': 2, 'DROPOUT': 0.15, 'INPUT_SIZE': 13, 'BATCH_SIZE': 8,
-                 'OUTPUT_SIZE': 5, 'LEARNING_RATE': 0.0001, 'GRADIENT_CLIP': 35, 'EPOCH': 1}
+        PARAM = {'HIDDEN_DIM': 8, 'NUM_LAYERS': 16, 'DROPOUT': 0.0, 'INPUT_SIZE': 128, 'BATCH_SIZE': 1024,
+                 'OUTPUT_SIZE': 5, 'LEARNING_RATE': 0.01, 'GRADIENT_CLIP': 0, 'EPOCH': 5}
         LABEL = 'accent'
 
 

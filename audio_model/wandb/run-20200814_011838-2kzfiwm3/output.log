@@ -1,0 +1,78 @@
+2020-08-14 01:18:47,030 — audio_model — INFO —load_data:143 — Uploaded 10167 MP3 files for trainings
+2020-08-14 01:18:47,058 — audio_model — INFO —convert_to_wav:117 — Can't find the file common_voice_en_648162.mp3
+2020-08-14 01:18:47,063 — audio_model — INFO —convert_to_wav:117 — Can't find the file common_voice_en_648166.mp3
+  0%|                                                                                                                                                    | 0/10167 [00:00<?, ?it/s]WARNING:root:frame length (1103) is greater than FFT size (512), frame will be truncated. Increase NFFT to avoid.
+WARNING:root:frame length (1103) is greater than FFT size (512), frame will be truncated. Increase NFFT to avoid.
+WARNING:root:frame length (1103) is greater than FFT size (512), frame will be truncated. Increase NFFT to avoid.
+WARNING:root:frame length (1103) is greater than FFT size (512), frame will be truncated. Increase NFFT to avoid.
+WARNING:root:frame length (1103) is greater than FFT size (512), frame will be truncated. Increase NFFT to avoid.
+WARNING:root:frame length (1103) is greater than FFT size (512), frame will be truncated. Increase NFFT to avoid.
+2020-08-14 01:18:49,007 — audio_model — INFO —convert_to_wav:117 — Can't find the file common_voice_en_641283.mp3
+WARNING:root:frame length (1103) is greater than FFT size (512), frame will be truncated. Increase NFFT to avoid.
+2020-08-14 01:18:49,029 — audio_model — INFO —convert_to_wav:117 — Can't find the file common_voice_en_641284.mp3
+WARNING:root:frame length (1103) is greater than FFT size (512), frame will be truncated. Increase NFFT to avoid.
+WARNING:root:frame length (1103) is greater than FFT size (512), frame will be truncated. Increase NFFT to avoid.2020-08-14 01:18:49,034 — audio_model — INFO —convert_to_wav:117 — Can't find the file common_voice_en_641285.mp3
+
+WARNING:root:frame length (1103) is greater than FFT size (512), frame will be truncated. Increase NFFT to avoid.
+WARNING:root:frame length (1103) is greater than FFT size (512), frame will be truncated. Increase NFFT to avoid.
+2020-08-14 01:18:49,036 — audio_model — INFO —convert_to_wav:117 — Can't find the file common_voice_en_657468.mp3WARNING:root:frame length (1103) is greater than FFT size (512), frame will be truncated. Increase NFFT to avoid.
+
+WARNING:root:frame length (1103) is greater than FFT size (512), frame will be truncated. Increase NFFT to avoid.
+WARNING:root:frame length (1103) is greater than FFT size (512), frame will be truncated. Increase NFFT to avoid.
+WARNING:root:frame length (1103) is greater than FFT size (512), frame will be truncated. Increase NFFT to avoid.
+  0%|                                                                                                                                                    | 0/10167 [00:00<?, ?it/s]
+WARNING:root:frame length (1103) is greater than FFT size (512), frame will be truncated. Increase NFFT to avoid.
+WARNING:root:frame length (1103) is greater than FFT size (512), frame will be truncated. Increase NFFT to avoid.
+WARNING:root:frame length (1103) is greater than FFT size (512), frame will be truncated. Increase NFFT to avoid.
+WARNING:root:frame length (1103) is greater than FFT size (512), frame will be truncated. Increase NFFT to avoid.
+WARNING:root:frame length (1103) is greater than FFT size (512), frame will be truncated. Increase NFFT to avoid.
+WARNING:root:frame length (1103) is greater than FFT size (512), frame will be truncated. Increase NFFT to avoid.
+WARNING:root:frame length (1103) is greater than FFT size (512), frame will be truncated. Increase NFFT to avoid.
+WARNING:root:frame length (1103) is greater than FFT size (512), frame will be truncated. Increase NFFT to avoid.
+WARNING:root:frame length (1103) is greater than FFT size (512), frame will be truncated. Increase NFFT to avoid.
+WARNING:root:frame length (1103) is greater than FFT size (512), frame will be truncated. Increase NFFT to avoid.
+WARNING:root:frame length (1103) is greater than FFT size (512), frame will be truncated. Increase NFFT to avoid.
+WARNING:root:frame length (1103) is greater than FFT size (512), frame will be truncated. Increase NFFT to avoid.
+WARNING:root:frame length (1103) is greater than FFT size (512), frame will be truncated. Increase NFFT to avoid.
+WARNING:root:frame length (1103) is greater than FFT size (512), frame will be truncated. Increase NFFT to avoid.
+WARNING:root:frame length (1103) is greater than FFT size (512), frame will be truncated. Increase NFFT to avoid.
+WARNING:root:frame length (1103) is greater than FFT size (512), frame will be truncated. Increase NFFT to avoid.
+WARNING:root:frame length (1103) is greater than FFT size (512), frame will be truncated. Increase NFFT to avoid.
+WARNING:root:frame length (1103) is greater than FFT size (512), frame will be truncated. Increase NFFT to avoid.
+WARNING:root:frame length (1103) is greater than FFT size (512), frame will be truncated. Increase NFFT to avoid.
+WARNING:root:frame length (1103) is greater than FFT size (512), frame will be truncated. Increase NFFT to avoid.
+WARNING:root:frame length (1103) is greater than FFT size (512), frame will be truncated. Increase NFFT to avoid.
+WARNING:root:frame length (1103) is greater than FFT size (512), frame will be truncated. Increase NFFT to avoid.
+WARNING:root:frame length (1103) is greater than FFT size (512), frame will be truncated. Increase NFFT to avoid.
+WARNING:root:frame length (1103) is greater than FFT size (512), frame will be truncated. Increase NFFT to avoid.
+WARNING:root:frame length (1103) is greater than FFT size (512), frame will be truncated. Increase NFFT to avoid.
+WARNING:root:frame length (1103) is greater than FFT size (512), frame will be truncated. Increase NFFT to avoid.
+WARNING:root:frame length (1103) is greater than FFT size (512), frame will be truncated. Increase NFFT to avoid.
+WARNING:root:frame length (1103) is greater than FFT size (512), frame will be truncated. Increase NFFT to avoid.
+WARNING:root:frame length (1103) is greater than FFT size (512), frame will be truncated. Increase NFFT to avoid.
+WARNING:root:frame length (1103) is greater than FFT size (512), frame will be truncated. Increase NFFT to avoid.
+WARNING:root:frame length (1103) is greater than FFT size (512), frame will be truncated. Increase NFFT to avoid.
+WARNING:root:frame length (1103) is greater than FFT size (512), frame will be truncated. Increase NFFT to avoid.
+Traceback (most recent call last):
+  File "C:/Users/ander/OneDrive/Projects/Common-Voice/audio_model/run_pipeline.py", line 157, in <module>
+    run.load_data(method="train", percentage=0.01)
+  File "C:/Users/ander/OneDrive/Projects/Common-Voice/audio_model/run_pipeline.py", line 145, in load_data
+    run_thread_pool(function=parser.convert_to_wav, my_iter=mp3_list)
+  File "C:\Users\ander\OneDrive\Projects\Common-Voice\utlis.py", line 196, in run_thread_pool
+    list(tqdm(executor.map(function, my_iter), total=len(my_iter)))
+  File "C:\Users\ander\OneDrive\Projects\Common-Voice\venv\lib\site-packages\tqdm\std.py", line 1129, in __iter__
+    for obj in iterable:
+  File "C:\Users\ander\AppData\Local\Programs\Python\Python35\lib\concurrent\futures\_base.py", line 556, in result_iterator
+    yield future.result()
+  File "C:\Users\ander\AppData\Local\Programs\Python\Python35\lib\concurrent\futures\_base.py", line 405, in result
+    return self.__get_result()
+  File "C:\Users\ander\AppData\Local\Programs\Python\Python35\lib\concurrent\futures\_base.py", line 357, in __get_result
+    raise self._exception
+  File "C:\Users\ander\AppData\Local\Programs\Python\Python35\lib\concurrent\futures\thread.py", line 55, in run
+    result = self.fn(*self.args, **self.kwargs)
+  File "C:\Users\ander\OneDrive\Projects\Common-Voice\audio_model\preprocessing\mp3_parser.py", line 91, in convert_to_wav
+    training_mfcc = audio_mfcc(data)
+  File "C:\Users\ander\OneDrive\Projects\Common-Voice\utlis.py", line 149, in audio_mfcc
+    return np.concatenate((fbank_feat, d_mfcc_feat)).T
+  File "<__array_function__ internals>", line 6, in concatenate
+ValueError: all the input array dimensions for the concatenation axis must match exactly, but along dimension 1, the array at index 0 has size 26 and the array at index 1 has size 13

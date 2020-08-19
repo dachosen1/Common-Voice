@@ -1,0 +1,11 @@
+2020-08-13 22:26:43,253 — audio_model — INFO —load_data:160 — Skipping MP3 feature engineering. Will use existing mfcc data for training
+2020-08-13 22:26:43,555 — audio_model — INFO —train_model:76 — Uploaded training data to C:\Users\ander\Documents\common-voice-dev\accent\train_data using 512 batch sizes
+2020-08-13 22:26:43,555 — audio_model — INFO —train_model:90 — Uploaded validation data to C:\Users\ander\Documents\common-voice-dev\accent\val_data using 512 batch sizes
+Traceback (most recent call last):
+  File "C:/Users/ander/OneDrive/Projects/Common-Voice/audio_model/run_pipeline.py", line 167, in <module>
+    run.train_model(model=AudioLSTM, RNN_TYPE="LSTM")
+  File "C:/Users/ander/OneDrive/Projects/Common-Voice/audio_model/run_pipeline.py", line 105, in train_model
+    model.set_callbacks(callbacks)
+  File "C:\Users\ander\OneDrive\Projects\Common-Voice\venv\lib\site-packages\torch\nn\modules\module.py", line 594, in __getattr__
+    type(self).__name__, name))
+AttributeError: 'AudioLSTM' object has no attribute 'set_callbacks'

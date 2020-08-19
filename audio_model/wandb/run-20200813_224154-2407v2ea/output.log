@@ -1,0 +1,44 @@
+2020-08-13 22:42:01,737 — audio_model — INFO —load_data:156 — Skipping MP3 feature engineering. Will use existing mfcc data for training
+2020-08-13 22:42:02,027 — audio_model — INFO —train_model:75 — Uploaded training data to C:\Users\ander\Documents\common-voice-dev\accent\train_data using 512 batch sizes
+2020-08-13 22:42:02,028 — audio_model — INFO —train_model:89 — Uploaded validation data to C:\Users\ander\Documents\common-voice-dev\accent\val_data using 512 batch sizes
+2020-08-13 22:42:02,029 — audio_model — INFO —train_model:115 — LSTM Model has been initialized with 2 layers, 8 hidden dimension, 13 Input size, 5 output size, 512 batch size, 0.15 dropout
+2020-08-13 22:43:12,762 — audio_model.model_manager — INFO —train:176 — Epoch: 1/2...Step: 65...Training Loss: 1.610...Validation Loss: 1.608...Train Accuracy: 0.213...Test Accuracy: 0.209
+2020-08-13 22:43:12,819 — audio_model.model_manager — INFO —train:176 — Epoch: 1/2...Step: 65...Training Loss: 1.610...Validation Loss: 1.610...Train Accuracy: 0.213...Test Accuracy: 0.195
+2020-08-13 22:43:12,838 — audio_model.model_manager — INFO —train:176 — Epoch: 1/2...Step: 65...Training Loss: 1.610...Validation Loss: 1.610...Train Accuracy: 0.213...Test Accuracy: 0.203
+2020-08-13 22:43:12,858 — audio_model.model_manager — INFO —train:176 — Epoch: 1/2...Step: 65...Training Loss: 1.610...Validation Loss: 1.610...Train Accuracy: 0.213...Test Accuracy: 0.193
+2020-08-13 22:43:14,970 — audio_model.model_manager — INFO —train:176 — Epoch: 1/2...Step: 65...Training Loss: 1.610...Validation Loss: 1.610...Train Accuracy: 0.213...Test Accuracy: 0.168
+2020-08-13 22:43:14,986 — audio_model.model_manager — INFO —train:176 — Epoch: 1/2...Step: 65...Training Loss: 1.610...Validation Loss: 1.610...Train Accuracy: 0.213...Test Accuracy: 0.236
+2020-08-13 22:43:15,002 — audio_model.model_manager — INFO —train:176 — Epoch: 1/2...Step: 65...Training Loss: 1.610...Validation Loss: 1.610...Train Accuracy: 0.213...Test Accuracy: 0.184
+2020-08-13 22:43:15,022 — audio_model.model_manager — INFO —train:176 — Epoch: 1/2...Step: 65...Training Loss: 1.610...Validation Loss: 1.610...Train Accuracy: 0.213...Test Accuracy: 0.189
+2020-08-13 22:43:17,059 — audio_model.model_manager — INFO —train:176 — Epoch: 1/2...Step: 65...Training Loss: 1.610...Validation Loss: 1.610...Train Accuracy: 0.213...Test Accuracy: 0.213
+2020-08-13 22:43:17,077 — audio_model.model_manager — INFO —train:176 — Epoch: 1/2...Step: 65...Training Loss: 1.610...Validation Loss: 1.610...Train Accuracy: 0.213...Test Accuracy: 0.178
+2020-08-13 22:43:17,094 — audio_model.model_manager — INFO —train:176 — Epoch: 1/2...Step: 65...Training Loss: 1.610...Validation Loss: 1.610...Train Accuracy: 0.213...Test Accuracy: 0.229
+2020-08-13 22:43:17,111 — audio_model.model_manager — INFO —train:176 — Epoch: 1/2...Step: 65...Training Loss: 1.610...Validation Loss: 1.610...Train Accuracy: 0.213...Test Accuracy: 0.213
+2020-08-13 22:43:19,070 — audio_model.model_manager — INFO —train:176 — Epoch: 1/2...Step: 65...Training Loss: 1.610...Validation Loss: 1.610...Train Accuracy: 0.213...Test Accuracy: 0.229
+2020-08-13 22:43:19,086 — audio_model.model_manager — INFO —train:176 — Epoch: 1/2...Step: 65...Training Loss: 1.610...Validation Loss: 1.610...Train Accuracy: 0.213...Test Accuracy: 0.193
+2020-08-13 22:43:19,100 — audio_model.model_manager — INFO —train:176 — Epoch: 1/2...Step: 65...Training Loss: 1.610...Validation Loss: 1.610...Train Accuracy: 0.213...Test Accuracy: 0.199
+2020-08-13 22:43:19,114 — audio_model.model_manager — INFO —train:176 — Epoch: 1/2...Step: 65...Training Loss: 1.610...Validation Loss: 1.610...Train Accuracy: 0.213...Test Accuracy: 0.221
+2020-08-13 22:43:20,636 — audio_model.model_manager — INFO —train:176 — Epoch: 1/2...Step: 65...Training Loss: 1.610...Validation Loss: 1.610...Train Accuracy: 0.213...Test Accuracy: 0.221
+2020-08-13 22:43:20,648 — audio_model.model_manager — INFO —train:176 — Epoch: 1/2...Step: 65...Training Loss: 1.610...Validation Loss: 1.610...Train Accuracy: 0.213...Test Accuracy: 0.201
+Validation loss decreased (inf --> 1.611)
+2020-08-13 22:44:37,599 — audio_model.model_manager — INFO —train:176 — Epoch: 2/2...Step: 130...Training Loss: 1.610...Validation Loss: 1.610...Train Accuracy: 0.207...Test Accuracy: 0.180
+2020-08-13 22:44:37,641 — audio_model.model_manager — INFO —train:176 — Epoch: 2/2...Step: 130...Training Loss: 1.610...Validation Loss: 1.610...Train Accuracy: 0.207...Test Accuracy: 0.191
+2020-08-13 22:44:37,682 — audio_model.model_manager — INFO —train:176 — Epoch: 2/2...Step: 130...Training Loss: 1.610...Validation Loss: 1.610...Train Accuracy: 0.207...Test Accuracy: 0.230
+2020-08-13 22:44:37,700 — audio_model.model_manager — INFO —train:176 — Epoch: 2/2...Step: 130...Training Loss: 1.610...Validation Loss: 1.609...Train Accuracy: 0.207...Test Accuracy: 0.205
+2020-08-13 22:44:40,145 — audio_model.model_manager — INFO —train:176 — Epoch: 2/2...Step: 130...Training Loss: 1.610...Validation Loss: 1.609...Train Accuracy: 0.207...Test Accuracy: 0.188
+2020-08-13 22:44:40,162 — audio_model.model_manager — INFO —train:176 — Epoch: 2/2...Step: 130...Training Loss: 1.610...Validation Loss: 1.609...Train Accuracy: 0.207...Test Accuracy: 0.207
+2020-08-13 22:44:40,179 — audio_model.model_manager — INFO —train:176 — Epoch: 2/2...Step: 130...Training Loss: 1.610...Validation Loss: 1.609...Train Accuracy: 0.207...Test Accuracy: 0.184
+2020-08-13 22:44:40,196 — audio_model.model_manager — INFO —train:176 — Epoch: 2/2...Step: 130...Training Loss: 1.610...Validation Loss: 1.609...Train Accuracy: 0.207...Test Accuracy: 0.217
+2020-08-13 22:44:42,695 — audio_model.model_manager — INFO —train:176 — Epoch: 2/2...Step: 130...Training Loss: 1.610...Validation Loss: 1.609...Train Accuracy: 0.207...Test Accuracy: 0.195
+2020-08-13 22:44:42,709 — audio_model.model_manager — INFO —train:176 — Epoch: 2/2...Step: 130...Training Loss: 1.610...Validation Loss: 1.609...Train Accuracy: 0.207...Test Accuracy: 0.189
+2020-08-13 22:44:42,834 — audio_model.model_manager — INFO —train:176 — Epoch: 2/2...Step: 130...Training Loss: 1.610...Validation Loss: 1.609...Train Accuracy: 0.207...Test Accuracy: 0.162
+2020-08-13 22:44:42,851 — audio_model.model_manager — INFO —train:176 — Epoch: 2/2...Step: 130...Training Loss: 1.610...Validation Loss: 1.610...Train Accuracy: 0.207...Test Accuracy: 0.178
+2020-08-13 22:44:45,010 — audio_model.model_manager — INFO —train:176 — Epoch: 2/2...Step: 130...Training Loss: 1.610...Validation Loss: 1.610...Train Accuracy: 0.207...Test Accuracy: 0.195
+2020-08-13 22:44:45,027 — audio_model.model_manager — INFO —train:176 — Epoch: 2/2...Step: 130...Training Loss: 1.610...Validation Loss: 1.610...Train Accuracy: 0.207...Test Accuracy: 0.172
+2020-08-13 22:44:45,196 — audio_model.model_manager — INFO —train:176 — Epoch: 2/2...Step: 130...Training Loss: 1.610...Validation Loss: 1.610...Train Accuracy: 0.207...Test Accuracy: 0.188
+2020-08-13 22:44:45,213 — audio_model.model_manager — INFO —train:176 — Epoch: 2/2...Step: 130...Training Loss: 1.610...Validation Loss: 1.610...Train Accuracy: 0.207...Test Accuracy: 0.203
+2020-08-13 22:44:46,794 — audio_model.model_manager — INFO —train:176 — Epoch: 2/2...Step: 130...Training Loss: 1.610...Validation Loss: 1.610...Train Accuracy: 0.207...Test Accuracy: 0.191
+2020-08-13 22:44:46,839 — audio_model.model_manager — INFO —train:176 — Epoch: 2/2...Step: 130...Training Loss: 1.610...Validation Loss: 1.610...Train Accuracy: 0.207...Test Accuracy: 0.227
+Validation loss decreased (1.611 --> 1.605)
+2020-08-13 22:44:47,688 — audio_model.model_manager — INFO —train:192 — Done Training, uploaded model to C:\Users\ander\OneDrive\Projects\Common-Voice\audio_model\wandb\run-20200813_224154-2407v2ea
+2020-08-13 22:44:47,689 — audio_model — INFO —train_model:130 — Saved model_country- version 0.0.2 in C:\Users\ander\OneDrive\Projects\Common-Voice\audio_model\trained_model

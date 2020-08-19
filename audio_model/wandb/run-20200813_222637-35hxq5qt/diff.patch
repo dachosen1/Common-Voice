@@ -1,0 +1,296 @@
+diff --git a/audio_model/EarlyStopping.py b/audio_model/EarlyStopping.py
+new file mode 100644
+index 0000000..968745b
+--- /dev/null
++++ b/audio_model/EarlyStopping.py
+@@ -0,0 +1,91 @@
++from __future__ import absolute_import
++from __future__ import print_function
++
++
++class Callback(object):
++    """
++    Abstract base class used to build new callbacks.
++    """
++
++    def __init__(self):
++        pass
++
++    def set_params(self, params):
++        self.params = params
++
++    def set_trainer(self, model):
++        self.trainer = model
++
++    def on_epoch_begin(self, epoch, logs=None):
++        pass
++
++    def on_epoch_end(self, epoch, logs=None):
++        pass
++
++    def on_batch_begin(self, batch, logs=None):
++        pass
++
++    def on_batch_end(self, batch, logs=None):
++        pass
++
++    def on_train_begin(self, logs=None):
++        pass
++
++    def on_train_end(self, logs=None):
++        pass
++
++
++class EarlyStopping(Callback):
++    """
++    Early Stopping to terminate training early under certain conditions
++    """
++
++    def __init__(self,
++                 monitor='val_loss',
++                 min_delta=0,
++                 patience=5):
++        """
++        EarlyStopping callback to exit the training loop if training or
++        validation loss does not improve by a certain amount for a certain
++        number of epochs
++        Arguments
++        ---------
++        monitor : string in {'val_loss', 'loss'}
++            whether to monitor train or val loss
++        min_delta : float
++            minimum change in monitored value to qualify as improvement.
++            This number should be positive.
++        patience : integer
++            number of epochs to wait for improvment before terminating.
++            the counter be reset after each improvment
++        """
++        self.monitor = monitor
++        self.min_delta = min_delta
++        self.patience = patience
++        self.wait = 0
++        self.best_loss = 1e-15
++        self.stopped_epoch = 0
++        super(EarlyStopping, self).__init__()
++
++    def on_train_begin(self, logs=None):
++        self.wait = 0
++        self.best_loss = 1e15
++
++    def on_epoch_end(self, epoch, logs=None):
++        current_loss = logs.get(self.monitor)
++        if current_loss is None:
++            pass
++        else:
++            if (current_loss - self.best_loss) < -self.min_delta:
++                self.best_loss = current_loss
++                self.wait = 1
++            else:
++                if self.wait >= self.patience:
++                    self.stopped_epoch = epoch + 1
++                    self.trainer._stop_training = True
++                self.wait += 1
++
++    def on_train_end(self, logs):
++        if self.stopped_epoch > 0:
++            print('\nTerminated Training for Early Stopping at Epoch %04i' %
++                  self.stopped_epoch)
+diff --git a/audio_model/VERSION.txt b/audio_model/VERSION.txt
+index 8a9ecc2..7bcd0e3 100644
+--- a/audio_model/VERSION.txt
++++ b/audio_model/VERSION.txt
+@@ -1 +1 @@
+-0.0.1
+\ No newline at end of file
++0.0.2
+\ No newline at end of file
+diff --git a/audio_model/config/config.py b/audio_model/config/config.py
+index 8c30fec..436a2f5 100644
+--- a/audio_model/config/config.py
++++ b/audio_model/config/config.py
+@@ -41,8 +41,8 @@ class CommonVoiceModels:
+                   4: 'American'}
+ 
+         NAME = "model_country-"
+-        PARAM = {'HIDDEN_DIM': 256, 'NUM_LAYERS': 2, 'DROPOUT': 0.15, 'INPUT_SIZE': 13, 'BATCH_SIZE': 8,
+-                 'OUTPUT_SIZE': 5, 'LEARNING_RATE': 0.0001, 'GRADIENT_CLIP': 35, 'EPOCH': 1}
++        PARAM = {'HIDDEN_DIM': 8, 'NUM_LAYERS': 2, 'DROPOUT': 0.15, 'INPUT_SIZE': 13, 'BATCH_SIZE': 512,
++                 'OUTPUT_SIZE': 5, 'LEARNING_RATE': 0.0001, 'GRADIENT_CLIP': 35, 'EPOCH': 2}
+         LABEL = 'accent'
+ 
+ 
+diff --git a/audio_model/model_manager.py b/audio_model/model_manager.py
+index 31420af..2f47ac9 100644
+--- a/audio_model/model_manager.py
++++ b/audio_model/model_manager.py
+@@ -5,70 +5,12 @@ import numpy as np
+ import torch
+ import torch.nn as nn
+ import wandb
+-
+ from utlis import _metric_summary, log_scalar
+ 
+ warnings.filterwarnings("ignore")
+ _logger = logging.getLogger(__name__)
+ 
+ 
+-class EarlyStopping:
+-    """
+-    Early stops the training if validation loss doesn't improve after a given threshold.
+-    """
+-
+-    def __init__(
+-            self, threshold: int = 5, verbose: bool = False, delta: float = 0
+-    ) -> None:
+-        """
+-        :param threshold: How long to wait after last time validation loss improved. Default: 50
+-        :param verbose: If True, prints a message for each validation loss improvement.Default: False
+-        :param delta: Minimum change in the monitored quantity to qualify as an improvement.Default: 0
+-        """
+-
+-        self.threshold = threshold
+-        self.verbose = verbose
+-        self.counter = 0
+-        self.best_score = None
+-        self.early_stop = False
+-        self.val_loss_min = np.Inf
+-        self.delta = delta
+-
+-    def __call__(self, val_loss, model):
+-
+-        score = -val_loss
+-
+-        if self.best_score is None:
+-            self.best_score = score
+-            self.save_checkpoint(val_loss)
+-
+-        elif score < self.best_score + self.delta:
+-            self.counter += 1
+-            print(
+-                "EarlyStopping counter: {} out of {}".format(
+-                    self.counter, self.threshold
+-                )
+-            )
+-
+-            if self.counter >= self.threshold:
+-                self.early_stop = True
+-        else:
+-            self.best_score = score
+-            self.save_checkpoint(val_loss)
+-            self.counter = 0
+-
+-    def save_checkpoint(self, val_loss):
+-        """Saves RNN_TYPE when validation loss decrease."""
+-        if self.verbose:
+-            print(
+-                "Validation loss decreased ({:.3f} --> {:.3f})".format(
+-                    self.val_loss_min, val_loss
+-                )
+-            )
+-
+-        self.val_loss_min = val_loss
+-
+-
+ def train(
+         model: object,
+         epoch,
+@@ -76,7 +18,7 @@ def train(
+         learning_rate,
+         train_loader: torch.utils.data.dataloader.DataLoader,
+         valid_loader: torch.utils.data.dataloader.DataLoader,
+-        print_every: int = 10,
++        print_every: int = 20,
+         early_stopping_threshold: int = 20,
+         early_stopping: bool = True,
+ ) -> object:
+@@ -94,12 +36,11 @@ def train(
+     :return: a model object
+     """
+ 
+-    if early_stopping:
+-        stopping = EarlyStopping(threshold=early_stopping_threshold, verbose=True)
+-
+     wandb.watch(model)
+ 
++
+     model.train()
++
+     criterion = nn.CrossEntropyLoss()
+     optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate)
+ 
+@@ -107,6 +48,8 @@ def train(
+         model.cuda()
+ 
+     counter = 0
++    running_loss_train= []
++    running_loss_val = []
+ 
+     for e in range(epoch):
+         for train_inputs, train_labels in train_loader:
+@@ -133,6 +76,7 @@ def train(
+             log_scalar(name="Precision/train", value=train_rc, step=counter)
+             log_scalar(name="Recall/train", value=train_rc, step=counter)
+             log_scalar(name="Loss/train", value=train_loss.item(), step=counter)
++            running_loss_train.append(train_loss)
+ 
+             if counter % print_every == 0:
+ 
+@@ -146,6 +90,7 @@ def train(
+ 
+                     val_output = model(val_inputs)
+                     val_loss = criterion(val_output, val_labels)
++                    running_loss_val.append(val_loss)
+ 
+                     val_acc, val_pr, val_rc = _metric_summary(
+                         pred=torch.max(val_output, dim=1).indices.data.cpu().numpy(),
+@@ -167,24 +112,15 @@ def train(
+                         e + 1,
+                         epoch,
+                         counter,
+-                        train_loss.item(),
+-                        val_loss.item(),
++                        np.mean(running_loss_train),
++                        np.mean(running_loss_val),
+                         train_acc,
+                         val_acc,
+                     )
+                 )
+ 
+-        if early_stopping:
+-            stopping(val_loss=val_loss, model=model)
+-            if stopping.early_stop:
+-                _logger.info("Stopping Model Early")
+-                break
+-
+-    # wandb.sklearn.plot_confusion_matrix(
+-    #     val_labels.cpu().numpy(),
+-    #     torch.max(val_output, dim=1).indices.data.cpu().numpy(),
+-    #     valid_loader.dataset.classes,
+-    # )
++                running_loss_train = []
++                running_loss_val = []
+ 
+     _logger.info("Done Training, uploaded model to {}".format(wandb.run.dir))
+     return model
+diff --git a/audio_model/run_pipeline.py b/audio_model/run_pipeline.py
+index d718a77..eb5665c 100644
+--- a/audio_model/run_pipeline.py
++++ b/audio_model/run_pipeline.py
+@@ -16,6 +16,7 @@ from audio_model.config.config import (
+     TrainingTestingSplitDirectory,
+     TRAINED_MODEL_DIR
+ )
++from torchsample.callbacks import EarlyStopping
+ from audio_model.model_manager import train
+ from audio_model.preprocessing.mp3_parser import Mp3parser
+ from utlis import csv_loader, sample_weight, run_thread_pool
+@@ -100,6 +101,9 @@ class Run:
+             batch_size=self.model_name.PARAM["BATCH_SIZE"],
+         )
+ 
++        callbacks = [EarlyStopping(monitor='val_loss', patience=5)]
++        model.set_callbacks(callbacks)
++
+         _logger.info(
+             "LSTM Model has been initialized with {} "
+             "layers, {} hidden dimension, "

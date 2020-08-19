@@ -1,0 +1,22 @@
+2020-08-13 23:38:36,680 — audio_model — INFO —load_data:151 — Skipping MP3 feature engineering. Will use existing mfcc data for training
+2020-08-13 23:38:38,836 — audio_model — INFO —train_model:75 — Uploaded training data to C:\Users\ander\Documents\common-voice-dev\accent\train_data using 64 batch sizes
+2020-08-13 23:38:38,836 — audio_model — INFO —train_model:89 — Uploaded validation data to C:\Users\ander\Documents\common-voice-dev\accent\val_data using 64 batch sizes
+2020-08-13 23:38:46,421 — audio_model — INFO —train_model:115 — LSTM Model has been initialized with 512 layers, 512 hidden dimension, 13 Input size, 5 output size, 64 batch size, 0.4 dropout
+Traceback (most recent call last):
+  File "C:/Users/ander/OneDrive/Projects/Common-Voice/audio_model/run_pipeline.py", line 158, in <module>
+    run.train_model(model=AudioLSTM, RNN_TYPE="LSTM")
+  File "C:/Users/ander/OneDrive/Projects/Common-Voice/audio_model/run_pipeline.py", line 122, in train_model
+    valid_loader=val_data_loader, early_stopping=True)
+  File "C:\Users\ander\OneDrive\Projects\Common-Voice\audio_model\model_manager.py", line 107, in train
+    model.cuda()
+  File "C:\Users\ander\OneDrive\Projects\Common-Voice\venv\lib\site-packages\torch\nn\modules\module.py", line 307, in cuda
+    return self._apply(lambda t: t.cuda(device))
+  File "C:\Users\ander\OneDrive\Projects\Common-Voice\venv\lib\site-packages\torch\nn\modules\module.py", line 203, in _apply
+    module._apply(fn)
+  File "C:\Users\ander\OneDrive\Projects\Common-Voice\venv\lib\site-packages\torch\nn\modules\rnn.py", line 144, in _apply
+    ret = super(RNNBase, self)._apply(fn)
+  File "C:\Users\ander\OneDrive\Projects\Common-Voice\venv\lib\site-packages\torch\nn\modules\module.py", line 225, in _apply
+    param_applied = fn(param)
+  File "C:\Users\ander\OneDrive\Projects\Common-Voice\venv\lib\site-packages\torch\nn\modules\module.py", line 307, in <lambda>
+    return self._apply(lambda t: t.cuda(device))
+RuntimeError: CUDA out of memory. Tried to allocate 20.00 MiB (GPU 0; 4.00 GiB total capacity; 3.09 GiB already allocated; 4.47 MiB free; 3.09 GiB reserved in total by PyTorch)

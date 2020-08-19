@@ -1,0 +1,10 @@
+2020-08-13 22:59:49,939 — audio_model — INFO —load_data:151 — Skipping MP3 feature engineering. Will use existing mfcc data for training
+2020-08-13 22:59:50,257 — audio_model — INFO —train_model:75 — Uploaded training data to C:\Users\ander\Documents\common-voice-dev\accent\train_data using 512 batch sizes
+2020-08-13 22:59:50,257 — audio_model — INFO —train_model:89 — Uploaded validation data to C:\Users\ander\Documents\common-voice-dev\accent\val_data using 512 batch sizes
+2020-08-13 22:59:50,259 — audio_model — INFO —train_model:115 — LSTM Model has been initialized with 2 layers, 8 hidden dimension, 13 Input size, 5 output size, 512 batch size, 0.15 dropout
+2020-08-13 23:01:07,955 — audio_model.model_manager — INFO —train:172 — Epoch: 1/2...Step: 65...Training Loss: 1.610...Validation Loss: 1.610...Train Accuracy: 0.213...Test Accuracy: 0.205
+Validation loss decreased (inf --> 1.611)
+2020-08-13 23:02:33,316 — audio_model.model_manager — INFO —train:172 — Epoch: 2/2...Step: 130...Training Loss: 1.610...Validation Loss: 1.609...Train Accuracy: 0.199...Test Accuracy: 0.234
+Validation loss decreased (1.611 --> 1.605)
+2020-08-13 23:02:33,445 — audio_model.model_manager — INFO —train:191 — Done Training, uploaded model to C:\Users\ander\OneDrive\Projects\Common-Voice\audio_model\wandb\run-20200813_225944-smtom4x6
+2020-08-13 23:02:33,445 — audio_model — INFO —train_model:125 — Saved model_country- version 0.0.1 in C:\Users\ander\OneDrive\Projects\Common-Voice\audio_model\trained_model

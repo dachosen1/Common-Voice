@@ -1,0 +1,18 @@
+2020-08-13 23:54:45,107 — audio_model — INFO —load_data:151 — Skipping MP3 feature engineering. Will use existing mfcc data for training
+2020-08-13 23:54:45,429 — audio_model — INFO —train_model:75 — Uploaded training data to C:\Users\ander\Documents\common-voice-dev\accent\train_data using 64 batch sizes
+2020-08-13 23:54:45,430 — audio_model — INFO —train_model:89 — Uploaded validation data to C:\Users\ander\Documents\common-voice-dev\accent\val_data using 64 batch sizes
+2020-08-13 23:54:45,544 — audio_model — INFO —train_model:115 — LSTM Model has been initialized with 128 layers, 128 hidden dimension, 13 Input size, 5 output size, 64 batch size, 0.4 dropout
+Traceback (most recent call last):
+  File "C:/Users/ander/OneDrive/Projects/Common-Voice/audio_model/run_pipeline.py", line 158, in <module>
+    run.train_model(model=AudioLSTM, RNN_TYPE="LSTM")
+  File "C:/Users/ander/OneDrive/Projects/Common-Voice/audio_model/run_pipeline.py", line 122, in train_model
+    valid_loader=val_data_loader, early_stopping=True)
+  File "C:\Users\ander\OneDrive\Projects\Common-Voice\audio_model\model_manager.py", line 127, in train
+    train_loss = criterion(train_output, train_labels)
+  File "C:\Users\ander\OneDrive\Projects\Common-Voice\venv\lib\site-packages\torch\nn\modules\module.py", line 550, in __call__
+    result = self.forward(*input, **kwargs)
+  File "C:\Users\ander\OneDrive\Projects\Common-Voice\venv\lib\site-packages\torch\nn\modules\loss.py", line 979, in forward
+    return F.multilabel_soft_margin_loss(input, target, weight=self.weight, reduction=self.reduction)
+  File "C:\Users\ander\OneDrive\Projects\Common-Voice\venv\lib\site-packages\torch\nn\functional.py", line 2644, in multilabel_soft_margin_loss
+    loss = -(target * logsigmoid(input) + (1 - target) * logsigmoid(-input))
+RuntimeError: The size of tensor a (64) must match the size of tensor b (5) at non-singleton dimension 1

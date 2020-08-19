@@ -1,0 +1,17 @@
+2020-08-13 22:30:14,581 — audio_model — INFO —load_data:156 — Skipping MP3 feature engineering. Will use existing mfcc data for training
+2020-08-13 22:30:14,891 — audio_model — INFO —train_model:75 — Uploaded training data to C:\Users\ander\Documents\common-voice-dev\accent\train_data using 512 batch sizes
+2020-08-13 22:30:14,891 — audio_model — INFO —train_model:89 — Uploaded validation data to C:\Users\ander\Documents\common-voice-dev\accent\val_data using 512 batch sizes
+2020-08-13 22:30:14,892 — audio_model — INFO —train_model:115 — LSTM Model has been initialized with 2 layers, 8 hidden dimension, 13 Input size, 5 output size, 512 batch size, 0.15 dropout
+Traceback (most recent call last):
+  File "C:/Users/ander/OneDrive/Projects/Common-Voice/audio_model/run_pipeline.py", line 163, in <module>
+    run.train_model(model=AudioLSTM, RNN_TYPE="LSTM")
+  File "C:/Users/ander/OneDrive/Projects/Common-Voice/audio_model/run_pipeline.py", line 126, in train_model
+    early_stopping=True,
+  File "C:\Users\ander\OneDrive\Projects\Common-Voice\audio_model\model_manager.py", line 173, in train
+    np.mean(running_loss_train),
+  File "<__array_function__ internals>", line 6, in mean
+  File "C:\Users\ander\OneDrive\Projects\Common-Voice\venv\lib\site-packages\numpy\core\fromnumeric.py", line 3335, in mean
+    out=out, **kwargs)
+  File "C:\Users\ander\OneDrive\Projects\Common-Voice\venv\lib\site-packages\numpy\core\_methods.py", line 161, in _mean
+    ret = ret.dtype.type(ret / rcount)
+AttributeError: 'torch.dtype' object has no attribute 'type'

@@ -1,0 +1,37 @@
+wandb_version: 1
+
+Frame:
+  desc: null
+  value:
+    MASK_THRESHOLD: 0.01
+    NFFT: 1103
+    NFILT: 26
+    NUMCEP: 13
+    SAMPLE_RATE: 44100
+Model:
+  desc: null
+  value:
+    BATCH_SIZE: 512
+    DROPOUT: 0.15
+    EPOCH: 2
+    GRADIENT_CLIP: 35
+    HIDDEN_DIM: 8
+    INPUT_SIZE: 13
+    LEARNING_RATE: 0.0001
+    NUM_LAYERS: 2
+    OUTPUT_SIZE: 5
+_wandb:
+  desc: null
+  value:
+    cli_version: 0.9.4
+    code_path: code/audio_model/run_pipeline.py
+    framework: torch
+    is_jupyter_run: false
+    is_kaggle_kernel: false
+    python_version: 3.5.4
+    viz:
+      confusion_matrix:
+        historyFieldSettings:
+          key: confusion_matrix
+          x-axis: _step
+        id: wandb/confusion_matrix/v1

@@ -1,0 +1,12 @@
+Metadata-Version: 2.1
+Name: audio-model
+Version: 0.0.1
+Summary: Approach to classify person age, gender country of origin based on voice
+Home-page: https://github.com/dachosen1/Common-Voice
+Author: Anderson Nelson
+Author-email: anderson.nelson1@gmail.com
+License: MIT
+Description: This modules uses data from Common voice which is a crowdsourcing project started by Mozilla to create a free database for speech recognition software. The project is supported by volunteers who record sample sentences with a microphone and review recordings of other users. The transcribed sentences will be collected in a voice database available under the public domain license CC0. This license ensures that developers can use the database for voice-to-text applications without restrictions or costs. Common Voice appeared as a response to the language assistants of large companies such as Amazon Echo, Siri or Google Assistant. In this modules I will provide an approach to classify in real time a person voice into the three broad categories of the commonvoice-voice-voice data set
+Platform: UNKNOWN
+Requires-Python: >=3.5.4
+Description-Content-Type: text/markdown

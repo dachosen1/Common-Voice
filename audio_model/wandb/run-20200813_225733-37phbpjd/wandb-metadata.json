@@ -1,0 +1,25 @@
+{
+    "executable": "C:\\Users\\ander\\OneDrive\\Projects\\Common-Voice\\venv\\Scripts\\python.exe",
+    "jobType": "Common-Voice",
+    "args": [],
+    "mode": "run",
+    "heartbeatAt": "2020-08-14T05:59:30.079175",
+    "username": "ander",
+    "python": "3.5.4",
+    "os": "Windows-10-10.0.18362-SP0",
+    "codePath": "audio_model\\run_pipeline.py",
+    "cpu_count": 8,
+    "host": "DESKTOP-S9EV97M",
+    "git": {
+        "remote": "https://github.com/dachosen1/Common-Voice.git",
+        "commit": "73e8c924c48cd342cec921c270304bcaa08cdf00"
+    },
+    "email": "anderson.nelson1@gmail.com",
+    "project": "Common-Voice",
+    "program": "C:/Users/ander/OneDrive/Projects/Common-Voice/audio_model/run_pipeline.py",
+    "startedAt": "2020-08-14T05:57:35.229107",
+    "state": "running",
+    "gpu": "GeForce GTX 1050",
+    "root": "C:/Users/ander/OneDrive/Projects/Common-Voice",
+    "gpu_count": 1
+}

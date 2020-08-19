@@ -39,7 +39,7 @@ def save_pipeline(*, pipeline_to_persist, model_name) -> None:
     _logger.info("saved pipeline: {}".format(save_file_name))
 
 
-def load_model(model_name) -> object:
+def load_model(model_name):
     """
     Load a saved PyTorch model
     :param model_name:  Name of the model to parse

@@ -6,16 +6,16 @@ import logging
 import os
 import shutil
 import warnings
+from librosa import power_to_db
+from librosa.feature import melspectrogram
 
 import matplotlib
 import matplotlib.pyplot as plt
-import mlflow
 import numpy as np
 import pandas as pd
 import torch
 import wandb
 from pydub import AudioSegment
-from python_speech_features import mfcc
 from sklearn.metrics import accuracy_score, precision_recall_fscore_support
 from torch.utils.data import WeightedRandomSampler
 from tqdm import tqdm
@@ -135,16 +135,13 @@ def sample_weight(data_folder):
     return sampler
 
 
-def audio_mfcc(data):
-    mfcc_feat = mfcc(
-        data,
-        samplerate=CommonVoiceModels.Frame.FRAME["SAMPLE_RATE"],
-        numcep=CommonVoiceModels.Frame.FRAME["NUMCEP"],
-        nfilt=CommonVoiceModels.Frame.FRAME["NFILT"],
-        nfft=CommonVoiceModels.Frame.FRAME["NFFT"],
-    ).T
+def audio_mfcc(signal, sample_rate=CommonVoiceModels.Frame.FRAME['SAMPLE_RATE'],
+               n_mels=CommonVoiceModels.Frame.FRAME['N_MELS'],fmax=CommonVoiceModels.Frame.FRAME['FMAX']):
+    specto = melspectrogram(y=signal, sr=sample_rate, n_mels=n_mels,
+                            fmax=fmax)
+    spec_to_db = power_to_db(specto, ref=np.max)
 
-    return mfcc_feat
+    return spec_to_db
 
 
 def generate_pred(mel, model, label, model_name):
@@ -187,7 +184,6 @@ def _metric_summary(pred: np.ndarray, label: np.ndarray):
 def log_scalar(name, value, step):
     """Log a scalar value to both MLflow and TensorBoard"""
     wandb.log({name: value}, step=step)
-    mlflow.log_metric(name, value)
 
 
 def run_thread_pool(function, my_iter):
