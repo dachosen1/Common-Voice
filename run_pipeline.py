@@ -1,7 +1,6 @@
 import logging
 import os
 import warnings
-from multiprocessing import Pool
 
 import torch
 import wandb
@@ -49,7 +48,7 @@ class Run:
         )
         self.output_size = model_name.PARAM["OUTPUT_SIZE"]
 
-        wandb.init(project="Common-Voice", group=self.label, tags= self.label, config=ALL_PARAM)
+        wandb.init(project="Common-Voice", group=self.label, tags=self.label, config=ALL_PARAM)
 
     def train_model(self, model: type, RNN_TYPE) -> None:
         train_dataset = DatasetFolder(
@@ -158,5 +157,5 @@ class Run:
 
 if __name__ == "__main__":
     run = Run(CommonVoiceModels.Gender)
-    run.load_data(method="none", percentage=0.05)
+    run.load_data(method="train", percentage=0.05)
     run.train_model(model=AudioLSTM, RNN_TYPE="LSTM")

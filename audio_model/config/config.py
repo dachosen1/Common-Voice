@@ -16,8 +16,8 @@ class CommonVoiceModels:
                   1: "Male"}
 
         NAME = "model_gender-"
-        PARAM = {'HIDDEN_DIM': 256, 'NUM_LAYERS': 4, 'DROPOUT': 0, 'INPUT_SIZE': 128, 'BATCH_SIZE': 525,
-                 'OUTPUT_SIZE': 2, 'LEARNING_RATE': 0.001, 'GRADIENT_CLIP': 15, 'EPOCH': 5}
+        PARAM = {'HIDDEN_DIM': 256, 'NUM_LAYERS': 4, 'DROPOUT': 0.3, 'INPUT_SIZE': 128, 'BATCH_SIZE': 525,
+                 'OUTPUT_SIZE': 2, 'LEARNING_RATE': 0.001, 'GRADIENT_CLIP': 15, 'EPOCH': 20}
         LABEL = 'gender'
 
     class Age(Frame):

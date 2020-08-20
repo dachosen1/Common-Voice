@@ -53,57 +53,49 @@ class Mp3parser:
     def convert_to_wav(self, index) -> None:
         clips_name = self.label_data.path.values[index]
         path = os.path.join(self.clips_dir, clips_name)
-        step_length_in_seconds = 1
+        sample_length_in_seconds = 1
 
         try:
 
             signal, _ = librosa.load(path=path, sr=self.SAMPLE_RATE)
             signal, _ = librosa.effects.trim(signal, top_db=config.CommonVoiceModels.Frame.FRAME['TOP_DB'])
 
-            start = 0
-            step = int(step_length_in_seconds * self.SAMPLE_RATE * step_length_in_seconds)
             duration = len(signal) // self.SAMPLE_RATE
 
-            window = 2
-            if duration > step_length_in_seconds:
+            start = 0
+            step = int(sample_length_in_seconds * self.FRAME_RATE)
 
-                for i in range(1, duration * 2 + 1):
-                    data = signal[start: start + step]
+            for i in range(1, duration + 1):
+                data = signal[start: start + step]
 
-                    training_mfcc = audio_mfcc(signal=data)
+                training_mfcc = audio_mfcc(data)
 
-                    assert training_mfcc.shape[0] == self.model.PARAM["INPUT_SIZE"]
-                    assert training_mfcc.shape[1] == 173
+                assert training_mfcc.shape[0] == self.model.PARAM["INPUT_SIZE"]
+                assert training_mfcc.shape[1] == 173
 
-                    clip_name = "{}".format(clips_name.split(".")[0])
-                    label_name = self.label_data[self.label_data.path == clips_name][self.data_label].values[0]
+                clip_name = "{}".format(clips_name.split(".")[0])
+                label_name = self.label_data[self.label_data.path == clips_name][self.data_label].values[0]
 
-                    if label_name in config.DO_NOT_INCLUDE:
-                        break
+                if label_name in config.DO_NOT_INCLUDE:
+                    break
 
-                    train_test_choice = np.random.choice(
-                        ["train_data", "val_data", "test_data"], p=[0.7, 0.2, 0.1]
-                    )
+                train_test_choice = np.random.choice(
+                    ["train_data", "val_data", "test_data"], p=[0.7, 0.2, 0.1]
+                )
 
-                    dir_path = os.path.join(self.document_path, self.data_label, train_test_choice)
-                    check_dir(dir_path)
+                dir_path = os.path.join(self.document_path, self.data_label, train_test_choice)
+                check_dir(dir_path)
 
-                    dir_path = os.path.join(self.document_path, self.data_label, train_test_choice, label_name)
+                dir_path = os.path.join(self.document_path, self.data_label, train_test_choice, label_name)
 
-                    check_dir(dir_path)
-                    save_path = os.path.join(dir_path, clip_name + "_" + str(i))
-                    np.save(save_path, training_mfcc.T)
-                    start = int(start * ( i / window))
-                    self.add_count += 1
+                check_dir(dir_path)
+                save_path = os.path.join(dir_path, clip_name + "_" + str(i))
+                np.save(save_path, training_mfcc.T)
+                start = step * i
+                self.add_count += 1
 
         except FileNotFoundError:
             _logger.info("Can't find the file {}".format(clips_name))
 
         except FileExistsError:
             _logger.warning("Error in creating folder that's already created")
-
-        except ValueError:
-            _logger.info("MP3 is less than {} seconds {}".format(step_length_in_seconds, clips_name))
-
-        except AssertionError:
-            pass
