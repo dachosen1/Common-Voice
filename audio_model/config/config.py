@@ -16,7 +16,7 @@ class CommonVoiceModels:
                   1: "Male"}
 
         NAME = "model_gender-"
-        PARAM = {'HIDDEN_DIM': 256, 'NUM_LAYERS': 4, 'DROPOUT': 0, 'INPUT_SIZE': 128, 'BATCH_SIZE': 525,
+        PARAM = {'HIDDEN_DIM': 4, 'NUM_LAYERS': 256, 'DROPOUT': 0, 'INPUT_SIZE': 128, 'BATCH_SIZE': 525,
                  'OUTPUT_SIZE': 2, 'LEARNING_RATE': 0.001, 'GRADIENT_CLIP': 15, 'EPOCH': 5}
         LABEL = 'gender'
 
@@ -30,7 +30,7 @@ class CommonVoiceModels:
         }
 
         NAME = "model_age-"
-        PARAM = {'HIDDEN_DIM': 128, 'NUM_LAYERS': 5, 'DROPOUT': 0, 'INPUT_SIZE': 128, 'BATCH_SIZE': 128,
+        PARAM = {'HIDDEN_DIM': 4, 'NUM_LAYERS': 256, 'DROPOUT': 0, 'INPUT_SIZE': 128, 'BATCH_SIZE': 128,
                  'OUTPUT_SIZE': 5, 'LEARNING_RATE': 0.01, 'GRADIENT_CLIP': 0, 'EPOCH': 1}
         LABEL = 'age'
 
