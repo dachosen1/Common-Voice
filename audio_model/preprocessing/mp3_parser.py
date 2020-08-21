@@ -2,12 +2,12 @@ import logging
 import os
 import warnings
 
-import librosa
 import numpy as np
 import pandas as pd
+from pydub import AudioSegment
 
 from audio_model.config import config
-from utlis import audio_melspectrogram
+from utlis import envelope, audio_mfcc
 
 warnings.filterwarnings("ignore")
 
@@ -32,6 +32,22 @@ def data_labels(data_path, label):
     return label_data
 
 
+def remove_silence(*, signal, sample_rate, threshold):
+    """
+    strip out dead audio space
+    :param signal: Audio sample signal
+    :param sample_rate: Audio Sample rate
+    :param threshold: silence threshold
+    :return:
+
+    """
+
+    signal = signal[np.abs(signal) > threshold]
+    wrap = envelope(y=signal, signal_rate=sample_rate, threshold=threshold)
+    signal = signal[wrap]
+    return signal
+
+
 class Mp3parser:
     def __init__(self, data_path, clips_dir, document_path, data_label, model):
         """
@@ -48,7 +64,7 @@ class Mp3parser:
 
         self.remove_count = 0
         self.add_count = 0
-        self.SAMPLE_RATE = config.CommonVoiceModels.Frame.FRAME['SAMPLE_RATE']
+        self.FRAME_RATE = 44100
 
     def convert_to_wav(self, index) -> None:
         clips_name = self.label_data.path.values[index]
@@ -56,21 +72,26 @@ class Mp3parser:
         sample_length_in_seconds = 1
 
         try:
-            signal, _ = librosa.load(path=path, sr=self.SAMPLE_RATE)
-            signal, _ = librosa.effects.trim(signal, top_db=config.CommonVoiceModels.Frame.FRAME['TOP_DB'])
+            audio_mp3 = AudioSegment.from_mp3(file=path).set_frame_rate(
+                frame_rate=self.FRAME_RATE
+            )
 
-            duration = len(signal) // self.SAMPLE_RATE
+            signal = (np.array(audio_mp3.normalize().get_array_of_samples(), dtype="int32") / 100000)
+            duration = len(signal) // self.FRAME_RATE
+
+            # Strip out moments of silence
+#             signal = remove_silence(signal=signal, sample_rate=self.FRAME_RATE, threshold=self.FRAME_RATE['MASK_THRESHOLD'])
 
             start = 0
-            step = int(sample_length_in_seconds * self.SAMPLE_RATE)
+            step = int(sample_length_in_seconds * self.FRAME_RATE)
 
             for i in range(1, duration + 1):
                 data = signal[start: start + step]
 
-                training_mfcc = audio_melspectrogram(data)
+                training_mfcc = audio_mfcc(data)
 
                 assert training_mfcc.shape[0] == self.model.PARAM["INPUT_SIZE"]
-                assert training_mfcc.shape[1] == 44
+                assert training_mfcc.shape[1] == 99
 
                 clip_name = "{}".format(clips_name.split(".")[0])
                 label_name = self.label_data[self.label_data.path == clips_name][self.data_label].values[0]
