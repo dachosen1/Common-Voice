@@ -48,10 +48,19 @@
             <div class="category-class">
               <div class="gender-box">
               </div>
+              <div class="country-box">
+              </div>
+              <div class="age-box">
+
+              </div>
             </div>
             <div class="category-prob">
               <div class="category-prob-gender">
 
+              </div>
+              <div class="category-prob-age">
+              </div>
+              <div class="category-prob-country">
               </div>
             </div>
           </div>
@@ -106,6 +115,16 @@
       socket.on('gender_model', function (ms) {
         $('div.gender-box').text(ms.pred).html()
         $('div.category-prob-gender').text(ms.prob).html()
+      })
+
+      socket.on('age_model', function (ms) {
+        $('div.age-box').text(ms.pred).html()
+        $('div.category-prob-age').text(ms.prob).html()
+      })
+
+      socket.on('country_model', function (ms) {
+        $('div.country-box').text(ms.pred).html()
+        $('div.category-prob-country').text(ms.prob).html()
       })
 
 
