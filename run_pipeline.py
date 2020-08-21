@@ -1,6 +1,7 @@
 import logging
 import os
 import warnings
+from multiprocessing import Pool
 
 import torch
 import wandb
@@ -17,7 +18,7 @@ from audio_model.config.config import (
 )
 from audio_model.model_manager import train
 from audio_model.preprocessing.mp3_parser import Mp3parser
-from utlis import csv_loader, sample_weight, run_thread_pool
+from utlis import csv_loader, sample_weight
 
 warnings.filterwarnings("ignore")
 
@@ -48,7 +49,7 @@ class Run:
         )
         self.output_size = model_name.PARAM["OUTPUT_SIZE"]
 
-        wandb.init(project="Common-Voice", group=self.label, tags=self.label, config=ALL_PARAM)
+        wandb.init(project="Common-Voice", tags=self.label, config=ALL_PARAM)
 
     def train_model(self, model: type, RNN_TYPE) -> None:
         train_dataset = DatasetFolder(
@@ -122,7 +123,7 @@ class Run:
             learning_rate=self.model_name.PARAM["LEARNING_RATE"],
             train_loader=train_data_loader,
             valid_loader=val_data_loader,
-            early_stopping=False,
+            early_stopping=True,
         )
 
         trained_model_path = os.path.join(TRAINED_MODEL_DIR, self.name + __version__ + ".pt")
@@ -144,9 +145,10 @@ class Run:
             path_list = path_list[0:round(len(path_list) * percentage)]
 
             mp3_list = range(len(path_list))
+            p = Pool()
 
             _logger.info("Uploaded {} MP3 files for trainings".format(len(mp3_list)))
-            run_thread_pool(function=parser.convert_to_wav, my_iter=mp3_list)
+            p.map(parser.convert_to_wav, mp3_list)
 
             _logger.info("Added {} total training examples.".format(parser.add_count))
             _logger.info("Removed {} total training examples.".format(parser.remove_count))
@@ -156,6 +158,6 @@ class Run:
 
 
 if __name__ == "__main__":
-    run = Run(CommonVoiceModels.Age)
-    run.load_data(method="train", percentage=0.02)
+    run = Run(CommonVoiceModels.Country)
+    run.load_data(method="train", percentage=0.01)
     run.train_model(model=AudioLSTM, RNN_TYPE="LSTM")
