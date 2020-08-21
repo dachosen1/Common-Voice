@@ -14,8 +14,9 @@ import numpy as np
 import pandas as pd
 import torch
 import wandb
+from librosa import power_to_db
+from librosa.feature import melspectrogram
 from pydub import AudioSegment
-from python_speech_features import mfcc
 from sklearn.metrics import accuracy_score, precision_recall_fscore_support
 from torch.utils.data import WeightedRandomSampler
 from tqdm import tqdm
@@ -135,16 +136,14 @@ def sample_weight(data_folder):
     return sampler
 
 
-def audio_mfcc(data):
-    mfcc_feat = mfcc(
-        data,
-        samplerate=CommonVoiceModels.Frame.FRAME["SAMPLE_RATE"],
-        numcep=CommonVoiceModels.Frame.FRAME["NUMCEP"],
-        nfilt=CommonVoiceModels.Frame.FRAME["NFILT"],
-        nfft=CommonVoiceModels.Frame.FRAME["NFFT"],
-    ).T
+def audio_melspectrogram(signal, sample_rate=CommonVoiceModels.Frame.FRAME['SAMPLE_RATE'],
+               n_mels=CommonVoiceModels.Frame.FRAME['N_MELS'],fmax=CommonVoiceModels.Frame.FRAME['FMAX']):
 
-    return mfcc_feat
+    specto = melspectrogram(y=signal, sr=sample_rate, n_mels=n_mels,
+                            fmax=fmax)
+    spec_to_db = power_to_db(specto, ref=np.max)
+
+    return spec_to_db
 
 
 def generate_pred(mel, model, label, model_name):

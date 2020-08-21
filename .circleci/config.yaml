@@ -1,0 +1,65 @@
+version: 2
+
+defaults:
+  docker:
+    - image: circleci/python:3.5.4
+  working_directory: ~/project
+
+
+jobs:
+  common-voice-audio_model:
+    docker:
+      - image: circleci/python:3.5.4
+    working_directory: ~/project/audio_model
+    steps:
+      - checkout:
+          path: ~/project
+
+      - run:
+          name: Model Unit Testing
+          command: |
+            python -m venv venv
+            source venv/bin/activate
+            sudo pip install --upgrade pip
+            pip install tox
+            tox
+      - run:
+          names: Package Installation
+          command: |
+            python -m venv venv
+            source venv/bin/activate
+            sudo pip install --upgrade pip
+            pip install tox
+            tox -e install_locally
+      - run:
+          name: Publish model
+          command: |
+            python -m venv venv
+            source venv/bin/activate
+            sudo pip install --upgrade pip
+            pip install tox
+            tox -e install_locally
+            ./scripts/publish_model.sh ./audio_model
+  common-voice-api:
+    docker:
+      - image: circleci/python:3.5.4
+    working_directory: ~/project/commonvoice
+    steps:
+      - checkout:
+          path: ~/project
+
+      - run:
+          name: Test API
+          command: |
+            python -m venv venv
+            source venv/bin/activate
+            sudo pip install --upgrade pip
+            pip install tox
+            sudo apt-get install portaudio19-dev python-pyaudio python3-pyaudio
+            tox
+workflows:
+  version: 2
+  model-testing:
+    jobs:
+      - common-voice-audio_model
+      - common-voice-api
