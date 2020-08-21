@@ -12,7 +12,7 @@ from flask_socketio import SocketIO
 
 from audio_model.config.config import CommonVoiceModels
 from audio_model.pipeline_mananger import load_model
-from utlis import generate_pred, audio_mfcc
+from utlis import generate_pred, audio_melspectrogram
 
 # _logger = get_logger(logger_name=__name__)
 
@@ -35,22 +35,9 @@ model_gender.load_state_dict(torch.load(path_gender))
 model_gender.eval()
 model_gender.init_hidden()
 
-# Age Model
-model_age, path_age = load_model(model_name=CommonVoiceModels.Age)
-model_age.load_state_dict(torch.load(path_age))
-model_age.eval()
-model_age.init_hidden()
-
-# Country Model
-model_country, path_country = load_model(model_name=CommonVoiceModels.Country)
-model_country.load_state_dict(torch.load(path_country))
-model_country.eval()
-model_country.init_hidden()
 
 if torch.cuda.is_available():
     model_gender.cuda()
-    model_age.cuda()
-    model_country.cuda()
 
 p = pyaudio.PyAudio()
 
@@ -67,8 +54,8 @@ def callback(in_data, frame_count, time_info, status):
     return in_data, pyaudio.paContinue
 
 
-@audio_app.route("/")
-@audio_app.route("/home")
+@app.route("/")
+@app.route("/home")
 def index():
     return render_template("index.html")
 
@@ -85,11 +72,11 @@ def run_audio_stream(msg):
     stream.start_stream()
     while True:
         if len(frames) >= 32:
-            socketio.sleep(1)
+            socketio.sleep(0.5)
 
             signal = np.concatenate(tuple(frames))
             wave_period = signal[-CommonVoiceModels.Frame.FRAME["SAMPLE_RATE"]:].astype(np.float)
-            spectrogram = audio_mfcc(wave_period)
+            spectrogram = audio_melspectrogram(wave_period)
 
             # Gender Model
             gender_output, gender_prob = generate_pred(mel=spectrogram, model=model_gender,
@@ -98,22 +85,8 @@ def run_audio_stream(msg):
                                                        )
             socketio.emit('gender_model', {'pred': gender_output, 'prob': round(gender_prob * 100, 2)})
 
-            # Country Model
-            country_output, country_prob = generate_pred(mel=spectrogram, model=model_country,
-                                                         label=CommonVoiceModels.Country.OUTPUT,
-                                                         model_name=CommonVoiceModels.Country,
-                                                         )
-            socketio.emit('country_model', {'pred': country_output, 'prob': round(country_prob * 100, 2)})
 
-            # Age Model
-            age_output, age_prob = generate_pred(mel=spectrogram, model=model_age,
-                                                 label=CommonVoiceModels.Age.OUTPUT,
-                                                 model_name=CommonVoiceModels.Age,
-                                                 )
-            socketio.emit('age_model', {'pred': age_output, 'prob': round(age_prob * 100, 2)})
-
-
-@audio_app.route("/about")
+@app.route("/about")
 def about():
     with open(os.path.join(os.getcwd(), "README.md"), "r") as markdown_file:
         content = markdown_file.read()
