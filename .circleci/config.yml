@@ -2,14 +2,14 @@ version: 2
 
 defaults:
   docker:
-    - image: circleci/python:3.5.4
+    - image: circleci/python:3.7
   working_directory: ~/project
 
 
 jobs:
   common-voice-audio_model:
     docker:
-      - image: circleci/python:3.5.4
+      - image: circleci/python:3.7
     working_directory: ~/project/audio_model
     steps:
       - checkout:
@@ -42,7 +42,7 @@ jobs:
             ./scripts/publish_model.sh ./audio_model
   common-voice-api:
     docker:
-      - image: circleci/python:3.5.4
+      - image: circleci/python:3.7
     working_directory: ~/project/commonvoice
     steps:
       - checkout:
