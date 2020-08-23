@@ -2,8 +2,6 @@ FROM python:3.7
 
 WORKDIR /usr/src/app
 
-ENV FLASK_APP run_app.py
-
 COPY commonvoice/requirements.txt ./
 
 RUN apt-get update \
@@ -15,4 +13,4 @@ RUN pip install torch==1.4.0+cpu -f https://download.pytorch.org/whl/cpu/torch_s
 
 COPY . .
 
-RUN chmod +x run.sh
+CMD gunicorn run_app:app --log-file -
