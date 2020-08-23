@@ -16,7 +16,3 @@ RUN pip install torch==1.4.0+cpu -f https://download.pytorch.org/whl/cpu/torch_s
 COPY . .
 
 RUN chmod +x run.sh
-
-EXPOSE 5000
-
-CMD [ "python", "run_app.py"]

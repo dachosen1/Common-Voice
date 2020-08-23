@@ -1,1 +1,1 @@
-web: gunicorn --pythonpath . --access-logfile - --error-logfile - run_app.py
+web: gunicorn run_app:socketio --log-file -
