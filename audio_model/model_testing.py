@@ -5,7 +5,7 @@ import torch
 
 from audio_model.config import config
 from audio_model.pipeline_mananger import load_model
-from utlis import generate_pred
+from audio_model.utils import generate_pred
 
 
 def test_model(dir_path):

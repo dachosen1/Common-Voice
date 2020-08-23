@@ -17,7 +17,7 @@ from audio_model.config.config import (
 )
 from audio_model.model_manager import train
 from audio_model.preprocessing.mp3_parser import Mp3parser
-from utlis import csv_loader, sample_weight, run_thread_pool
+from audio_model.utils import csv_loader, sample_weight, run_thread_pool
 
 warnings.filterwarnings("ignore")
 
@@ -156,6 +156,6 @@ class Run:
 
 
 if __name__ == "__main__":
-    run = Run(CommonVoiceModels.Age)
-    run.load_data(method="train", percentage=0.02)
+    run = Run(CommonVoiceModels.Gender)
+    run.load_data(method="none", percentage=0.02)
     run.train_model(model=AudioLSTM, RNN_TYPE="LSTM")
