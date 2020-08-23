@@ -1,5 +1,5 @@
-google==3.0.0
-google-cloud-storage==1.30.0
+librosa==0.8.0
+llvmlite==0.34.0
 matplotlib==3.0.3
 mlflow==1.9.1
 numpy==1.18.5

@@ -7,7 +7,7 @@ import numpy as np
 import pandas as pd
 
 from audio_model.config import config
-from utlis import audio_melspectrogram
+from audio_model.utils import audio_melspectrogram
 
 warnings.filterwarnings("ignore")
 

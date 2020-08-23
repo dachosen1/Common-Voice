@@ -6,7 +6,7 @@ import torch
 import torch.nn as nn
 import wandb
 
-from utlis import _metric_summary, log_scalar
+from audio_model.utils import _metric_summary, log_scalar
 
 warnings.filterwarnings("ignore")
 _logger = logging.getLogger(__name__)
