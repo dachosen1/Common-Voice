@@ -8,16 +8,16 @@ from torch.utils.data import DataLoader
 from torchvision.datasets import DatasetFolder
 
 from audio_model import __version__
-from audio_model.LSTM import AudioLSTM
-from audio_model.config.config import (
+from audio_model.audio_model.LSTM import AudioLSTM
+from audio_model.audio_model.config.config import (
     CommonVoiceModels,
     DataDirectory,
     TrainingTestingSplitDirectory,
     TRAINED_MODEL_DIR
 )
-from audio_model.model_manager import train
-from audio_model.preprocessing.mp3_parser import Mp3parser
-from audio_model.utils import csv_loader, sample_weight, run_thread_pool
+from audio_model.audio_model.model_manager import train
+from audio_model.audio_model.preprocessing.mp3_parser import Mp3parser
+from audio_model.audio_model.utils import csv_loader, sample_weight, run_thread_pool
 
 warnings.filterwarnings("ignore")
 
@@ -156,6 +156,8 @@ class Run:
 
 
 if __name__ == "__main__":
-    run = Run(CommonVoiceModels.Gender)
-    run.load_data(method="none", percentage=0.02)
+    run = Run(CommonVoiceModels.Country)
+    run.load_data(method="train", percentage=0.003)
     run.train_model(model=AudioLSTM, RNN_TYPE="LSTM")
+
+

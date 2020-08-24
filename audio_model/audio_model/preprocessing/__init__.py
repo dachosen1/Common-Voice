@@ -1,6 +1,6 @@
 import logging
 
-from audio_model.config import logging_config
+from audio_model.audio_model.config import logging_config
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)

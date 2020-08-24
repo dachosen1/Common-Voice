@@ -6,8 +6,8 @@ import librosa
 import numpy as np
 import pandas as pd
 
-from audio_model.config import config
-from audio_model.utils import audio_melspectrogram
+from audio_model.audio_model.config import config
+from audio_model.audio_model.utils import audio_melspectrogram
 
 warnings.filterwarnings("ignore")
 

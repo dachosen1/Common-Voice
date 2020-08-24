@@ -1,6 +1,6 @@
 import os
 
-import audio_model
+from audio_model import audio_model
 
 PACKAGE_ROOT = os.path.dirname(audio_model.__file__)
 TRAINED_MODEL_DIR = os.path.join(PACKAGE_ROOT, "trained_model")
@@ -9,7 +9,7 @@ TRAINED_MODEL_DIR = os.path.join(PACKAGE_ROOT, "trained_model")
 class CommonVoiceModels:
 
     class Frame:
-        FRAME = dict(SAMPLE_RATE=22050, NUMCEP=13, NFILT=26, NFFT=2048, TOP_DB=10, FMAX=8000, N_MELS=128)
+        FRAME = dict(SAMPLE_RATE=22050, NUMCEP=13, NFILT=26, NFFT=2048, TOP_DB=60, FMAX=8000, N_MELS=128)
 
     class Gender(Frame):
         OUTPUT = {0: "Female",
@@ -64,6 +64,7 @@ DO_NOT_INCLUDE = [
     'scotland',
     'eighties'
 ]
+
 
 
 class Bucket:

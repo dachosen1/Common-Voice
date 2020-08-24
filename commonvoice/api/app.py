@@ -7,15 +7,15 @@ import numpy as np
 import pyaudio
 import requests
 import torch
-from flask import Flask, render_template, Blueprint
+from flask import Flask, render_template, request
 from flask_socketio import SocketIO
 from librosa import power_to_db
 from librosa.feature import melspectrogram
 
-from audio_model.config.config import CommonVoiceModels
-from audio_model.pipeline_mananger import load_model
-# from audio_model.utils import generate_pred, audio_melspectrogram
-
+from audio_model.audio_model.config.config import CommonVoiceModels
+from audio_model.audio_model.pipeline_mananger import load_model
+# from .config import get_logger
+#
 # _logger = get_logger(logger_name=__name__)
 
 
@@ -28,7 +28,8 @@ def generate_pred(mel, model, label, model_name):
     :param label: label dictionary
     :return: prints prediction label and probability
     """
-    mel = torch.from_numpy(mel).reshape(1, -1, model_name.PARAM["INPUT_SIZE"]).float()
+    mel = torch.from_numpy(mel).reshape(1, -1,
+                                        model_name.PARAM["INPUT_SIZE"]).float()
 
     if torch.cuda.is_available():
         model.cuda()
@@ -48,8 +49,10 @@ def generate_pred(mel, model, label, model_name):
     return label_name, round(float(prob.flatten()[0]), 5)
 
 
-def audio_melspectrogram(signal, sample_rate=CommonVoiceModels.Frame.FRAME['SAMPLE_RATE'],
-               n_mels=CommonVoiceModels.Frame.FRAME['N_MELS'],fmax=CommonVoiceModels.Frame.FRAME['FMAX']):
+def audio_melspectrogram(signal,
+                         sample_rate=CommonVoiceModels.Frame.FRAME['SAMPLE_RATE'],
+                         n_mels=CommonVoiceModels.Frame.FRAME['N_MELS'],
+                         fmax=CommonVoiceModels.Frame.FRAME['FMAX']):
 
     specto = melspectrogram(y=signal, sr=sample_rate, n_mels=n_mels,
                             fmax=fmax)
@@ -58,13 +61,10 @@ def audio_melspectrogram(signal, sample_rate=CommonVoiceModels.Frame.FRAME['SAMP
     return spec_to_db
 
 
-audio_app = Blueprint('audio-app', __name__)
-
 warnings.filterwarnings("ignore")
 
-app = Flask(
-    __name__, static_folder="css", static_url_path="/css", template_folder="templates",
-)
+app = Flask(__name__, static_folder="css", static_url_path="/css",
+            template_folder="templates")
 
 socketio = SocketIO(app)
 
@@ -127,14 +127,19 @@ def run_audio_stream(msg):
             socketio.emit('gender_model', {'pred': gender_output, 'prob': round(gender_prob * 100, 2)})
 
 
-@app.route("/about")
+@app.route("/about/")
 def about():
     with open(os.path.join(os.getcwd(), "README.md"), "r") as markdown_file:
         content = markdown_file.read()
         return markdown.markdown(content)
 
 
-@audio_app.route("/health", method=['GET'])
+@app.route("/health", methods=['GET'])
 def health():
-    if requests.method == 'GET':
+    if request.method == 'GET':
         return 'Ok'
+
+
+if __name__ == '__main__':
+    #app.run(debug=True)
+   socketio.run(app)

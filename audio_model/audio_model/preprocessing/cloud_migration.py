@@ -9,7 +9,7 @@ import pandas as pd
 from google.cloud import storage
 from tqdm import tqdm
 
-from audio_model.config import config
+from audio_model.audio_model.config import config
 
 
 def upload_from_file(file, bucket, bucket_folder) -> None:

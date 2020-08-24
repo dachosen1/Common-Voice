@@ -4,9 +4,9 @@ import typing as t
 
 import joblib
 
-from audio_model import LSTM
+from audio_model.audio_model import LSTM
 from audio_model import __version__ as _version
-from audio_model.config.config import TRAINED_MODEL_DIR
+from audio_model.audio_model.config.config import TRAINED_MODEL_DIR
 
 _logger = logging.getLogger(__name__)
 

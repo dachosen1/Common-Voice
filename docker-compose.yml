@@ -1,0 +1,7 @@
+version: '3.4'
+
+services:
+  common-voice-app:
+    build: .
+    volumes:
+      - .:/usr/src/app

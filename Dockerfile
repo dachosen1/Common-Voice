@@ -1,16 +1,19 @@
-FROM python:3.7
+FROM python:3.7.8
 
 WORKDIR /usr/src/app
 
-COPY commonvoice/requirements.txt ./
+
+ADD commonvoice /usr/src/app/
 
 RUN apt-get update \
         && apt-get install libportaudio2 libportaudiocpp0 portaudio19-dev libsndfile1-dev -y \
         && pip3 install pyaudio
 
+RUN pip install --upgrade pip
 RUN pip install --no-cache-dir -r requirements.txt
 RUN pip install torch==1.4.0+cpu -f https://download.pytorch.org/whl/cpu/torch_stable.html
 
-COPY . .
+ADD . .
 
-CMD gunicorn run_app:app --log-file -
+RUN chmod +x run.sh
+
