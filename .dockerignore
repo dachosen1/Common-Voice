@@ -2,9 +2,9 @@ venv-model/
 venv-app/
 .circleci/
 .github/
+.idea/
+wandb/
 
 commonvoice/tox.ini
 
 .gitignore
-
-*.log

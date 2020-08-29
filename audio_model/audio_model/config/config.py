@@ -1,5 +1,6 @@
 import os
 
+import random
 from audio_model import audio_model
 
 PACKAGE_ROOT = os.path.dirname(audio_model.__file__)
@@ -7,7 +8,6 @@ TRAINED_MODEL_DIR = os.path.join(PACKAGE_ROOT, "trained_model")
 
 
 class CommonVoiceModels:
-
     class Frame:
         FRAME = dict(SAMPLE_RATE=22050, NUMCEP=13, NFILT=26, NFFT=2048, TOP_DB=60, FMAX=8000, N_MELS=128)
 
@@ -42,7 +42,7 @@ class CommonVoiceModels:
                   4: 'American'}
 
         NAME = "model_country-"
-        PARAM = {'HIDDEN_DIM': 8, 'NUM_LAYERS': 16, 'DROPOUT': 0.0, 'INPUT_SIZE': 128, 'BATCH_SIZE': 1024,
+        PARAM = {'HIDDEN_DIM': 8, 'NUM_LAYERS': 16, 'DROPOUT': 0.0, 'INPUT_SIZE': 130, 'BATCH_SIZE': 1024,
                  'OUTPUT_SIZE': 5, 'LEARNING_RATE': 0.01, 'GRADIENT_CLIP': 0, 'EPOCH': 5}
         LABEL = 'accent'
 

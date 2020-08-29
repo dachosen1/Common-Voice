@@ -1,19 +1,41 @@
-FROM python:3.7.8
+FROM python:3.7.9
 
 WORKDIR /usr/src/app
 
-
-ADD commonvoice /usr/src/app/
-
-RUN apt-get update \
-        && apt-get install libportaudio2 libportaudiocpp0 portaudio19-dev libsndfile1-dev -y \
-        && pip3 install pyaudio
-
-RUN pip install --upgrade pip
-RUN pip install --no-cache-dir -r requirements.txt
-RUN pip install torch==1.4.0+cpu -f https://download.pytorch.org/whl/cpu/torch_stable.html
+RUN adduser --disabled-password --gecos '' ml-api-user
 
 ADD . .
 
-RUN chmod +x run.sh
+RUN	apt-get update && apt-get install -y \
+	dirmngr \
+	gnupg \
+	--no-install-recommends \
+	&& apt-get update && apt-get install -y \
+	alsa-utils \
+	libgl1-mesa-dri \
+	libgl1-mesa-glx \
+	libpulse0 \
+	xdg-utils \
+	libnotify-bin \
+	rtkit \
+	pulseaudio \
+	--no-install-recommends \
+	&& rm -rf /var/lib/apt/lists/*
 
+RUN apt-get update \
+        && apt-get install libportaudio2 libportaudiocpp0 portaudio19-dev libasound-dev libsndfile1-dev -y \
+        && pip install pyaudio \
+    pip install --upgrade pip \
+    pip install --no-cache-dir -r requirements.txt\
+    pip install torch==1.4.0+cpu -f https://download.pytorch.org/whl/cpu/torch_stable.html
+
+RUN for group in video audio voice pulse rtkit \
+     ; do \
+         adduser ml-api-user $group ; \
+     done
+
+USER ml-api-user
+
+EXPOSE 5000
+
+CMD ["bash", "./run.sh"]

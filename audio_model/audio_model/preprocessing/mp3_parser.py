@@ -7,7 +7,7 @@ import numpy as np
 import pandas as pd
 
 from audio_model.audio_model.config import config
-from audio_model.audio_model.utils import audio_melspectrogram
+from audio_model.audio_model.utils import audio_melspectrogram, audio_mfcc
 
 warnings.filterwarnings("ignore")
 
@@ -57,7 +57,7 @@ class Mp3parser:
 
         try:
             signal, _ = librosa.load(path=path, sr=self.SAMPLE_RATE)
-            signal, _ = librosa.effects.trim(signal, top_db=config.CommonVoiceModels.Frame.FRAME['TOP_DB'])
+         #   signal, _ = librosa.effects.trim(signal, top_db=config.CommonVoiceModels.Frame.FRAME['TOP_DB'])
 
             duration = len(signal) // self.SAMPLE_RATE
 
@@ -67,10 +67,10 @@ class Mp3parser:
             for i in range(1, duration + 1):
                 data = signal[start: start + step]
 
-                training_mfcc = audio_melspectrogram(data)
+                training_mfcc = audio_mfcc(data)
 
                 assert training_mfcc.shape[0] == self.model.PARAM["INPUT_SIZE"]
-                assert training_mfcc.shape[1] == 44
+                assert training_mfcc.shape[1] == 13
 
                 clip_name = "{}".format(clips_name.split(".")[0])
                 label_name = self.label_data[self.label_data.path == clips_name][self.data_label].values[0]
@@ -90,7 +90,7 @@ class Mp3parser:
                 check_dir(dir_path)
                 save_path = os.path.join(dir_path, clip_name + "_" + str(i))
                 np.save(save_path, training_mfcc.T)
-                start = step * i
+                start = self.SAMPLE_RATE * i
                 self.add_count += 1
 
         except FileNotFoundError:

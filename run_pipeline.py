@@ -7,6 +7,7 @@ import wandb
 from torch.utils.data import DataLoader
 from torchvision.datasets import DatasetFolder
 
+from datetime import datetime
 from audio_model import __version__
 from audio_model.audio_model.LSTM import AudioLSTM
 from audio_model.audio_model.config.config import (
@@ -46,9 +47,11 @@ class Run:
         self.test_dir = os.path.join(
             DataDirectory.DEV_DIR, self.label, TrainingTestingSplitDirectory.TEST_DIR,
         )
-        self.output_size = model_name.PARAM["OUTPUT_SIZE"]
 
-        wandb.init(project="Common-Voice", group=self.label, tags=self.label, config=ALL_PARAM)
+        wandb.init(project="Common-Voice", group=self.label, tags=self.label, config=self.model_name.PARAM)
+
+        self.config = wandb.config
+        self.output_size = self.config.OUTPUT_SIZE
 
     def train_model(self, model: type, RNN_TYPE) -> None:
         train_dataset = DatasetFolder(
@@ -63,7 +66,7 @@ class Run:
 
         train_data_loader = DataLoader(
             train_dataset,
-            batch_size=self.model_name.PARAM["BATCH_SIZE"],
+            batch_size=self.config.BATCH_SIZE,
             sampler=train_sample_weight,
             num_workers=4,
             drop_last=True,
@@ -71,13 +74,13 @@ class Run:
 
         _logger.info(
             "Uploaded training data to {} using {} batch sizes".format(
-                self.train_dir, self.model_name.PARAM["BATCH_SIZE"]
+                self.train_dir, self.config.BATCH_SIZE
             )
         )
 
         val_data_loader = DataLoader(
             val_dataset,
-            batch_size=self.model_name.PARAM["BATCH_SIZE"],
+            batch_size=self.config.BATCH_SIZE,
             sampler=val_sample_weight,
             num_workers=4,
             drop_last=True,
@@ -85,18 +88,18 @@ class Run:
 
         _logger.info(
             "Uploaded validation data to {} using {} batch sizes".format(
-                self.val_dir, self.model_name.PARAM["BATCH_SIZE"]
+                self.val_dir, self.config.BATCH_SIZE
             )
         )
 
         model = model(
-            num_layer=self.model_name.PARAM["NUM_LAYERS"],
-            input_size=self.model_name.PARAM["INPUT_SIZE"],
-            hidden_size=self.model_name.PARAM["HIDDEN_DIM"],
-            output_size=self.model_name.PARAM["OUTPUT_SIZE"],
-            dropout=self.model_name.PARAM["DROPOUT"],
+            num_layer=self.config.NUM_LAYERS,
+            input_size=self.config.INPUT_SIZE,
+            hidden_size=self.config.HIDDEN_DIM,
+            output_size=self.config.OUTPUT_SIZE,
+            dropout=self.config.DROPOUT,
             RNN_TYPE=RNN_TYPE,
-            batch_size=self.model_name.PARAM["BATCH_SIZE"],
+            batch_size=self.config.BATCH_SIZE,
         )
 
         _logger.info(
@@ -106,23 +109,23 @@ class Run:
             "{} output size, "
             "{} batch size, "
             "{} dropout".format(
-                self.model_name.PARAM["NUM_LAYERS"],
-                self.model_name.PARAM["HIDDEN_DIM"],
-                self.model_name.PARAM["INPUT_SIZE"],
-                self.model_name.PARAM["OUTPUT_SIZE"],
-                self.model_name.PARAM["BATCH_SIZE"],
-                self.model_name.PARAM["DROPOUT"],
+                self.config.NUM_LAYERS,
+                self.config.HIDDEN_DIM,
+                self.config.INPUT_SIZE,
+                self.config.OUTPUT_SIZE,
+                self.config.BATCH_SIZE,
+                self.config.DROPOUT,
             )
         )
 
         trained_model = train(
             model=model,
-            epoch=self.model_name.PARAM["EPOCH"],
-            gradient_clip=self.model_name.PARAM["GRADIENT_CLIP"],
-            learning_rate=self.model_name.PARAM["LEARNING_RATE"],
+            epoch=self.config.EPOCH,
+            gradient_clip=self.config.GRADIENT_CLIP,
+            learning_rate=self.config.LEARNING_RATE,
             train_loader=train_data_loader,
             valid_loader=val_data_loader,
-            early_stopping=False,
+            early_stopping=True,
         )
 
         trained_model_path = os.path.join(TRAINED_MODEL_DIR, self.name + __version__ + ".pt")
@@ -146,10 +149,14 @@ class Run:
             mp3_list = range(len(path_list))
 
             _logger.info("Uploaded {} MP3 files for trainings".format(len(mp3_list)))
+
+            start = datetime.now()
             run_thread_pool(function=parser.convert_to_wav, my_iter=mp3_list)
+            end = datetime.now()
 
             _logger.info("Added {} total training examples.".format(parser.add_count))
             _logger.info("Removed {} total training examples.".format(parser.remove_count))
+            _logger.info("Processing was completed in {}. ".format(end - start))
 
         else:
             _logger.info("Skipping MP3 feature engineering. Will use existing mfcc data for training")
@@ -157,7 +164,6 @@ class Run:
 
 if __name__ == "__main__":
     run = Run(CommonVoiceModels.Country)
-    run.load_data(method="train", percentage=0.003)
+    run.load_data(method="train", percentage=0.01)
     run.train_model(model=AudioLSTM, RNN_TYPE="LSTM")
-
 

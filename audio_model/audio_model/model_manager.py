@@ -77,7 +77,7 @@ def train(
         train_loader: torch.utils.data.dataloader.DataLoader,
         valid_loader: torch.utils.data.dataloader.DataLoader,
         print_every: int = 10,
-        early_stopping_threshold: int = 20,
+        early_stopping_threshold: int = 4,
         early_stopping: bool = True,
 ) -> object:
     """

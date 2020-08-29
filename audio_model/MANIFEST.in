@@ -1,10 +1,16 @@
 include *.txt
 include *.md
+include *.pt
 include *.cfg
 include *.pkl
-recursive-include ./audio_model/*
+
+recursive-include audio_model/*
+
 
 include audio_model/VERSION
+include *.pt
+
+
 
 include ./requirements.txt
 exclude *.log

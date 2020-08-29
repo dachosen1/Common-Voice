@@ -9,7 +9,7 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 logger.addHandler(logging_config.get_console_handler())
-logger.addHandler(logging.FileHandler('common-voice.log'))
+# logger.addHandler(logging.FileHandler('common-voice.log'))
 logger.propagate = False
 
 

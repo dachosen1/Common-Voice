@@ -5,3 +5,4 @@ services:
     build: .
     volumes:
       - .:/usr/src/app
+      --volume="/etc/sudoers.d:/etc/sudoers.d:ro"
