@@ -163,7 +163,7 @@ class Run:
 
 
 if __name__ == "__main__":
-    run = Run(CommonVoiceModels.Country)
-    run.load_data(method="train", percentage=0.01)
+    run = Run(CommonVoiceModels.Gender)
+    run.load_data(method="none", percentage=0.01)
     run.train_model(model=AudioLSTM, RNN_TYPE="LSTM")
 

@@ -1,20 +1,20 @@
 program: run_pipeline.py
 method: bayes
 metric:
-  name: Loss/val
-  goal: minimize
+  name: Accuracy/val
+  goal: maximize
 parameters:
   EPOCH:
     distribution: int_uniform
-    min: 1
-    max: 40
+    min: 5
+    max: 15
   DROPOUT:
     distribution: uniform
     min: 0
     max: 0.99
   BATCH_SIZE:
     distribution: int_uniform
-    min: 64
+    min: 256
     max: 1024
   HIDDEN_DIM:
     distribution: int_uniform

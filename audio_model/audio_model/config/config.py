@@ -16,8 +16,8 @@ class CommonVoiceModels:
                   1: "Male"}
 
         NAME = "model_gender-"
-        PARAM = {'HIDDEN_DIM': 256, 'NUM_LAYERS': 4, 'DROPOUT': 0.3, 'INPUT_SIZE': 128, 'BATCH_SIZE': 525,
-                 'OUTPUT_SIZE': 2, 'LEARNING_RATE': 0.001, 'GRADIENT_CLIP': 15, 'EPOCH': 1}
+        PARAM = {'HIDDEN_DIM': 256, 'NUM_LAYERS': 4, 'DROPOUT': 0.3, 'INPUT_SIZE': 44, 'BATCH_SIZE': 525,
+                 'OUTPUT_SIZE': 2, 'LEARNING_RATE': 0.001, 'GRADIENT_CLIP': 15, 'EPOCH': 2}
         LABEL = 'gender'
 
     class Age(Frame):
@@ -78,7 +78,7 @@ class Bucket:
 class DataDirectory:
     DATA_DIR = r"C:\Users\ander\Documents\common-voice-data"
     DEV_DIR = r"C:\Users\ander\Documents\common-voice-dev"
-    CLIPS_DIR = r"C:\Users\ander\Documents\cv-corpus-5.1-2020-06-22\en\clips"
+    CLIPS_DIR = r"C:\Users\ander\Documents\en\cv-corpus-5.1-2020-06-22\en\clips"
     TRAIN_DIR = r"C:\Users\ander\Documents\common-voice-train"
 
 

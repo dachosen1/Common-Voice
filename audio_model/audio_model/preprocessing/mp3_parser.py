@@ -57,7 +57,7 @@ class Mp3parser:
 
         try:
             signal, _ = librosa.load(path=path, sr=self.SAMPLE_RATE)
-         #   signal, _ = librosa.effects.trim(signal, top_db=config.CommonVoiceModels.Frame.FRAME['TOP_DB'])
+            signal, _ = librosa.effects.trim(signal, top_db=config.CommonVoiceModels.Frame.FRAME['TOP_DB'])
 
             duration = len(signal) // self.SAMPLE_RATE
 
@@ -95,6 +95,7 @@ class Mp3parser:
 
         except FileNotFoundError:
             _logger.info("Can't find the file {}".format(clips_name))
+            self.remove_count += 1
 
         except FileExistsError:
             _logger.warning("Error in creating folder that's already created")
