@@ -2,10 +2,6 @@ FROM python:3.7.9
 
 WORKDIR /usr/src/app
 
-RUN adduser --disabled-password --gecos '' ml-api-user
-
-ADD . .
-
 RUN	apt-get update && apt-get install -y \
 	dirmngr \
 	gnupg \
@@ -22,8 +18,18 @@ RUN	apt-get update && apt-get install -y \
 	--no-install-recommends \
 	&& rm -rf /var/lib/apt/lists/*
 
+RUN apt-get -y update
+RUN apt-get -y upgrade
+RUN apt-get install -y ffmpeg
+
+RUN adduser --disabled-password --gecos '' ml-api-user
+
+WORKDIR /home/ml-api-user
+
+COPY requirements.txt ./
+
 RUN apt-get update \
-        && apt-get install libportaudio2 libportaudiocpp0 portaudio19-dev libasound-dev libsndfile1-dev -y \
+        && apt-get install libportaudio2 python3-dev libportaudiocpp0 portaudio19-dev libasound-dev libsndfile1-dev -y \
         && pip install pyaudio \
     pip install --upgrade pip \
     pip install --no-cache-dir -r requirements.txt\

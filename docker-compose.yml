@@ -1,8 +1,17 @@
 version: '3.4'
 
 services:
-  common-voice-app:
+  common-voice:
     build: .
+    image: anelso42/common-voice-app
+    devices:
+      - /dev/input
+      - /dev/snd
+      - /dev/snd:/dev/snd
+
     volumes:
       - .:/usr/src/app
-      --volume="/etc/sudoers.d:/etc/sudoers.d:ro"
+      - /tmp/.X11-unix:/tmp/.X11-unix
+
+    ports:
+      - 5000:5000
