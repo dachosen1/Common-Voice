@@ -23,23 +23,23 @@ from audio_model.audio_model.pipeline_mananger import load_model
 #
 # _logger = get_logger(logger_name=__name__)
 
-#
-# ERROR_HANDLER_FUNC = CFUNCTYPE(None, c_char_p, c_int, c_char_p, c_int, c_char_p)
-#
-#
-# def py_error_handler(filename, line, function, err, fmt):
-#     pass
-#
-#
-# c_error_handler = ERROR_HANDLER_FUNC(py_error_handler)
-#
-#
-# @contextmanager
-# def noalsaerr():
-#     asound = cdll.LoadLibrary('libasound.so')
-#     asound.snd_lib_error_set_handler(c_error_handler)
-#     yield
-#     asound.snd_lib_error_set_handler(None)
+
+ERROR_HANDLER_FUNC = CFUNCTYPE(None, c_char_p, c_int, c_char_p, c_int, c_char_p)
+
+
+def py_error_handler(filename, line, function, err, fmt):
+    pass
+
+
+c_error_handler = ERROR_HANDLER_FUNC(py_error_handler)
+
+
+@contextmanager
+def noalsaerr():
+    asound = cdll.LoadLibrary('libasound.so')
+    asound.snd_lib_error_set_handler(c_error_handler)
+    yield
+    asound.snd_lib_error_set_handler(None)
 
 
 warnings.filterwarnings("ignore")
@@ -80,30 +80,30 @@ def index():
 
 @socketio.on('audio-streaming', )
 def run_audio_stream(msg):
+    with noalsaerr():
+        p = pyaudio.PyAudio()
+        stream = p.open(
+            format=FORMAT,
+            channels=CHANNELS,
+            rate=CommonVoiceModels.Frame.FRAME["SAMPLE_RATE"],
+            input=True,
+            stream_callback=callback,
+        )
+        stream.start_stream()
+        while True:
+            if len(frames) >= 32:
+                socketio.sleep(0.5)
 
-    p = pyaudio.PyAudio()
-    stream = p.open(
-        format=FORMAT,
-        channels=CHANNELS,
-        rate=CommonVoiceModels.Frame.FRAME["SAMPLE_RATE"],
-        input=True,
-        stream_callback=callback,
-    )
-    stream.start_stream()
-    while True:
-        if len(frames) >= 32:
-            socketio.sleep(0.5)
+                signal = np.concatenate(tuple(frames))
+                wave_period = signal[-CommonVoiceModels.Frame.FRAME["SAMPLE_RATE"]:].astype(np.float)
+                spectrogram = audio_melspectrogram(wave_period)
 
-        signal = np.concatenate(tuple(frames))
-        wave_period = signal[-CommonVoiceModels.Frame.FRAME["SAMPLE_RATE"]:].astype(np.float)
-        spectrogram = audio_melspectrogram(wave_period)
-
-        # Gender Model
-        gender_output, gender_prob = generate_pred(mel=spectrogram, model=model_gender,
-                                                   label=CommonVoiceModels.Gender.OUTPUT,
-                                                   model_name=CommonVoiceModels.Gender,
-                                                   )
-        socketio.emit('gender_model', {'pred': gender_output, 'prob': round(gender_prob * 100, 2)})
+                # Gender Model
+                gender_output, gender_prob = generate_pred(mel=spectrogram, model=model_gender,
+                                                           label=CommonVoiceModels.Gender.OUTPUT,
+                                                           model_name=CommonVoiceModels.Gender,
+                                                           )
+                socketio.emit('gender_model', {'pred': gender_output, 'prob': round(gender_prob * 100, 2)})
 
 
 @app.route("/about/")
