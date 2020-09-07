@@ -5,7 +5,6 @@ defaults:
     - image: circleci/python:3.7
   working_directory: ~/project
 
-
 jobs:
   common-voice-audio_model:
     docker:
@@ -18,20 +17,14 @@ jobs:
       - run:
           name: Model Unit Testing
           command: |
-            python -m venv venv
-            source venv/bin/activate
             sudo pip install --upgrade pip
             pip install pytest
-            pip install tox
-            tox
+            pip install torch===1.5.1 torchvision===0.6.1 -f https://download.pytorch.org/whl/torch_stable.html
+            pytest
       - run:
           names: Package Installation
-          command: |
-            python -m venv venv
-            source venv/bin/activate
-            sudo pip install --upgrade pip
-            pip install tox
-            tox -e install_locally
+          command: python setup.py sdist bdist_wheel
+
   common-voice-api:
     docker:
       - image: circleci/python:3.7
