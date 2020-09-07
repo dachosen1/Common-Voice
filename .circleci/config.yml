@@ -21,6 +21,7 @@ jobs:
             python -m venv venv
             source venv/bin/activate
             sudo pip install --upgrade pip
+            pip install pytest
             pip install tox
             tox
       - run:
