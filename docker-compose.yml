@@ -1,4 +1,4 @@
-version: '3.4'
+version: '3.7'
 
 services:
   common-voice:
@@ -12,7 +12,7 @@ services:
       - XDG_RUNTIME_DIR=/run/user/1000
     volumes:
       - $HOME/.config/pulse:/usr/src/app/.config/pulse
-      - /etc/machine-id:/etc/machine-id:ro
+#      - /etc/machine-id:/etc/machine-id:ro
       - /run/user/1000/pulse:/run/user/1000/pulse:ro
     ports:
       - 5000:${PORT:-5000}

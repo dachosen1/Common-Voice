@@ -45,22 +45,10 @@ jobs:
             python -m venv venv
             source venv/bin/activate
             sudo pip install --upgrade pip
-            pip install tox
             sudo apt-get install portaudio19-dev python-pyaudio python3-pyaudio
-            tox
-
-  docker-container-deployment:
-    build:
-      machine: true
-      steps:
-        - checkout:
-            - run: |
-                docker build -t common-voice-app . && docker run common-voice-app
-                docker compose-up common-voice-app
 workflows:
   version: 2
   model-testing:
     jobs:
       - common-voice-audio_model
       - common-voice-api
-      - docker-container-deployment
