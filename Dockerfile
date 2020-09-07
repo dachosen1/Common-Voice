@@ -1,16 +1,48 @@
-FROM python:3.7
+FROM python:3.7.8
+
+ARG DEBIAN_FRONTEND=noninteractive
+
+RUN apt-get update -qq \
+ && apt-get install -qqy --no-install-recommends \
+      ffmpeg \
+      libportaudio2 \
+      libportaudiocpp0 \
+      libsndfile1-dev \
+      portaudio19-dev \
+      pulseaudio \
+ && rm -rf /var/lib/apt/lists/*
+
+RUN pip3 install --no-cache-dir pyaudio
+RUN pip3 install --no-cache-dir torch==1.4.0+cpu -f https://download.pytorch.org/whl/cpu/torch_stable.html
+
+RUN addgroup --gid 1000 ml \
+ && adduser --gecos "" \
+      --home /usr/src/app \
+      --shell /bin/bash \
+      --uid 1000 \
+      --gid 1000 \
+      --disabled-password \
+      ml \
+ && adduser ml adm \
+ && adduser ml audio \
+ && adduser ml pulse \
+ && adduser ml voice
+
+RUN mkdir -p /run/user/1000 \
+ && chown ml:ml /run/user/1000
 
 WORKDIR /usr/src/app
 
-COPY commonvoice/requirements.txt ./
+USER ml
 
-RUN apt-get update \
-        && apt-get install libportaudio2 libportaudiocpp0 portaudio19-dev libsndfile1-dev -y \
-        && pip3 install pyaudio
+RUN mkdir -p .local/bin .config .cache
 
-RUN pip install --no-cache-dir -r requirements.txt
-RUN pip install torch==1.4.0+cpu -f https://download.pytorch.org/whl/cpu/torch_stable.html
+ENV PATH="/usr/src/app/.local/bin:$PATH"
 
-COPY . .
+COPY --chown=ml:ml requirements.txt requirements.txt
 
-CMD gunicorn run_app:app --log-file -
+RUN pip3 install --no-cache-dir -r requirements.txt
+
+COPY --chown=ml:ml . .
+
+ENTRYPOINT /usr/src/app/run.sh

@@ -1,24 +1,23 @@
-**/*.venv-app
+venv-model/
+venv-app/
+.circleci/
+.github/
+.idea/
+.tox/
 
-**/*wandb
-**/*mlruns
-**/*audio-model
-*/*/audio-model*
-run_pipeline.py
-utils.py
+wandb/
 
-*/*/.circleci*
-**/*.github
 
-.git
-.cache
 
-venv/*
-*/venv/*
-/venv/*
-commonvoice/.tox
-model/.tox
-.circleci*
-*.log
-.git
+commonvoice/tox.ini
+
 .gitignore
+
+.cache/
+.config/
+.git/
+.vscode/
+.dockerignore
+docker-compose.yml
+Dockerfile
+Procfile

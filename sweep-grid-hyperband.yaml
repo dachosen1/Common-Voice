@@ -1,0 +1,38 @@
+program: run_pipeline.py
+method: bayes
+metric:
+  name: Accuracy/val
+  goal: maximize
+parameters:
+  EPOCH:
+    distribution: int_uniform
+    min: 5
+    max: 15
+  DROPOUT:
+    distribution: uniform
+    min: 0
+    max: 0.99
+  BATCH_SIZE:
+    distribution: int_uniform
+    min: 256
+    max: 1024
+  HIDDEN_DIM:
+    distribution: int_uniform
+    min: 1
+    max: 512
+  NUM_LAYERS:
+    distribution: int_uniform
+    min: 1
+    max: 64
+  GRADIENT_CLIP:
+    distribution: int_uniform
+    min: 0
+    max: 200
+  LEARNING_RATE:
+    distribution: uniform
+    min: 0.00005
+    max: 0.05
+early_terminate:
+  type: hyperband
+  max_iter: 27
+  s: 2

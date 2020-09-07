@@ -1,5 +1,5 @@
 /.idea/
 /venv
-/commonvoice/.tox
-/wandb
+/venv-model
+/audio_model/wandb
 /notebook

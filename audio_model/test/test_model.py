@@ -3,7 +3,7 @@ import random
 import pytest
 import torch
 
-from audio_model.LSTM import AudioLSTM
+from audio_model.audio_model.LSTM import AudioLSTM
 
 
 @pytest.mark.parametrize(
