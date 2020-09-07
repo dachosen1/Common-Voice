@@ -1,0 +1,9 @@
+librosa==0.8.0
+matplotlib==3.3.1
+numpy==1.19.1
+pandas==1.1.1
+pydub==0.24.1
+requests==2.24.0
+scikit-learn==0.23.2
+tqdm==4.48.2
+wandb==0.9.6
