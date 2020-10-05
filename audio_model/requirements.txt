@@ -6,4 +6,4 @@ pydub==0.24.1
 requests==2.24.0
 scikit-learn==0.23.2
 tqdm==4.48.2
-wandb==0.9.6
+wandb==0.10.4
