@@ -12,7 +12,7 @@ from flask_socketio import SocketIO
 
 from audio_model.audio_model.config.config import CommonVoiceModels
 from audio_model.audio_model.pipeline_mananger import load_model
-from audio_model.audio_model.utils import audio_melspectrogram, generate_pred
+from audio_model.audio_model.utils import audio_melspectrogram, generate_pred, audio_mfcc
 
 
 # from .config import get_logger
@@ -107,8 +107,8 @@ def health():
 
 
 @app.route("/model/gender/v1/<mfcc>", methods=['POST'])
-def gender_model(mfcc):
-
+def gender_model(signal):
+    mfcc = audio_mfcc(signal)
     mfcc_split = mfcc.rsplit(',')
     mfcc_split = [float(i.strip('[]')) for i in mfcc_split]
     mfcc_split = np.array(mfcc_split).astype(np.float)
@@ -123,7 +123,8 @@ def gender_model(mfcc):
 
 
 @app.route("/model/age/v1/<mfcc>", methods=['POST'])
-def age_model(mfcc):
+def age_model(signal):
+    mfcc = audio_mfcc(signal)
     mfcc_split = mfcc.rsplit(',')
     mfcc_split = [float(i.strip('[]')) for i in mfcc_split]
     mfcc_split = np.array(mfcc_split).astype(np.float)
@@ -138,8 +139,9 @@ def age_model(mfcc):
 
 
 @app.route("/model/country/v1/<mfcc>", methods=['POST'])
-def country_model(mfcc):
+def country_model(signal):
 
+    mfcc = audio_mfcc(signal)
     mfcc_split = mfcc.rsplit(',')
     mfcc_split = [float(i.strip('[]')) for i in mfcc_split]
     mfcc_split = np.array(mfcc_split).astype(np.float)
