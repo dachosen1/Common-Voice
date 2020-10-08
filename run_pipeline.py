@@ -1,13 +1,13 @@
 import logging
 import os
 import warnings
+from datetime import datetime
 
 import torch
 import wandb
 from torch.utils.data import DataLoader
 from torchvision.datasets import DatasetFolder
 
-from datetime import datetime
 from audio_model import __version__
 from audio_model.audio_model.LSTM import AudioLSTM
 from audio_model.audio_model.config.config import (
@@ -133,8 +133,8 @@ class Run:
 
         torch.save(trained_model.state_dict(), trained_model_path)
 
-    def load_data(self, method, percentage):
-        if method == "train":
+    def load_data(self, percentage, load="No"):
+        if load == "Yes":
             parser = Mp3parser(
                 data_path=DataDirectory.DATA_DIR,
                 clips_dir=DataDirectory.CLIPS_DIR,
@@ -164,6 +164,5 @@ class Run:
 
 if __name__ == "__main__":
     run = Run(CommonVoiceModels.Gender)
-    run.load_data(method="none", percentage=0.01)
+    run.load_data(load="none", percentage=0.01)
     run.train_model(model=AudioLSTM, RNN_TYPE="LSTM")
-

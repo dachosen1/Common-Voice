@@ -13,6 +13,7 @@ import requests
 import torch
 from flask import Flask, render_template, request
 from flask_socketio import SocketIO
+# from flask_restful import reqparse
 
 from audio_model.audio_model.utils import audio_melspectrogram, generate_pred
 
@@ -127,6 +128,22 @@ def generate_gender_pred(spectrogram):
 def health():
     if request.method == 'GET':
         return 'Ok'
+
+
+@app.route("/model/gender/v1/<mfcc>", methods=['POST'])
+def gender_model(mfcc):
+
+    mfcc_split = mfcc.rsplit(',')
+    mfcc_split = [float(i.strip('[]')) for i in mfcc_split]
+    mfcc_split = np.array(mfcc_split).astype(np.float)
+
+    # Gender Model
+    gender_output, gender_prob = generate_pred(mel=mfcc_split, model=model_gender,
+                                               label=CommonVoiceModels.Gender.OUTPUT,
+                                               model_name=CommonVoiceModels.Gender,
+                                               )
+
+    return {'Prediction': gender_output, 'Probability': gender_prob}, 201
 
 
 if __name__ == '__main__':
