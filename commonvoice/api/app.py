@@ -20,16 +20,6 @@ from audio_model.audio_model.utils import audio_melspectrogram, generate_pred
 # _logger = get_logger(logger_name=__name__)
 
 
-
-
-@contextmanager
-def noalsaerr():
-    asound = cdll.LoadLibrary('libasound.so')
-    asound.snd_lib_error_set_handler(c_error_handler)
-    yield
-    asound.snd_lib_error_set_handler(None)
-
-
 warnings.filterwarnings("ignore")
 
 app = Flask(__name__, static_folder="css", static_url_path="/css",
@@ -118,6 +108,37 @@ def health():
 
 @app.route("/model/gender/v1/<mfcc>", methods=['POST'])
 def gender_model(mfcc):
+
+    mfcc_split = mfcc.rsplit(',')
+    mfcc_split = [float(i.strip('[]')) for i in mfcc_split]
+    mfcc_split = np.array(mfcc_split).astype(np.float)
+
+    # Gender Model
+    gender_output, gender_prob = generate_pred(mel=mfcc_split, model=model_gender,
+                                               label=CommonVoiceModels.Gender.OUTPUT,
+                                               model_name=CommonVoiceModels.Gender,
+                                               )
+
+    return {'Prediction': gender_output, 'Probability': gender_prob}, 201
+
+
+@app.route("/model/age/v1/<mfcc>", methods=['POST'])
+def age_model(mfcc):
+    mfcc_split = mfcc.rsplit(',')
+    mfcc_split = [float(i.strip('[]')) for i in mfcc_split]
+    mfcc_split = np.array(mfcc_split).astype(np.float)
+
+    # Gender Model
+    gender_output, gender_prob = generate_pred(mel=mfcc_split, model=model_gender,
+                                               label=CommonVoiceModels.Gender.OUTPUT,
+                                               model_name=CommonVoiceModels.Gender,
+                                               )
+
+    return {'Prediction': gender_output, 'Probability': gender_prob}, 201
+
+
+@app.route("/model/country/v1/<mfcc>", methods=['POST'])
+def country_model(mfcc):
 
     mfcc_split = mfcc.rsplit(',')
     mfcc_split = [float(i.strip('[]')) for i in mfcc_split]
