@@ -39,10 +39,9 @@ RUN mkdir -p .local/bin .config .cache
 
 ENV PATH="/usr/src/app/.local/bin:$PATH"
 
-COPY --chown=ml:ml requirements.txt requirements.txt
+COPY --chown=ml:ml . .
 
 RUN pip3 install --no-cache-dir -r requirements.txt
-
-COPY --chown=ml:ml . .
+RUN chown /usr/lib/x86_64-linux-gnu/libstdc++.so.6 /usr/lib/
 
 ENTRYPOINT /usr/src/app/run.sh

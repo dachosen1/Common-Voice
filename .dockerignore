@@ -2,6 +2,7 @@ venv-model/
 venv-app/
 .circleci/
 .github/
+.pytest_cache/
 .idea/
 .tox/
 
@@ -19,5 +20,3 @@ commonvoice/tox.ini
 .vscode/
 .dockerignore
 docker-compose.yml
-Dockerfile
-Procfile
