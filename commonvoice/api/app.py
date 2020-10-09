@@ -108,9 +108,9 @@ def health():
 
 @app.route("/model/gender/v1/<mfcc>", methods=['POST'])
 def gender_model(mfcc):
-    # mfcc = audio_mfcc(signal)
-    mfcc_split = mfcc.rsplit(',')
-    mfcc_split = [float(i.strip('[]')) for i in mfcc_split]
+    mfcc = audio_mfcc(mfcc)
+    # mfcc_split = mfcc.rsplit(',')
+    mfcc_split = [float(i.strip('[]')) for i in mfcc]
     mfcc_split = np.array(mfcc_split).astype(np.float)
 
     # Gender Model
