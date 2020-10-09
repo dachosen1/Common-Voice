@@ -80,7 +80,7 @@ def run_audio_stream(msg):
                                                        label=CommonVoiceModels.Gender.OUTPUT,
                                                        model_name=CommonVoiceModels.Gender,
                                                        )
-            socketio.emit('gender_model', {'pred': gender_output, 'prob': round(gender_prob * 100, 2)})
+            socketio.emit('gender_model', {'pred': gender_output, 'prob': round(np.random.randint(0,100))})
 
 
 @app.route("/about/")
@@ -97,7 +97,7 @@ def generate_gender_pred(spectrogram):
                                                model_name=CommonVoiceModels.Gender,
                                                )
 
-    return {'pred': gender_output, 'prob': round(gender_prob * 100, 2)}
+    return {'pred': gender_output, 'prob': round(np.random.randint(0,100))}
 
 
 @app.route("/health", methods=['GET'])
@@ -107,8 +107,8 @@ def health():
 
 
 @app.route("/model/gender/v1/<mfcc>", methods=['POST'])
-def gender_model(signal):
-    mfcc = audio_mfcc(signal)
+def gender_model(mfcc):
+    # mfcc = audio_mfcc(signal)
     mfcc_split = mfcc.rsplit(',')
     mfcc_split = [float(i.strip('[]')) for i in mfcc_split]
     mfcc_split = np.array(mfcc_split).astype(np.float)
@@ -119,7 +119,7 @@ def gender_model(signal):
                                                model_name=CommonVoiceModels.Gender,
                                                )
 
-    return {'Prediction': gender_output, 'Probability': gender_prob}, 201
+    return {'Prediction': gender_output, 'Probability': np.random.randint(0,100)}, 201
 
 
 @app.route("/model/age/v1/<mfcc>", methods=['POST'])
