@@ -2,125 +2,173 @@
 <html lang="en">
 
 <head>
-  <meta charset="utf-8">
-  <link rel="shortcut icon" href="#"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <meta name="description" content="">
+    <meta charset="utf-8">
+    <link rel="shortcut icon" href="#" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
 
-  <!-- Latest compiled and minified CSS -->
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
-      integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
+        integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
 
-  <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css')}}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css')}}">
 
 
-  <title>Common Voice - Home Page</title>
+    <title>Common Voice - Home Page</title>
 </head>
 
 <body class="container">
 
-  <header class="main-header">
-      <a class="brand-logo" href= {{ url_for("index") }}>
-        <img src="../css/img/Logo.png" alt='Logo'>
-        <div class="brand-logo-name">Common Voice</div>
-      </a>
-    <nav class="main-nav">
-      <ul>
-        <li><a href={{ url_for("about") }}> About </a> </li>
-      </ul>
-    </nav>
-  </header>
-  <main class="home-main-section">
-    <div class="section-2">
-      <div class="recording-picture">
-        <img src="../css/img/undraw_recording.png" alt="Recording logo">
-      </div>
-      <div class="main-section-right">
-        <div class="call-to-action">
-          <h1 class="title">Generating Audio Prediction using Machine Learning </h1>
-        </div>
-        <div class="audio-mic">
-          <button type="submit">
-            <img src="../css/img/mic.png" alt="submit"/>
-          </button>
-        </div>
-          <div class="prediction-result">
-            <div class="category-class">
-              <div class="gender-box">
-              </div>
+    <header class="main-header">
+        <a class="brand-logo" href={{ url_for("index") }}>
+            <img src="../css/img/Logo.png" alt='Logo'>
+            <div class="brand-logo-name">Common Voice</div>
+        </a>
+        <nav class="main-nav">
+            <ul>
+                <li><a href={{ url_for("about") }}> About </a> </li>
+            </ul>
+        </nav>
+    </header>
+    <main class="home-main-section">
+        <div class="section-2">
+            <div class="recording-picture">
+                <img src="../css/img/undraw_recording.png" alt="Recording logo">
             </div>
-            <div class="category-prob">
-              <div class="category-prob-gender">
+            <div class="main-section-right">
+                <div class="call-to-action">
+                    <h1 class="title">Generating Audio Prediction using Machine Learning </h1>
+                </div>
+                <div class="audio-mic">
+                    <button type="submit" onclick="recordAudio()">
+                        <img src="../css/img/mic.png" alt="submit" />
+                    </button>
+                </div>
+                <div class="prediction-result">
+                    <div class="category-class">
+                        <div class="gender-box">
+                        </div>
+                    </div>
+                    <div class="category-prob">
+                        <div class="category-prob-gender">
 
-              </div>
+                        </div>
+                    </div>
+                </div>
             </div>
-          </div>
-           </div>
-      </div>
-
-      <div class="section-3">
-        <div class="section-3-top">
-          <h1>
-            What is Common Voice?
-          </h1>
         </div>
 
-        <div class="section-3-bottom">
-          <div class="section-3-bottom-left">
-            <p class="section-3-bottom-left-text">
-              Common Voice is Mozilla's initiative to help teach machines how real people speak.
-            </p>
-          </div>
-          <div class="section-3-bottom-right">
-            <p class="common-voice-overview"> Voice is natural, voice is human. That’s why Common-voice is excited about
-              creating usable voice technology. But to create voice systems, developers need an extremely large amount
-              of voice data. </p>
+        <div class="section-3">
+            <div class="section-3-top">
+                <h1>
+                    What is Common Voice?
+                </h1>
+            </div>
 
-              <p> Most of the data used by large companies isn’t available to the majority of people. Common voice
-                believes that stifles innovation.  Common Voice is a project to help make voice recognition open and
-                accessible to everyone. </p>
+            <div class="section-3-bottom">
+                <div class="section-3-bottom-left">
+                    <p class="section-3-bottom-left-text">
+                        Common Voice is Mozilla's initiative to help teach machines how real people speak.
+                    </p>
+                </div>
+                <div class="section-3-bottom-right">
+                    <p class="common-voice-overview"> Voice is natural, voice is human. That’s why Common-voice is
+                        excited about
+                        creating usable voice technology. But to create voice systems, developers need an extremely
+                        large amount
+                        of voice data. </p>
 
-            <p> Now you can donate your voice to help us build an open-source voice database that anyone can use to
-              make innovative apps for devices and the web. Read a sentence to help machines learn how real people
-              speak. Check the work of other contributors to improve the quality. It’s that simple! </p>
+                    <p> Most of the data used by large companies isn’t available to the majority of people. Common voice
+                        believes that stifles innovation. Common Voice is a project to help make voice recognition open
+                        and
+                        accessible to everyone. </p>
 
-            <p> To learn more visit: <a href="https://voice.mozilla.org/en">Common Voice</a>
-            </p>
-          </div>
+                    <p> Now you can donate your voice to help us build an open-source voice database that anyone can use
+                        to
+                        make innovative apps for devices and the web. Read a sentence to help machines learn how real
+                        people
+                        speak. Check the work of other contributors to improve the quality. It’s that simple! </p>
+
+                    <p> To learn more visit: <a href="https://voice.mozilla.org/en">Common Voice</a>
+                    </p>
+                </div>
+            </div>
         </div>
-      </div>
-    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
-    <script src="//code.jquery.com/jquery-1.12.4.min.js" integrity="sha256-ZosEbRLbNQzLpnKIkEdrPv7lOy9C27hHQ+Xp8a4MxAQ="
-            crossorigin="anonymous"></script>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js"
-            integrity="sha256-yr4fRk/GU1ehYJPAs8P4JlTgu0Hdsp4ZKrx8bDEDC3I=" crossorigin="anonymous"></script>
-    <script type="text/javascript" charset="utf-8">
 
-      var socket = io.connect('http://' + document.domain + ':' + location.port)
+        <script>
+            // Audio recording script
+            // /model/gender/v1/<mfcc>
+            // /model/age/v1/<mfcc>
+            // /model/country/v1/<mfcc>
 
-      socket.on('connect', function () {
-        socket.emit('audio-streaming', {})
-        console.log('Connected')
-      })
+            function sendAudio(blob) {
+                console.log(blob);
+                let response1 = fetch("/model/gender/v1/", {
+                    method: "post",
+                    body: blob,
+                    headers: {},
+                });
+                let response2 = fetch("/model/age/v1/", {
+                    method: "post",
+                    body: blob,
+                    headers: {},
+                });
+                let response3 = fetch("/model/country/v1/", {
+                    method: "post",
+                    body: blob,
+                    headers: {},
+                });
+            }
+            function recordAudio() {
+                console.log("clickerd");
+                navigator.mediaDevices.getUserMedia({ audio: true })
+                    .then(stream => {
+                        const mediaRecorder = new MediaRecorder(stream);
+                        mediaRecorder.start();
 
-      socket.on('gender_model', function (ms) {
-        $('div.gender-box').text(ms.pred).html()
-        $('div.category-prob-gender').text(ms.prob).html()
-      })
+                        let audioChunks = [];
 
+                        mediaRecorder.addEventListener("dataavailable", event => {
+                            audioChunks.push(event.data);
+                            // console.log(audioChunks);
 
-    </script>
-  </main>
+                            const audioBlob = new Blob(audioChunks);
+                            // console.log(audioBlob);
+                        });
+
+                        mediaRecorder.addEventListener("stop", () => {
+                            audioChunks = audioChunks.filter((ele, index) => {
+                                return index == audioChunks.length - 1;
+                            })
+                            const audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
+                            sendAudio(audioBlob);
+                            const audioUrl = URL.createObjectURL(audioBlob);
+                            const audio = new Audio(audioUrl);
+                            audio.play();
+                            console.log("new", audioChunks);
+                            mediaRecorder.start();
+                        });
+
+                        setInterval(() => {
+                            mediaRecorder.stop();
+                        }, 1000);
+                    });
+            }
+        </script>
+        <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+
+    </main>
 </body>
 <footer class="main-footer">
-  <div class="container">
-    <nav class="footer-nav">
-      <ul>
-        <li><a href="https://github.com/dachosen1/Common-Voice" class="social-link">
-          <img src="../css/img/github.png">
-        </a></li>
-      </ul>
-    </nav>
-  </div>
+    <div class="container">
+        <nav class="footer-nav">
+            <ul>
+                <li><a href="https://github.com/dachosen1/Common-Voice" class="social-link">
+                        <img src="../css/img/github.png">
+                    </a></li>
+            </ul>
+        </nav>
+    </div>
 </footer>
+
 </html>
