@@ -10,6 +10,8 @@ from audio_model.audio_model.config.config import CommonVoiceModels
 from audio_model.audio_model.pipeline_mananger import load_model
 from audio_model.audio_model.utils import generate_pred, audio_mfcc
 
+from requests import Request
+from flask_restful import  reqparse
 warnings.filterwarnings("ignore")
 
 app = Flask(__name__, static_folder="css", static_url_path="/css",
@@ -52,9 +54,12 @@ def health():
         return 'Ok'
 
 
-@app.route("/model/gender/v1/", methods=['POST'])
-def gender_model(audio_wav):
-    mfcc = load_audio_wav(audio_wav)
+@app.route("/model/gender/v1", methods=['POST'])
+def gender_model():
+
+    audio_wav = request.data
+
+    mfcc = audio_mfcc(audio_wav)
 
     # Gender Model
     gender_output, gender_prob = generate_pred(mel=mfcc, model=model_gender,
@@ -66,8 +71,9 @@ def gender_model(audio_wav):
 
 
 @app.route("/model/age/v1/", methods=['POST'])
-def age_model(audio_wav):
-    mfcc = load_audio_wav(audio_wav)
+def age_model():
+    audio_wav = request.data
+    mfcc = audio_mfcc(audio_wav)
 
     # Gender Model
     gender_output, gender_prob = generate_pred(mel=mfcc, model=model_gender,
@@ -79,8 +85,9 @@ def age_model(audio_wav):
 
 
 @app.route("/model/country/v1/", methods=['POST'])
-def country_model(audio_wav):
-    mfcc = load_audio_wav(audio_wav)
+def country_model():
+    audio_wav = request.data
+    mfcc = audio_mfcc(audio_wav)
 
     # Gender Model
     gender_output, gender_prob = generate_pred(mel=mfcc, model=model_gender,
