@@ -59,7 +59,7 @@ def gender_model():
 
     audio_wav = request.data
 
-    mfcc = load_audio_wav(audio_wav)
+    mfcc = audio_mfcc(audio_wav)
 
     # Gender Model
     gender_output, gender_prob = generate_pred(mel=mfcc, model=model_gender,
@@ -73,7 +73,7 @@ def gender_model():
 @app.route("/model/age/v1/", methods=['POST'])
 def age_model():
     audio_wav = request.data
-    mfcc = load_audio_wav(audio_wav)
+    mfcc = audio_mfcc(audio_wav)
 
     # Gender Model
     gender_output, gender_prob = generate_pred(mel=mfcc, model=model_gender,
@@ -87,7 +87,7 @@ def age_model():
 @app.route("/model/country/v1/", methods=['POST'])
 def country_model():
     audio_wav = request.data
-    mfcc = load_audio_wav(audio_wav)
+    mfcc = audio_mfcc(audio_wav)
 
     # Gender Model
     gender_output, gender_prob = generate_pred(mel=mfcc, model=model_gender,
