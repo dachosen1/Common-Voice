@@ -1,4 +1,4 @@
-from commonvoice.api.app import app
+from commonvoice.api.app import app, socketio
 
 if __name__ == '__main__':
-    app.run()
+    socketio.run(app)

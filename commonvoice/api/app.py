@@ -1,23 +1,47 @@
 import os
 import warnings
+from contextlib import contextmanager
+from ctypes import *
 
-import librosa
 import markdown
+import numpy as np
+import pyaudio
 import torch
 from flask import Flask, render_template, request
+from flask_socketio import SocketIO
 
 from audio_model.audio_model.config.config import CommonVoiceModels
 from audio_model.audio_model.pipeline_mananger import load_model
-from audio_model.audio_model.utils import generate_pred, audio_mfcc
+from audio_model.audio_model.utils import audio_melspectrogram, generate_pred
 
-from requests import Request
-from flask_restful import  reqparse
+
+ERROR_HANDLER_FUNC = CFUNCTYPE(None, c_char_p, c_int, c_char_p, c_int, c_char_p)
+
+
+def py_error_handler(filename, line, function, err, fmt):
+    pass
+
+
+c_error_handler = ERROR_HANDLER_FUNC(py_error_handler)
+
+
+@contextmanager
+def noalsaerr():
+    asound = cdll.LoadLibrary('libasound.so')
+    asound.snd_lib_error_set_handler(c_error_handler)
+    yield
+    asound.snd_lib_error_set_handler(None)
+
+
 warnings.filterwarnings("ignore")
 
 app = Flask(__name__, static_folder="css", static_url_path="/css",
             template_folder="templates")
 
-SAMPLE_RATE = CommonVoiceModels.Country.FRAME['SAMPLE_RATE']
+socketio = SocketIO(app)
+
+FORMAT = pyaudio.paFloat32
+CHANNELS = 1
 
 # Gender Model
 model_gender, path_gender = load_model(model_name=CommonVoiceModels.Gender)
@@ -28,17 +52,49 @@ model_gender.init_hidden()
 if torch.cuda.is_available():
     model_gender.cuda()
 
+max_frames = 50
+frames = []
 
-def load_audio_wav(audio_wav):
-    signal, _ = librosa.load(audio_wav, sr=SAMPLE_RATE)
-    mfcc = audio_mfcc(signal)
-    return mfcc
+
+def callback(in_data, frame_count, time_info, status):
+    frames.append(np.frombuffer(in_data, dtype=np.int16))
+    if len(frames) > max_frames:
+        frames.pop(0)
+    return in_data, pyaudio.paContinue
 
 
 @app.route("/")
 @app.route("/home")
 def index():
     return render_template("index.html")
+
+
+@socketio.on('audio-streaming', )
+def run_audio_stream(msg):
+    with noalsaerr():
+        p = pyaudio.PyAudio()
+        stream = p.open(
+            format=FORMAT,
+            channels=CHANNELS,
+            rate=CommonVoiceModels.Frame.FRAME["SAMPLE_RATE"],
+            input=True,
+            stream_callback=callback,
+        )
+        stream.start_stream()
+        while True:
+            if len(frames) >= 32:
+                socketio.sleep(0.5)
+
+                signal = np.concatenate(tuple(frames))
+                wave_period = signal[-CommonVoiceModels.Frame.FRAME["SAMPLE_RATE"]:].astype(np.float)
+                spectrogram = audio_melspectrogram(wave_period)
+
+                # Gender Model
+                gender_output, gender_prob = generate_pred(mel=spectrogram, model=model_gender,
+                                                           label=CommonVoiceModels.Gender.OUTPUT,
+                                                           model_name=CommonVoiceModels.Gender,
+                                                           )
+                socketio.emit('gender_model', {'pred': gender_output, 'prob': round(gender_prob * 100, 2)})
 
 
 @app.route("/about/")
@@ -48,55 +104,21 @@ def about():
         return markdown.markdown(content)
 
 
+@app.route('/model-gender', methods=['POST'])
+def generate_gender_pred(spectrogram):
+    gender_output, gender_prob = generate_pred(mel=spectrogram, model=model_gender,
+                                               label=CommonVoiceModels.Gender.OUTPUT,
+                                               model_name=CommonVoiceModels.Gender,
+                                               )
+
+    return {'pred': gender_output, 'prob': round(gender_prob * 100, 2)}
+
+
 @app.route("/health", methods=['GET'])
 def health():
     if request.method == 'GET':
         return 'Ok'
 
 
-@app.route("/model/gender/v1", methods=['POST'])
-def gender_model():
-
-    audio_wav = request.data
-
-    mfcc = audio_mfcc(audio_wav)
-
-    # Gender Model
-    gender_output, gender_prob = generate_pred(mel=mfcc, model=model_gender,
-                                               label=CommonVoiceModels.Gender.OUTPUT,
-                                               model_name=CommonVoiceModels.Gender,
-                                               )
-
-    return {'Prediction': gender_output, 'Probability': gender_prob}, 200
-
-
-@app.route("/model/age/v1/", methods=['POST'])
-def age_model():
-    audio_wav = request.data
-    mfcc = audio_mfcc(audio_wav)
-
-    # Gender Model
-    gender_output, gender_prob = generate_pred(mel=mfcc, model=model_gender,
-                                               label=CommonVoiceModels.Gender.OUTPUT,
-                                               model_name=CommonVoiceModels.Gender,
-                                               )
-
-    return {'Prediction': gender_output, 'Probability': gender_prob}, 200
-
-
-@app.route("/model/country/v1/", methods=['POST'])
-def country_model():
-    audio_wav = request.data
-    mfcc = audio_mfcc(audio_wav)
-
-    # Gender Model
-    gender_output, gender_prob = generate_pred(mel=mfcc, model=model_gender,
-                                               label=CommonVoiceModels.Gender.OUTPUT,
-                                               model_name=CommonVoiceModels.Gender,
-                                               )
-
-    return {'Prediction': gender_output, 'Probability': gender_prob}, 201
-
-
 if __name__ == '__main__':
-    app.run(debug=True)
+    socketio.run(app)
