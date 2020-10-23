@@ -8,7 +8,7 @@ Mako==1.1.3
 Markdown==3.2.2
 matplotlib==3.0.3
 mlflow==1.9.1
-numpy==1.18.5
+numpy==1.19.2
 pandas==0.25.3
 pydub==0.24.1
 pytest==5.4.3

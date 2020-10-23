@@ -2,7 +2,7 @@ librosa==0.8.0
 llvmlite==0.34.0
 matplotlib==3.0.3
 mlflow==1.9.1
-numpy==1.18.5
+numpy==1.19.2
 pandas==0.25.3
 pydub==0.24.1
 pyparsing==2.4.7
@@ -69,7 +69,7 @@ mlflow==1.9.1
 more-itertools==8.5.0
 msrest==0.6.19
 numba==0.51.2
-numpy==1.18.5
+numpy==1.19.2
 nvidia-ml-py3==7.352.0
 oauthlib==3.1.0
 packaging==20.4
