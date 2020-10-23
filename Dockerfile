@@ -1,6 +1,7 @@
-FROM python:3.7.8
+FROM python:3.8.6
 
 ARG DEBIAN_FRONTEND=noninteractive
+ENV PYTHONUNBUFFERED True
 
 RUN apt-get update -qq \
  && apt-get install -qqy --no-install-recommends \
@@ -13,7 +14,7 @@ RUN apt-get update -qq \
  && rm -rf /var/lib/apt/lists/*
 
 RUN pip3 install --no-cache-dir pyaudio
-RUN pip3 install --no-cache-dir torch==1.4.0+cpu -f https://download.pytorch.org/whl/cpu/torch_stable.html
+RUN pip3 install --no-cache-dir torch==1.6.0+cpu -f https://download.pytorch.org/whl/cpu/torch_stable.html
 
 RUN addgroup --gid 1000 ml \
  && adduser --gecos "" \
@@ -42,5 +43,6 @@ ENV PATH="/usr/src/app/.local/bin:$PATH"
 COPY --chown=ml:ml . .
 
 RUN pip3 install --no-cache-dir -r requirements.txt
+EXPOSE 5000
 
 ENTRYPOINT /usr/src/app/run.sh

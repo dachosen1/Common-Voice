@@ -1,2 +1,23 @@
--r commonvoice/requirements.txt
--r audio_model/requirements.txt
+audioread==2.1.9
+Flask==1.1.2
+Flask-SocketIO==4.3.1
+gunicorn==20.0.4
+librosa==0.8.0
+llvmlite==0.34.0
+Mako==1.1.3
+Markdown==3.2.2
+matplotlib==3.0.3
+mlflow==1.9.1
+numpy==1.18.5
+pandas==0.25.3
+pydub==0.24.1
+pytest==5.4.3
+python-socketio==4.6.0
+python-speech-features==0.6
+scikit-learn==0.22.2.post1
+scipy==1.5.3
+SoundFile==0.10.3.post1
+SQLAlchemy==1.3.13
+tox==3.19.0
+tqdm==4.47.0
+wandb==0.9.4

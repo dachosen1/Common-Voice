@@ -1,5 +1,5 @@
-venv-model/
-venv-app/
+venv/
+
 .circleci/
 .github/
 .pytest_cache/
@@ -7,8 +7,6 @@ venv-app/
 .tox/
 
 wandb/
-
-
 
 commonvoice/tox.ini
 
@@ -19,4 +17,3 @@ commonvoice/tox.ini
 .git/
 .vscode/
 .dockerignore
-docker-compose.yml

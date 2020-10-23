@@ -50,7 +50,6 @@ def index():
 
 @socketio.on('audio-streaming', )
 def run_audio_stream(msg):
-
     p = pyaudio.PyAudio()
     stream = p.open(
         format=FORMAT,
@@ -97,7 +96,3 @@ def generate_gender_pred(spectrogram):
 def health():
     if request.method == 'GET':
         return 'Ok'
-
-
-if __name__ == '__main__':
-    socketio.run(app)
