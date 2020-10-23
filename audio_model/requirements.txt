@@ -12,7 +12,7 @@ setuptools==49.3.1
 scikit-learn==0.22.2.post1
 tox==3.19.0
 tqdm==4.47.0
-wandb==0.9.4
+wandb==0.10.8
 
 
 
@@ -127,7 +127,7 @@ tzlocal==2.1
 urllib3==1.25.11
 virtualenv==20.0.35
 waitress==1.4.4
-wandb==0.9.4
+wandb==0.10.8
 watchdog==0.10.3
 wcwidth==0.2.5
 websocket-client==0.57.0
