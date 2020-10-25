@@ -1,14 +1,14 @@
 version: '3.7'
 
 services:
-  common-voice:
+  commvoice:
     build: .
     image: anelso42/common-voice-app
     devices:
       - /dev/snd
     environment:
 #      - ALSA_PCM=usbstream:CARD=StargazerMicrop
-      - PORT=${PORT:-80}
+      - PORT=${PORT:-8080}
       - XDG_RUNTIME_DIR=/run/user/1000
       - ALSA_CARD=Generic
     volumes:
@@ -16,4 +16,4 @@ services:
 #      - /etc/machine-id:/etc/machine-id:ro
       - /run/user/1000/pulse:/run/user/1000/pulse:ro
     ports:
-      - 5000:${PORT:-80}
+      - 8080:${PORT:-8080}
