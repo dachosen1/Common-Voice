@@ -8,7 +8,7 @@ services:
       - /dev/snd
     environment:
 #      - ALSA_PCM=usbstream:CARD=StargazerMicrop
-      - PORT=${PORT:-5000}
+      - PORT=${PORT:-8080}
       - XDG_RUNTIME_DIR=/run/user/1000
       - ALSA_CARD=Generic
     volumes:
@@ -16,4 +16,4 @@ services:
 #      - /etc/machine-id:/etc/machine-id:ro
       - /run/user/1000/pulse:/run/user/1000/pulse:ro
     ports:
-      - 5000:${PORT:-5000}
+      - 5000:${PORT:-8080}
