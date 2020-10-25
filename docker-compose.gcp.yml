@@ -1,5 +1,0 @@
-version: '3.7'
-
-services:
-  common-voice:
-    image: gcr.io/commvoice/commvoice:${DOCKER_IMAGE_TAG:-latest}
