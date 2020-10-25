@@ -11,7 +11,7 @@ python-speech-features==0.6
 setuptools==49.3.1
 scikit-learn==0.22.2.post1
 tox==3.19.0
-tqdm==4.47.0
+tqdm==4.50.2
 wandb==0.9.4
 
 
@@ -122,7 +122,7 @@ toml==0.10.1
 torch==1.6.0
 torchvision==0.7.0
 tox==3.19.0
-tqdm==4.47.0
+tqdm==4.50.2
 tzlocal==2.1
 urllib3==1.25.11
 virtualenv==20.0.35
