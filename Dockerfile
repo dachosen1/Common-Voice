@@ -13,9 +13,6 @@ RUN apt-get update -qq \
       pulseaudio \
  && rm -rf /var/lib/apt/lists/*
 
-RUN pip3 install --no-cache-dir pyaudio
-RUN pip3 install --no-cache-dir torch==1.6.0+cpu -f https://download.pytorch.org/whl/cpu/torch_stable.html
-
 RUN addgroup --gid 1000 ml \
  && adduser --gecos "" \
       --home /usr/src/app \
@@ -42,7 +39,10 @@ ENV PATH="/usr/src/app/.local/bin:$PATH"
 
 COPY --chown=ml:ml . .
 
+RUN pip3 install --no-cache-dir pyaudio
+RUN pip3 install --no-cache-dir torch==1.6.0+cpu -f https://download.pytorch.org/whl/cpu/torch_stable.html
 RUN pip3 install --no-cache-dir -r requirements.txt
-EXPOSE 5000
+
+EXPOSE 8080
 
 ENTRYPOINT /usr/src/app/run.sh
