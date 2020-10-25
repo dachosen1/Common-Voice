@@ -82,16 +82,6 @@ def about():
         return markdown.markdown(content)
 
 
-# @app.route('/model-gender', methods=['POST'])
-# def generate_gender_pred(spectrogram):
-#     gender_output, gender_prob = generate_pred(mel=spectrogram, model=model_gender,
-#                                                label=CommonVoiceModels.Gender.OUTPUT,
-#                                                model_name=CommonVoiceModels.Gender,
-#                                                )
-#
-#     return {'pred': gender_output, 'prob': round(gender_prob * 100, 2)}
-
-
 @app.route("/health", methods=['GET'])
 def health():
     if request.method == 'GET':
