@@ -72,7 +72,7 @@ def run_audio_stream(msg):
                                                        label=CommonVoiceModels.Gender.OUTPUT,
                                                        model_name=CommonVoiceModels.Gender,
                                                        )
-            socketio.emit('gender_model', {'pred': gender_output, 'prob': round(np.random.randint(0, 100))})
+            socketio.emit('gender_model', {'pred': gender_output, 'prob': gender_prob})
 
 
 @app.route("/about/")
