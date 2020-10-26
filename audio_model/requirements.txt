@@ -34,7 +34,7 @@ colorama==0.4.4
 configparser==5.0.1
 cryptography==3.1.1
 cycler==0.10.0
-databricks-cli==0.12.2
+databricks-cli==0.13.0
 decorator==4.4.2
 distlib==0.3.1
 docker==4.3.1
