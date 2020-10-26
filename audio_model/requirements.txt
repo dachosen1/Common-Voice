@@ -49,7 +49,7 @@ gitdb==4.0.5
 GitPython==3.1.9
 gorilla==0.3.0
 gql==0.2.0
-graphql-core==1.1
+graphql-core==3.1.2
 gunicorn==20.0.4
 idna==2.10
 importlib-metadata==2.0.0
