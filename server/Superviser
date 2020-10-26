@@ -1,0 +1,7 @@
+[program:gunicorn]
+command=/path/to/gunicorn main:application -c /path/to/gunicorn.conf.py
+directory=/path/to/project
+user=nobody
+autostart=true
+autorestart=true
+redirect_stderr=true

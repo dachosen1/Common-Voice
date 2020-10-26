@@ -1,4 +1,4 @@
-FROM python:3.8.6
+FROM python:3.7.9
 
 ARG DEBIAN_FRONTEND=noninteractive
 ENV PYTHONUNBUFFERED True

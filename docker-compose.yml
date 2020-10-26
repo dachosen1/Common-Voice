@@ -4,6 +4,7 @@ services:
   commvoice:
     build: .
     image: anelso42/common-voice-app
+    container_name: commvoice
     devices:
       - /dev/snd
     environment:
@@ -17,3 +18,10 @@ services:
       - /run/user/1000/pulse:/run/user/1000/pulse:ro
     ports:
       - 8080:${PORT:-8080}
+
+  nginx:
+    build: ./server
+    container_name: nginx
+    restart: always
+    ports:
+      - "80:80"
