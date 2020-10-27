@@ -1,6 +1,5 @@
 import os
 
-import random
 from audio_model import audio_model
 
 PACKAGE_ROOT = os.path.dirname(audio_model.__file__)
@@ -30,7 +29,7 @@ class CommonVoiceModels:
         }
 
         NAME = "model_age-"
-        PARAM = {'HIDDEN_DIM': 256, 'NUM_LAYERS': 4, 'DROPOUT': 0, 'INPUT_SIZE': 128, 'BATCH_SIZE': 525,
+        PARAM = {'HIDDEN_DIM': 256, 'NUM_LAYERS': 4, 'DROPOUT': 0, 'INPUT_SIZE': 44, 'BATCH_SIZE': 525,
                  'OUTPUT_SIZE': 5, 'LEARNING_RATE': 0.001, 'GRADIENT_CLIP': 15, 'EPOCH': 5}
         LABEL = 'age'
 
@@ -42,7 +41,7 @@ class CommonVoiceModels:
                   4: 'American'}
 
         NAME = "model_country-"
-        PARAM = {'HIDDEN_DIM': 8, 'NUM_LAYERS': 16, 'DROPOUT': 0.0, 'INPUT_SIZE': 130, 'BATCH_SIZE': 1024,
+        PARAM = {'HIDDEN_DIM': 8, 'NUM_LAYERS': 16, 'DROPOUT': 0.0, 'INPUT_SIZE': 44, 'BATCH_SIZE': 1024,
                  'OUTPUT_SIZE': 5, 'LEARNING_RATE': 0.01, 'GRADIENT_CLIP': 0, 'EPOCH': 5}
         LABEL = 'accent'
 
@@ -66,20 +65,10 @@ DO_NOT_INCLUDE = [
 ]
 
 
-
-class Bucket:
-    RAW_DATA = "common-voice-voice-all"
-    META_DATA = "common-voice-voice-data"
-    VALIDATION_SET = "common-voice-voice-dev"
-    TEST_SET = "common-voice-voice-test"
-    TRAIN_SET = "common-voice-voice-train"
-
-
 class DataDirectory:
     DATA_DIR = r"C:\Users\ander\Documents\common-voice-data"
     DEV_DIR = r"C:\Users\ander\Documents\common-voice-dev"
-    CLIPS_DIR = r"C:\Users\ander\Documents\en\cv-corpus-5.1-2020-06-22\en\clips"
-    TRAIN_DIR = r"C:\Users\ander\Documents\common-voice-train"
+    CLIPS_DIR = r"C:\Users\ander\Documents\common-voice-data\clips"
 
 
 # class DataDirectory:
