@@ -7,6 +7,8 @@ services:
     container_name: commvoice
     devices:
       - /dev/snd
+    networks:
+      - my-network
     environment:
 #      - ALSA_PCM=usbstream:CARD=StargazerMicrop
       - PORT=${PORT:-8080}
@@ -16,12 +18,20 @@ services:
       - $HOME/.config/pulse:/usr/src/app/.config/pulse
 #      - /etc/machine-id:/etc/machine-id:ro
       - /run/user/1000/pulse:/run/user/1000/pulse:ro
+
     ports:
       - 8080:${PORT:-8080}
 
   nginx:
     build: ./server
     container_name: nginx
-    restart: always
+    depends_on:
+      - commvoice
+    networks:
+      my-network:
+        aliases:
+          - commvoice
     ports:
       - "80:80"
+networks:
+    my-network:
