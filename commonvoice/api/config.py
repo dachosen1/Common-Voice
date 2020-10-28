@@ -17,9 +17,9 @@ LOG_DIR = os.path.join(PACKAGE_ROOT, "logs")
 
 LOG_FILE = os.path.join(LOG_DIR, "ml_api.log")
 
+
 # UPLOAD_FOLDER = PACKAGE_ROOT / 'uploads'
 # UPLOAD_FOLDER.mkdir(exist_ok=True)
-
 
 
 def get_console_handler():
