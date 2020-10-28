@@ -16,7 +16,7 @@ from audio_model.audio_model.config.config import (
 )
 from audio_model.audio_model.model_manager import train
 from audio_model.audio_model.preprocessing.mp3_parser import Mp3parser
-from audio_model.audio_model.utils import csv_loader, sample_weight, run_thread_pool
+from audio_model.audio_model.utils import csv_loader, sample_weight, run_thread_pool, run_process_pool
 
 warnings.filterwarnings("ignore")
 
@@ -149,7 +149,7 @@ class Run:
             _logger.info("Uploaded {} MP3 files for trainings".format(len(mp3_list)))
 
             start = datetime.now()
-            run_thread_pool(function=parser.convert_to_wav, my_iter=mp3_list)
+            run_process_pool(function=parser.convert_to_wav, my_iter=mp3_list)
             end = datetime.now()
 
             _logger.info("Added {} total training examples.".format(parser.add_count))

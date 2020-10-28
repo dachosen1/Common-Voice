@@ -194,10 +194,10 @@ def log_scalar(name, value, step):
 
 
 def run_thread_pool(function, my_iter):
-    with concurrent.futures.ThreadPoolExecutor() as executor:
+    with concurrent.futures.ThreadPoolExecutor(max_workers=concurrent.futures.ProcessPoolExecutor()._max_workers) as executor:
         tqdm(executor.map(function, my_iter), total=len(my_iter))
 
 
 def run_process_pool(function, my_iter):
-    with concurrent.futures.ProcessPoolExecutor() as executor:
+    with concurrent.futures.ProcessPoolExecutor(max_workers=concurrent.futures.ProcessPoolExecutor()._max_workers) as executor:
         tqdm(executor.map(function, my_iter), total=len(my_iter))

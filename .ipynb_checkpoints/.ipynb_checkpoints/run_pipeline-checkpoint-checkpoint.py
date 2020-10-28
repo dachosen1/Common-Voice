@@ -4,7 +4,7 @@ from audio_model.pipeline import Run
 
 # Gender
 run = Run(CommonVoiceModels.Gender)
-run.load_data(load="Yes", percentage=0.5)
+run.load_data(load="Yes", percentage=0.05)
 # run.train_model(model=AudioLSTM, RNN_TYPE="LSTM")
 
 # Country
