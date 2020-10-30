@@ -1,1 +1,2 @@
 -r commonvoice/requirements.txt
+-r audio_model/requirements.txt
