@@ -96,7 +96,7 @@
             integrity="sha256-yr4fRk/GU1ehYJPAs8P4JlTgu0Hdsp4ZKrx8bDEDC3I=" crossorigin="anonymous"></script>
     <script type="text/javascript" charset="utf-8">
 
-      var socket = io.connect('http://' + document.domain + ':' + location.port);
+      var socket = io.connect('/');
 
       socket.on('connect', function () {
         socket.emit('audio-streaming', {})
