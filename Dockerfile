@@ -14,6 +14,8 @@ RUN apt-get update -qq \
       portaudio19-dev \
       pulseaudio \
       python3-pyaudio \
+      gcc \
+      python3-dev \
  && rm -rf /var/lib/apt/lists/*
 
 COPY . .
