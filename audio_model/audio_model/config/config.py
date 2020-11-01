@@ -65,16 +65,16 @@ DO_NOT_INCLUDE = [
 ]
 
 
-# class DataDirectory:
-#     DATA_DIR = r"C:\Users\ander\Documents\common-voice-data"
-#     DEV_DIR = r"C:\Users\ander\Documents\common-voice-dev"
-#     CLIPS_DIR = r"C:\Users\ander\Documents\common-voice-data\clips"
-
-
 class DataDirectory:
-    DATA_DIR = "/home/jupyter/comm-voice-training/common-voice-data"
-    DEV_DIR = "/home/jupyter/comm-voice-training/common-voice-dev"
-    CLIPS_DIR = "/home/jupyter/comm-voice-training/common-voice-data/clips"
+    DATA_DIR = r"C:\Users\ander\Documents\common-voice-data"
+    DEV_DIR = r"C:\Users\ander\Documents\common-voice-dev"
+    CLIPS_DIR = r"C:\Users\ander\Documents\common-voice-data\clips"
+
+
+# class DataDirectory:
+#     DATA_DIR = "/home/jupyter/comm-voice-training/common-voice-data"
+#     DEV_DIR = "/home/jupyter/comm-voice-training/common-voice-dev"
+#     CLIPS_DIR = "/home/jupyter/comm-voice-training/common-voice-data/clips"
 
 class TrainingTestingSplitDirectory:
     TRAIN_DIR = r"train_data"

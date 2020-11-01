@@ -1,7 +1,9 @@
-FROM python:3.7.9
+FROM python:3.7.9-slim-buster AS builder
 
 ARG DEBIAN_FRONTEND=noninteractive
 ENV PYTHONUNBUFFERED True
+
+WORKDIR /usr/src/app
 
 RUN apt-get update -qq \
  && apt-get install -qqy --no-install-recommends \
@@ -11,8 +13,19 @@ RUN apt-get update -qq \
       libsndfile1-dev \
       portaudio19-dev \
       pulseaudio \
+      python3-pyaudio \
  && rm -rf /var/lib/apt/lists/*
 
+COPY . .
+
+RUN pip3 install --no-cache-dir torch==1.6.0+cpu -f https://download.pytorch.org/whl/cpu/torch_stable.html
+RUN pip3 install --no-cache-dir -r requirements.txt
+
+ENTRYPOINT /usr/src/app/run.sh
+
+FROM debian:stable-slim
+
+RUN addgroup --gid 1001 pulse
 RUN addgroup --gid 1000 ml \
  && adduser --gecos "" \
       --home /usr/src/app \
@@ -26,23 +39,19 @@ RUN addgroup --gid 1000 ml \
  && adduser ml pulse \
  && adduser ml voice
 
+
+COPY --from=builder /usr/src/app .
+
+RUN mkdir -p .local/bin .config .cache
+
 RUN mkdir -p /run/user/1000 \
  && chown ml:ml /run/user/1000
 
-WORKDIR /usr/src/app
-
 USER ml
-
-RUN mkdir -p .local/bin .config .cache
 
 ENV PATH="/usr/src/app/.local/bin:$PATH"
 
 COPY --chown=ml:ml . .
 
-RUN pip3 install --no-cache-dir pyaudio
-RUN pip3 install --no-cache-dir torch==1.6.0+cpu -f https://download.pytorch.org/whl/cpu/torch_stable.html
-RUN pip3 install --no-cache-dir -r requirements.txt
-
 EXPOSE 8080
 
-ENTRYPOINT /usr/src/app/run.sh
