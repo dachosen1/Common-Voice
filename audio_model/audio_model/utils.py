@@ -135,8 +135,11 @@ def sample_weight(data_folder):
     return sampler
 
 
-def audio_melspectrogram(signal, sample_rate=CommonVoiceModels.Frame.FRAME['SAMPLE_RATE'],
-                         n_mels=CommonVoiceModels.Frame.FRAME['N_MELS'], fmax=CommonVoiceModels.Frame.FRAME['FMAX']):
+FRAME = CommonVoiceModels.Frame.FRAME
+
+
+def audio_melspectrogram(signal, sample_rate=FRAME['SAMPLE_RATE'],
+                         n_mels=FRAME['N_MELS'], fmax=FRAME['FMAX']):
     specto = melspectrogram(y=signal, sr=sample_rate, n_mels=n_mels,
                             fmax=fmax)
     spec_to_db = power_to_db(specto, ref=np.max)
@@ -193,11 +196,14 @@ def log_scalar(name, value, step):
     wandb.log({name: value}, step=step)
 
 
+max_workers = concurrent.futures.ProcessPoolExecutor()._max_workers
+
+
 def run_thread_pool(function, my_iter):
-    with concurrent.futures.ThreadPoolExecutor(max_workers=concurrent.futures.ProcessPoolExecutor()._max_workers) as executor:
+    with concurrent.futures.ThreadPoolExecutor(max_workers=max_workers) as executor:
         tqdm(executor.map(function, my_iter), total=len(my_iter))
 
 
 def run_process_pool(function, my_iter):
-    with concurrent.futures.ProcessPoolExecutor(max_workers=concurrent.futures.ProcessPoolExecutor()._max_workers) as executor:
+    with concurrent.futures.ProcessPoolExecutor(max_workers=max_workers) as executor:
         tqdm(executor.map(function, my_iter), total=len(my_iter))

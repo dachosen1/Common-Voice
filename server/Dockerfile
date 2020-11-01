@@ -1,4 +1,4 @@
-FROM nginx:1.19.3
+FROM nginx:1.19.3-alpine-perl
 
 RUN rm /etc/nginx/conf.d/default.conf
 
