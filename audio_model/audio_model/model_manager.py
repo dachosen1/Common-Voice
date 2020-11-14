@@ -97,7 +97,7 @@ def train(
     if early_stopping:
         stopping = EarlyStopping(threshold=early_stopping_threshold, verbose=True)
 
-    wandb.watch(model)
+    # wandb.watch(model)
 
     model.train()
     criterion = nn.CrossEntropyLoss()
@@ -111,7 +111,9 @@ def train(
     for e in range(epoch):
         for train_inputs, train_labels in train_loader:
             counter += 1
-            model.init_hidden()
+            # model.init_hidden()
+
+            train_inputs = train_inputs.view(512, 1, 13, 44)
 
             if torch.cuda.is_available():
                 train_inputs, train_labels = train_inputs.cuda(), train_labels.cuda()
@@ -120,7 +122,7 @@ def train(
             train_output = model(train_inputs)
 
             train_acc, train_pr, train_rc = _metric_summary(
-                pred=torch.max(train_output, dim=1).indices.data.cpu().numpy(),
+                pred=torch.max(torch.sigmoid(train_output), dim=1).indices.data.cpu().numpy(),
                 label=train_labels.cpu().numpy(),
             )
 
@@ -136,7 +138,7 @@ def train(
 
             if counter % print_every == 0:
 
-                model.init_hidden()
+                # model.init_hidden()
                 model.eval()
 
                 for val_inputs, val_labels in valid_loader:
@@ -144,6 +146,7 @@ def train(
                     if torch.cuda.is_available():
                         val_inputs, val_labels = val_inputs.cuda(), val_labels.cuda()
 
+                    val_inputs = val_inputs.view(512, 1, 13, 44)
                     val_output = model(val_inputs)
                     val_loss = criterion(val_output, val_labels)
 

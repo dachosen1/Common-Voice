@@ -27,7 +27,7 @@ _logger = logging.getLogger("audio_model")
 warnings.filterwarnings("ignore")
 
 
-def csv_loader(path: str) -> torch.Tensor:
+def npy_loader(path: str) -> torch.Tensor:
     """
     :param path:
     :return:

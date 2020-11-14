@@ -9,6 +9,4 @@ pytest==5.4.3
 scikit-learn==0.22.2.post1
 tox==3.19.0
 tqdm==4.47.0
-wandb==0.9.4
-
-
+wandb==0.9.7
