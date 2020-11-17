@@ -8,6 +8,8 @@ import wandb
 from torch.utils.data import DataLoader
 from torchvision.datasets import DatasetFolder
 
+from audio_model.audio_model.models import AudioLSTM, AudioCNN
+
 from audio_model import __version__
 from audio_model.audio_model.config.config import (
     DataDirectory,
@@ -16,7 +18,7 @@ from audio_model.audio_model.config.config import (
 )
 from audio_model.audio_model.model_manager import train
 from audio_model.audio_model.preprocessing.mp3_parser import Mp3parser
-from audio_model.audio_model.utils import npy_loader, sample_weight, run_thread_pool
+from audio_model.audio_model.utils import npy_loader, sample_weight, run_thread_pool, csv_loader
 
 warnings.filterwarnings("ignore")
 
@@ -44,17 +46,15 @@ class Run:
 
         wandb.init(project="Common-Voice", group=self.label, tags=self.label, config=self.model_name.PARAM)
 
-        self.config = self.model_name.PARAM
+        self.config = wandb.config
 
         self.output_size = self.config['OUTPUT_SIZE']
 
-    def train_model(self, model: type, **kwargs) -> None:
-        train_dataset = DatasetFolder(
-            root=self.train_dir, loader=npy_loader, extensions=".npy"
-        )
-        val_dataset = DatasetFolder(
-            root=self.val_dir, loader=npy_loader, extensions=".npy"
-        )
+    def train_model(self) -> None:
+        train_dataset = DatasetFolder(root=self.train_dir, loader=npy_loader, extensions=".npy")
+
+        print(self.train_dir)
+        val_dataset = DatasetFolder(root=self.val_dir, loader=npy_loader, extensions=".npy")
 
         train_sample_weight = sample_weight(train_dataset)
         val_sample_weight = sample_weight(val_dataset)
@@ -63,7 +63,7 @@ class Run:
             train_dataset,
             batch_size=self.config['BATCH_SIZE'],
             sampler=train_sample_weight,
-            num_workers=0,
+            num_workers=4,
             drop_last=True,
         )
 
@@ -77,7 +77,7 @@ class Run:
             val_dataset,
             batch_size=self.config['BATCH_SIZE'],
             sampler=val_sample_weight,
-            num_workers=0,
+            num_workers=4,
             drop_last=True,
         )
 
@@ -87,7 +87,7 @@ class Run:
             )
         )
 
-        model = model(**kwargs)
+        # model = model(**kwargs)
 
         _logger.info(
             "LSTM Model has been initialized with {} "
@@ -106,7 +106,7 @@ class Run:
         )
 
         trained_model = train(
-            model=model,
+            model=lstm_model(self.config),
             epoch=self.config['EPOCH'],
             gradient_clip=self.config['GRADIENT_CLIP'],
             learning_rate=self.config['LEARNING_RATE'],
@@ -148,3 +148,16 @@ class Run:
         else:
             _logger.info("Skipping MP3 feature engineering. Will use existing mfcc data for training")
 
+
+def lstm_model(param):
+
+    model = AudioLSTM(batch_size=param['BATCH_SIZE'],
+                      input_size=param['INPUT_SIZE'],
+                      num_layer=param['NUM_LAYERS'],
+                      hidden_size=param['HIDDEN_DIM'],
+                      dropout=param['DROPOUT'],
+                      output_size=param['OUTPUT_SIZE'])
+
+    _logger.info(model)
+
+    return model

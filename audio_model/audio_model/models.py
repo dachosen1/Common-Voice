@@ -1,7 +1,6 @@
 import torch
 import torch.nn as nn
-
-import torch.nn.functional as F
+from torch.nn import functional as F
 
 
 class AudioLSTM(nn.Module):
@@ -54,10 +53,7 @@ class AudioLSTM(nn.Module):
             )
 
         self.dropout = nn.Dropout(dropout)
-        self.linear = nn.Linear(self.hidden_size, self.hidden_size)
-        self.linear2 = nn.Linear(self.hidden_size, self.hidden_size)
-        self.linear3 = nn.Linear(self.hidden_size, self.output_size)
-
+        self.linear = nn.Linear(self.hidden_size, self.output_size)
         self.out = nn.Sigmoid()
 
     def forward(self, sequence):
@@ -68,16 +64,9 @@ class AudioLSTM(nn.Module):
         mfcc_reshape = sequence.float().permute(1, 0, 2)
         lstm_out, _ = self.RNN_TYPE(mfcc_reshape)
         lstm_out = self.dropout(lstm_out)
-
-        fc_1 = F.relu(self.linear(lstm_out[-1]))
-        fc_1 = self.dropout(fc_1)
-
-        fc_2 = F.relu(self.linear2(fc_1))
-        fc_2 = self.dropout(fc_2)
-        final_layer = self.linear3(fc_2)
-
-        #        score = torch.sigmoid(logits)
-        return final_layer
+        logits = self.linear(lstm_out[-1])
+        score = torch.sigmoid(logits)
+        return score
 
     def init_hidden(self):
         """

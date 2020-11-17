@@ -1,17 +1,11 @@
-from audio_model.audio_model.models import AudioLSTM, AudioCNN
-from audio_model.audio_model.config.config import CommonVoiceModels
+from audio_model.audio_model.config.config import Gender, Age
 from audio_model.pipeline import Run
 
-# num_layer = self.config['NUM_LAYERS'],
-# input_size = self.config['INPUT_SIZE'],
-# hidden_size = self.config['HIDDEN_DIM'],
-# output_size = self.config['OUTPUT_SIZE'],
-# dropout = self.config['DROPOUT'],
-# batch_size = self.config['BATCH_SIZE'],
+if __name__ == '__main__':
+    # model = AudioCNN(out_channel=6, kernel_size=3, output_size=5, padding=1,
+    #                  input_size=216, batch_size=256, dropout=0.25)
 
-
-# Gender
-run = Run(CommonVoiceModels.Country)
-run.load_data(load="No", percentage=0.002)
-
-run.train_model(model=AudioCNN)
+    # Gender
+    run = Run(Gender)
+    run.load_data(load="No", percentage=0.005)
+    run.train_model()
