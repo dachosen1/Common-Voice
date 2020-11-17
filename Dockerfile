@@ -41,7 +41,6 @@ RUN addgroup --gid 1000 ml \
  && adduser ml pulse \
  && adduser ml voice
 
-
 COPY --from=builder /usr/src/app .
 
 RUN mkdir -p .local/bin .config .cache
