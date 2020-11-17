@@ -7,8 +7,7 @@ import numpy as np
 import pandas as pd
 
 from audio_model.audio_model.config.config import FRAME, DO_NOT_INCLUDE
-from audio_model.audio_model.utils import melspectrogram, envelop_mask, envelope, audio_melspectrogram
-
+from audio_model.audio_model.utils import audio_melspectrogram, remove_silence
 
 warnings.filterwarnings("ignore")
 
@@ -32,21 +31,6 @@ def data_labels(data_path, label):
     label_data = label_data[label_data[label] != "other"]
     return label_data
 
-
-
-def remove_silence(*, signal, sample_rate, threshold):
-    """
-    strip out dead audio space
-    :param signal: Audio sample signal
-    :param sample_rate: Audio Sample rate
-    :param threshold: silence threshold
-    :return:
-    """
-
-    signal = signal[np.abs(signal) > threshold]
-    wrap = envelope(y=signal, signal_rate=sample_rate, threshold=FRAME['MASK_THRESHOLD'])
-    signal = signal[wrap]
-    return signal
 
 
 class Mp3parser:

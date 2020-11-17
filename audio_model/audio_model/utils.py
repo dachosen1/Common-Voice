@@ -259,6 +259,20 @@ def melspectrogram(y):
     S = amp_to_db(linear_to_mel(np.abs(D)))
     return normalize(S)
 
+def remove_silence(*, signal, sample_rate, threshold):
+    """
+    strip out dead audio space
+    :param signal: Audio sample signal
+    :param sample_rate: Audio Sample rate
+    :param threshold: silence threshold
+    :return:
+    """
+
+    signal = signal[np.abs(signal) > threshold]
+    wrap = envelope(y=signal, signal_rate=sample_rate, threshold=FRAME['MASK_THRESHOLD'])
+    signal = signal[wrap]
+    return signal
+
 
 def stft(y):
     return librosa.stft(
