@@ -14,7 +14,7 @@ class Gender:
               1: "Male"}
 
     NAME = "model_gender-"
-    PARAM = {'HIDDEN_DIM': 128, 'NUM_LAYERS': 2, 'DROPOUT': 0.3, 'INPUT_SIZE': 128, 'BATCH_SIZE': 256,
+    PARAM = {'HIDDEN_DIM': 120, 'NUM_LAYERS': 2, 'DROPOUT': 0.3, 'INPUT_SIZE': 128, 'BATCH_SIZE': 512,
              'OUTPUT_SIZE': 2, 'LEARNING_RATE': 0.001, 'GRADIENT_CLIP': 15, 'EPOCH': 40}
     LABEL = 'gender'
 

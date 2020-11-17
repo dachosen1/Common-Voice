@@ -76,7 +76,7 @@ class Run:
         val_data_loader = DataLoader(
             val_dataset,
             batch_size=self.config['BATCH_SIZE'],
-            sampler=val_sample_weight,
+ #           sampler=val_sample_weight,
             num_workers=4,
             drop_last=True,
         )
