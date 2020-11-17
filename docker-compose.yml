@@ -22,16 +22,16 @@ services:
     ports:
       - 8080:${PORT:-8080}
 
-  nginx:
-    build: ./server
-    container_name: nginx
-    depends_on:
-      - commvoice
-    networks:
-      my-network:
-        aliases:
-          - commvoice
-    ports:
-      - "80:80"
-networks:
-    my-network:
+#  nginx:
+#    build: ./server
+#    container_name: nginx
+#    depends_on:
+#      - commvoice
+#    networks:
+#      my-network:
+#        aliases:
+#          - commvoice
+#    ports:
+#      - "80:80"
+#networks:
+#    my-network:
