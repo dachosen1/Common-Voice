@@ -58,7 +58,7 @@ class Mp3parser:
 
         try:
             signal, _ = librosa.load(path=path, sr=self.SAMPLE_RATE)
-            signal = remove_silence(signal=signal, sample_rate=self.SAMPLE_RATE, threshold=0.02)
+            signal = remove_silence(signal=signal)
 
             duration = len(signal) // self.SAMPLE_RATE
 

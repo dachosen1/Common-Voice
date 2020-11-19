@@ -6,67 +6,10 @@ import torch
 import torch.nn as nn
 import wandb
 
-from audio_model.audio_model.utils import _metric_summary, log_scalar
+from audio_model.audio_model.utils import _metric_summary, log_scalar, EarlyStopping
 
 warnings.filterwarnings("ignore")
 _logger = logging.getLogger(__name__)
-
-
-class EarlyStopping:
-    """
-    Early stops the training if validation loss doesn't improve after a given threshold.
-    """
-
-    def __init__(
-            self, threshold: int = 5, verbose: bool = False, delta: float = 0
-    ) -> None:
-        """
-        :param threshold: How long to wait after last time validation loss improved. Default: 50
-        :param verbose: If True, prints a message for each validation loss improvement.Default: False
-        :param delta: Minimum change in the monitored quantity to qualify as an improvement.Default: 0
-        """
-
-        self.threshold = threshold
-        self.verbose = verbose
-        self.counter = 0
-        self.best_score = None
-        self.early_stop = False
-        self.val_loss_min = np.Inf
-        self.delta = delta
-
-    def __call__(self, val_loss, model):
-
-        score = -val_loss
-
-        if self.best_score is None:
-            self.best_score = score
-            self.save_checkpoint(val_loss)
-
-        elif score < self.best_score + self.delta:
-            self.counter += 1
-            print(
-                "EarlyStopping counter: {} out of {}".format(
-                    self.counter, self.threshold
-                )
-            )
-
-            if self.counter >= self.threshold:
-                self.early_stop = True
-        else:
-            self.best_score = score
-            self.save_checkpoint(val_loss)
-            self.counter = 0
-
-    def save_checkpoint(self, val_loss):
-        """Saves RNN_TYPE when validation loss decrease."""
-        if self.verbose:
-            print(
-                "Validation loss decreased ({:.3f} --> {:.3f})".format(
-                    self.val_loss_min, val_loss
-                )
-            )
-
-        self.val_loss_min = val_loss
 
 
 def train(
@@ -81,10 +24,9 @@ def train(
 ) -> object:
     """
     :param model:  Torch model
-    :param train_loader:  Training Folder Datafolder
-    :param valid_loader: Validation Folder Data Folder
+    :param train_loader:  Training Data Folder
+    :param valid_loader: Validation Data Folder
     :param learning_rate: Learning rate to improve loss function
-    :param print_every: Iteration to print model results and validation
     :param epoch: Number of times to pass though the entire data folder
     :param gradient_clip:
     :param early_stopping_threshold:  threshold to stop running model

@@ -10,7 +10,7 @@ from flask_socketio import SocketIO
 
 from audio_model.audio_model.config.config import Gender, FRAME
 from audio_model.audio_model.pipeline_mananger import load_model
-from audio_model.audio_model.utils import audio_melspectrogram, generate_pred, remove_silence
+from audio_model.audio_model.utils import audio_melspectrogram, generate_pred, remove_silence, sigmoid
 
 warnings.filterwarnings("ignore")
 
@@ -64,7 +64,7 @@ def run_audio_stream(msg):
             socketio.sleep(0.5)
 
             signal = np.concatenate(tuple(frames))
-            signal = remove_silence(signal)
+            # signal = remove_silence(signal)
             wave_period = signal[-FRAME["SAMPLE_RATE"]:].astype(np.float)
             spectrogram = audio_melspectrogram(wave_period)
 
@@ -73,7 +73,7 @@ def run_audio_stream(msg):
                                                        label=Gender.OUTPUT,
                                                        model_name=Gender,
                                                        )
-            socketio.emit('gender_model', {'pred': gender_output, 'prob': gender_prob})
+            socketio.emit('gender_model', {'pred': gender_output, 'prob': sigmoid(gender_prob)})
 
 
 @app.route("/about/")

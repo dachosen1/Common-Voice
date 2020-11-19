@@ -57,6 +57,7 @@ def csv_loader(path: str) -> torch.Tensor:
     sample = torch.from_numpy(data)
     return sample
 
+
 def envelope(y: int, signal_rate: int, threshold: float):
     signal_clean = []
     y = pd.Series(y).apply(np.abs)
@@ -152,7 +153,8 @@ def envelop_mask(signal):
 
 
 def audio_melspectrogram(signal):
-    specto = librosa.feature.melspectrogram(y=signal, sr=FRAME['SAMPLE_RATE'], n_mels=FRAME['N_MELS'], fmax=FRAME['FMAX'])
+    specto = librosa.feature.melspectrogram(y=signal, sr=FRAME['SAMPLE_RATE'], n_mels=FRAME['N_MELS'],
+                                            fmax=FRAME['FMAX'])
     spec_to_db = power_to_db(specto, ref=np.max)
     return spec_to_db
 
@@ -199,10 +201,11 @@ def generate_pred(mel, model, label, model_name):
 
 def _metric_summary(pred: np.ndarray, label: np.ndarray):
     acc = accuracy_score(y_true=label, y_pred=pred)
-    f1 = f1_score(y_true=label, y_pred=pred)
-    pc = precision_score(y_true=label, y_pred=pred)
-    rs = recall_score(y_true=label, y_pred=pred)
+    f1 = f1_score(y_true=label, y_pred=pred,average='weighted')
+    pc = precision_score(y_true=label, y_pred=pred, average='weighted')
+    rs = recall_score(y_true=label, y_pred=pred, average='weighted')
     return acc, f1, pc, rs
+
 
 def log_scalar(name, value, step):
     """Log a scalar value to both MLflow and TensorBoard"""
@@ -259,23 +262,80 @@ def melspectrogram(y):
     S = amp_to_db(linear_to_mel(np.abs(D)))
     return normalize(S)
 
-def remove_silence(*, signal, sample_rate, threshold):
+
+def remove_silence(signal):
     """
     strip out dead audio space
     :param signal: Audio sample signal
-    :param sample_rate: Audio Sample rate
-    :param threshold: silence threshold
     :return:
     """
 
-    signal = signal[np.abs(signal) > threshold]
-    wrap = envelope(y=signal, signal_rate=sample_rate, threshold=FRAME['MASK_THRESHOLD'])
+    signal = signal[np.abs(signal) > FRAME['TOP_DB'] / 1000]
+    wrap = envelope(y=signal, signal_rate=FRAME['SAMPLE_RATE'], threshold=FRAME['MASK_THRESHOLD'])
     signal = signal[wrap]
     return signal
 
 
-def stft(y):
-    return librosa.stft(
-        y=y,
-        n_fft=FRAME['NFFT'], hop_length=FRAME['HOP_LENGTH'], win_length=FRAME['WIN_LENGTH'])
+def sigmoid(x):
+    return f'{np.round(1 / (1 + np.exp(-x))*100, 2)}%'
 
+
+def stft(y):
+    return librosa.stft(y=y, n_fft=FRAME['NFFT'], hop_length=FRAME['HOP_LENGTH'], win_length=FRAME['WIN_LENGTH'])
+
+
+class EarlyStopping:
+    """
+    Early stops the training if validation loss doesn't improve after a given threshold.
+    """
+
+    def __init__(
+            self, threshold: int = 5, verbose: bool = False, delta: float = 0
+    ) -> None:
+        """
+        :param threshold: How long to wait after last time validation loss improved. Default: 50
+        :param verbose: If True, prints a message for each validation loss improvement.Default: False
+        :param delta: Minimum change in the monitored quantity to qualify as an improvement.Default: 0
+        """
+
+        self.threshold = threshold
+        self.verbose = verbose
+        self.counter = 0
+        self.best_score = None
+        self.early_stop = False
+        self.val_loss_min = np.Inf
+        self.delta = delta
+
+    def __call__(self, val_loss, model):
+
+        score = -val_loss
+
+        if self.best_score is None:
+            self.best_score = score
+            self.save_checkpoint(val_loss)
+
+        elif score < self.best_score + self.delta:
+            self.counter += 1
+            print(
+                "EarlyStopping counter: {} out of {}".format(
+                    self.counter, self.threshold
+                )
+            )
+
+            if self.counter >= self.threshold:
+                self.early_stop = True
+        else:
+            self.best_score = score
+            self.save_checkpoint(val_loss)
+            self.counter = 0
+
+    def save_checkpoint(self, val_loss):
+        """Saves RNN_TYPE when validation loss decrease."""
+        if self.verbose:
+            print(
+                "Validation loss decreased ({:.3f} --> {:.3f})".format(
+                    self.val_loss_min, val_loss
+                )
+            )
+
+        self.val_loss_min = val_loss
