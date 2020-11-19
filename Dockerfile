@@ -1,6 +1,9 @@
-FROM python:3.7.8
+FROM python:3.7.9-slim-buster AS builder
 
 ARG DEBIAN_FRONTEND=noninteractive
+ENV PYTHONUNBUFFERED True
+
+WORKDIR /usr/src/app
 
 RUN apt-get update -qq \
  && apt-get install -qqy --no-install-recommends \
@@ -10,11 +13,22 @@ RUN apt-get update -qq \
       libsndfile1-dev \
       portaudio19-dev \
       pulseaudio \
+      python3-pyaudio \
+      gcc \
+      python3-dev \
  && rm -rf /var/lib/apt/lists/*
 
-RUN pip3 install --no-cache-dir pyaudio
-RUN pip3 install --no-cache-dir torch==1.7.0+cpu -f https://download.pytorch.org/whl/cpu/torch_stable.html
+COPY . .
 
+RUN pip3 install --no-cache-dir torch==1.7.0+cpu -f https://download.pytorch.org/whl/cpu/torch_stable.html
+RUN pip3 install --no-cache-dir -r requirements.txt
+RUN pip3 install --no-cache-dir pyaudio
+
+ENTRYPOINT gunicorn --bind "0.0.0.0:${PORT:-8080}" --workers=4 --access-logfile - --error-logfile - run_app:app
+
+#FROM debian:stable-slim
+
+#RUN addgroup --gid 1000 pulse
 RUN addgroup --gid 1000 ml \
  && adduser --gecos "" \
       --home /usr/src/app \
@@ -28,19 +42,17 @@ RUN addgroup --gid 1000 ml \
  && adduser ml pulse \
  && adduser ml voice
 
+#COPY --from=builder /usr/src/app .
+
+RUN mkdir -p .local/bin .config .cache
+
 RUN mkdir -p /run/user/1000 \
  && chown ml:ml /run/user/1000
 
-WORKDIR /usr/src/app
-
 USER ml
-
-RUN mkdir -p .local/bin .config .cache
 
 ENV PATH="/usr/src/app/.local/bin:$PATH"
 
 COPY --chown=ml:ml . .
 
-RUN pip3 install --no-cache-dir -r requirements.txt
-
-ENTRYPOINT /usr/src/app/run.sh
+EXPOSE 8080

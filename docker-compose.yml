@@ -13,6 +13,7 @@ services:
 #      - ALSA_PCM=usbstream:CARD=StargazerMicrop
       - PORT=${PORT:-8080}
       - XDG_RUNTIME_DIR=/run/user/1000
+      - NUMBA_CACHE_DIR=/tmp
       - ALSA_CARD=Generic
     volumes:
       - $HOME/.config/pulse:/usr/src/app/.config/pulse
