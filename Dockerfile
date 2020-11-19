@@ -13,7 +13,7 @@ RUN apt-get update -qq \
  && rm -rf /var/lib/apt/lists/*
 
 RUN pip3 install --no-cache-dir pyaudio
-RUN pip3 install --no-cache-dir torch==1.4.0+cpu -f https://download.pytorch.org/whl/cpu/torch_stable.html
+RUN pip3 install --no-cache-dir torch==1.7.0+cpu -f https://download.pytorch.org/whl/cpu/torch_stable.html
 
 RUN addgroup --gid 1000 ml \
  && adduser --gecos "" \
