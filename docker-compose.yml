@@ -25,7 +25,6 @@ services:
 
   nginx:
     build: ./commonvoice/server
-    context: "."
     container_name: nginx
     depends_on:
       - commvoice
