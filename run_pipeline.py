@@ -7,5 +7,5 @@ if __name__ == '__main__':
 
     # Gender
     run = Run(Gender)
-    run.load_data(load="No", percentage=0.005)
+    run.load_data(load=True, percentage=0.03)
     run.train_model()

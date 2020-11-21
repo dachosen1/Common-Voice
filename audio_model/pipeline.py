@@ -120,8 +120,8 @@ class Run:
 
         torch.save(trained_model.state_dict(), trained_model_path)
 
-    def load_data(self, percentage, load="No"):
-        if load == "Yes":
+    def load_data(self, percentage, load=False):
+        if load:
             parser = Mp3parser(
                 data_path=DataDirectory.DATA_DIR,
                 clips_dir=DataDirectory.CLIPS_DIR,
