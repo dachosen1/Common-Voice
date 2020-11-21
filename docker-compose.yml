@@ -10,14 +10,14 @@ services:
     networks:
       - my-network
     environment:
-#      - ALSA_PCM=usbstream:CARD=StargazerMicrop
+      - ALSA_PCM=usbstream:CARD=StargazerMicrop
       - PORT=${PORT:-8080}
       - XDG_RUNTIME_DIR=/run/user/1000
       - NUMBA_CACHE_DIR=/tmp
       - ALSA_CARD=Generic
     volumes:
       - $HOME/.config/pulse:/usr/src/app/.config/pulse
-#      - /etc/machine-id:/etc/machine-id:ro
+      - /etc/machine-id:/etc/machine-id:ro
       - /run/user/1001/pulse:/run/user/1001/pulse:ro
 
     ports:
@@ -25,7 +25,6 @@ services:
 
   nginx:
     build: ./commonvoice/server
-    context: "."
     container_name: nginx
     depends_on:
       - commvoice
