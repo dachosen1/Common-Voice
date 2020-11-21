@@ -25,6 +25,7 @@ services:
 
   nginx:
     build: ./commonvoice/server
+    context: "."
     container_name: nginx
     depends_on:
       - commvoice
@@ -33,6 +34,6 @@ services:
         aliases:
           - commvoice
     ports:
-      - "80:80"
+      - "8080:80"
 networks:
     my-network:

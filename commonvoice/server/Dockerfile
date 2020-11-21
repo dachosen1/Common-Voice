@@ -1,14 +1,18 @@
-FROM nginx:1.19.3
+FROM nginx:alpine
 
-RUN rm /etc/nginx/conf.d/default.conf
-COPY default.conf /etc/nginx/conf.d/
+COPY . /etc/nginx/
 
-COPY nginx.conf /etc/nginx/
-COPY sites-available/commvoice.me.conf /etc/nginx/sites-available/
-COPY nginxconfig.io /etc/nginx/nginxconfig.io/
+#RUN adduser --disabled-password --gecos '' www-data
+
+RUN apk add certbot certbot-nginx
+RUN apk add acf-openssl
 
 RUN openssl dhparam -out /etc/nginx/dhparam.pem 2048
-
 RUN mkdir -p /var/www/_letsencrypt
 
-RUN chown www-data /var/www/_letsencrypt
+RUN certbot certonly --webroot -d commvoice.me --email anderson.nelson1@gmail.com -w /var/www/_letsencrypt -n --agree-tos --force-renewal
+#
+#RUN sed -i -r 's/#?;#//g' /etc/nginx/sites-available/commvoice.me.conf
+#RUN echo -e '#!/bin/bash\nnginx -t && systemctl reload nginx' | tee /etc/letsencrypt/renewal-hooks/post/nginx-reload.sh
+#
+#RUN chmod a+x /etc/letsencrypt/renewal-hooks/post/nginx-reload.sh
