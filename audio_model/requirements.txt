@@ -7,5 +7,5 @@ pytest==5.4.3
 pydub==0.24.1
 scikit-learn==0.22.2.post1
 tox==3.19.0
-tqdm==4.47.0
+tqdm==4.54.0
 wandb==0.9.7
