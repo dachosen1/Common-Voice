@@ -10,7 +10,7 @@ Markdown==3.2.2
 # Backend rpc
 librosa==0.8.0
 llvmlite==0.34.0
-matplotlib==3.0.3
+matplotlib==3.3.3
 pandas==0.25.3
 pydub==0.24.1
 scikit-learn==0.22.2.post1
