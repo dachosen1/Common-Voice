@@ -18,16 +18,19 @@ RUN apt-get update -qq \
       python3-dev \
  && rm -rf /var/lib/apt/lists/*
 
-COPY . .
+COPY ./requirements.txt .
 
-RUN pip3 install --no-cache-dir torch==1.6.0+cpu -f https://download.pytorch.org/whl/cpu/torch_stable.html
-RUN pip3 install --no-cache-dir -r requirements.txt
+RUN pip3 install torch==1.6.0+cpu -f https://download.pytorch.org/whl/cpu/torch_stable.html
+RUN pip3 install pyaudio
+RUN pip3 install -r requirements.txt
+
+COPY . .
 
 ENTRYPOINT /usr/src/app/run.sh
 
-FROM debian:stable-slim
+#FROM debian:stable-slim
 
-RUN addgroup --gid 1001 pulse
+#RUN addgroup --gid 1001 pulse
 RUN addgroup --gid 1000 ml \
  && adduser --gecos "" \
       --home /usr/src/app \
@@ -41,8 +44,7 @@ RUN addgroup --gid 1000 ml \
  && adduser ml pulse \
  && adduser ml voice
 
-
-COPY --from=builder /usr/src/app .
+#COPY --from=builder /usr/src/app .
 
 RUN mkdir -p .local/bin .config .cache
 
