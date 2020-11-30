@@ -1,7 +1,7 @@
 librosa==0.8.0
 llvmlite==0.34.0
 matplotlib==3.0.3
-numpy==1.18.5
+numpy==1.19.4
 pandas==0.25.3
 pytest==5.4.3
 pydub==0.24.1
