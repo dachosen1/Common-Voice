@@ -1,6 +1,6 @@
 FROM python:3.7.9-slim-buster AS builder
 
-ARG DEBIAN_FRONTEND=noninteractive
+ENV DEBIAN_FRONTEND=noninteractive
 ENV PYTHONUNBUFFERED True
 
 WORKDIR /usr/src/app
@@ -20,15 +20,14 @@ RUN apt-get update -qq \
 
 COPY . .
 
-RUN pip3 install --no-cache-dir torch==1.7.0+cpu -f https://download.pytorch.org/whl/cpu/torch_stable.html
+RUN pip3 install --no-cache-dir torch==1.6.0+cpu -f https://download.pytorch.org/whl/cpu/torch_stable.html
 RUN pip3 install --no-cache-dir -r requirements.txt
-RUN pip3 install --no-cache-dir pyaudio
 
-ENTRYPOINT gunicorn --bind "0.0.0.0:${PORT:-8080}" --workers=4 --access-logfile - --error-logfile - run_app:app
+ENTRYPOINT /usr/src/app/run.sh
 
-#FROM debian:stable-slim
+FROM debian:stable-slim
 
-#RUN addgroup --gid 1000 pulse
+RUN addgroup --gid 1001 pulse
 RUN addgroup --gid 1000 ml \
  && adduser --gecos "" \
       --home /usr/src/app \
@@ -42,7 +41,8 @@ RUN addgroup --gid 1000 ml \
  && adduser ml pulse \
  && adduser ml voice
 
-#COPY --from=builder /usr/src/app .
+
+COPY --from=builder /usr/src/app .
 
 RUN mkdir -p .local/bin .config .cache
 
