@@ -1,16 +1,11 @@
-from audio_model.audio_model.LSTM import AudioLSTM
-from audio_model.audio_model.config.config import CommonVoiceModels
+from audio_model.audio_model.config.config import Gender, Age
 from audio_model.pipeline import Run
 
-# Gender
-run = Run(CommonVoiceModels.Gender)
-run.load_data(load="Yes", percentage=0.5)
-# run.train_model(model=AudioLSTM, RNN_TYPE="LSTM")
+if __name__ == '__main__':
+    # model = AudioCNN(out_channel=6, kernel_size=3, output_size=5, padding=1,
+    #                  input_size=216, batch_size=256, dropout=0.25)
 
-# Country
-run = Run(CommonVoiceModels.Country)
-run.load_data(load="Yes", percentage=0.5)
-
-# Age
-run = Run(CommonVoiceModels.Age)
-run.load_data(load="Yes", percentage=0.5)
+    # Gender
+    run = Run(Gender)
+    run.load_data(load=True, percentage=0.03)
+    run.train_model()

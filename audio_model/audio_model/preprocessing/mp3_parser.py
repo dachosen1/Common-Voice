@@ -6,8 +6,8 @@ import librosa
 import numpy as np
 import pandas as pd
 
-from audio_model.audio_model.config import config
-from audio_model.audio_model.utils import audio_mfcc
+from audio_model.audio_model.config.config import FRAME, DO_NOT_INCLUDE
+from audio_model.audio_model.utils import audio_melspectrogram, remove_silence
 
 warnings.filterwarnings("ignore")
 
@@ -32,6 +32,7 @@ def data_labels(data_path, label):
     return label_data
 
 
+
 class Mp3parser:
     def __init__(self, data_path, clips_dir, document_path, data_label, model):
         """
@@ -48,7 +49,7 @@ class Mp3parser:
 
         self.remove_count = 0
         self.add_count = 0
-        self.SAMPLE_RATE = config.CommonVoiceModels.Frame.FRAME['SAMPLE_RATE']
+        self.SAMPLE_RATE = FRAME['SAMPLE_RATE']
 
     def convert_to_wav(self, index) -> None:
         clips_name = self.label_data.path.values[index]
@@ -57,7 +58,7 @@ class Mp3parser:
 
         try:
             signal, _ = librosa.load(path=path, sr=self.SAMPLE_RATE)
-            signal, _ = librosa.effects.trim(signal, top_db=config.CommonVoiceModels.Frame.FRAME['TOP_DB'])
+            signal = remove_silence(signal=signal)
 
             duration = len(signal) // self.SAMPLE_RATE
 
@@ -67,15 +68,15 @@ class Mp3parser:
             for i in range(1, duration + 1):
                 data = signal[start: start + step]
 
-                training_mfcc = audio_mfcc(data)
+                training_mfcc = audio_melspectrogram(data)
 
                 assert training_mfcc.shape[0] == self.model.PARAM["INPUT_SIZE"]
-                assert training_mfcc.shape[1] == 13
+                assert training_mfcc.shape[1] == 32
 
                 clip_name = "{}".format(clips_name.split(".")[0])
                 label_name = self.label_data[self.label_data.path == clips_name][self.data_label].values[0]
 
-                if label_name in config.DO_NOT_INCLUDE:
+                if label_name in DO_NOT_INCLUDE:
                     break
 
                 train_test_choice = np.random.choice(

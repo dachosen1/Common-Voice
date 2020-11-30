@@ -8,6 +8,8 @@ import wandb
 from torch.utils.data import DataLoader
 from torchvision.datasets import DatasetFolder
 
+from audio_model.audio_model.models import AudioLSTM, AudioCNN
+
 from audio_model import __version__
 from audio_model.audio_model.config.config import (
     DataDirectory,
@@ -16,7 +18,7 @@ from audio_model.audio_model.config.config import (
 )
 from audio_model.audio_model.model_manager import train
 from audio_model.audio_model.preprocessing.mp3_parser import Mp3parser
-from audio_model.audio_model.utils import csv_loader, sample_weight, run_thread_pool, run_process_pool
+from audio_model.audio_model.utils import npy_loader, sample_weight, run_thread_pool, csv_loader
 
 warnings.filterwarnings("ignore")
 
@@ -29,10 +31,6 @@ class Run:
     def __init__(self, model_name):
 
         self.model_name = model_name
-        ALL_PARAM = {
-            "Model": self.model_name.PARAM,
-            "Frame": self.model_name.FRAME,
-        }
 
         self.label = model_name.LABEL
         self.name = model_name.NAME
@@ -49,22 +47,21 @@ class Run:
         wandb.init(project="Common-Voice", group=self.label, tags=self.label, config=self.model_name.PARAM)
 
         self.config = wandb.config
-        self.output_size = self.config.OUTPUT_SIZE
 
-    def train_model(self, model: type, RNN_TYPE) -> None:
-        train_dataset = DatasetFolder(
-            root=self.train_dir, loader=csv_loader, extensions=".npy"
-        )
-        val_dataset = DatasetFolder(
-            root=self.val_dir, loader=csv_loader, extensions=".npy"
-        )
+        self.output_size = self.config['OUTPUT_SIZE']
+
+    def train_model(self) -> None:
+        train_dataset = DatasetFolder(root=self.train_dir, loader=npy_loader, extensions=".npy")
+
+        print(self.train_dir)
+        val_dataset = DatasetFolder(root=self.val_dir, loader=npy_loader, extensions=".npy")
 
         train_sample_weight = sample_weight(train_dataset)
         val_sample_weight = sample_weight(val_dataset)
 
         train_data_loader = DataLoader(
             train_dataset,
-            batch_size=self.config.BATCH_SIZE,
+            batch_size=self.config['BATCH_SIZE'],
             sampler=train_sample_weight,
             num_workers=4,
             drop_last=True,
@@ -72,33 +69,25 @@ class Run:
 
         _logger.info(
             "Uploaded training data to {} using {} batch sizes".format(
-                self.train_dir, self.config.BATCH_SIZE
+                self.train_dir, self.config['BATCH_SIZE']
             )
         )
 
         val_data_loader = DataLoader(
             val_dataset,
-            batch_size=self.config.BATCH_SIZE,
-            sampler=val_sample_weight,
+            batch_size=self.config['BATCH_SIZE'],
+ #           sampler=val_sample_weight,
             num_workers=4,
             drop_last=True,
         )
 
         _logger.info(
             "Uploaded validation data to {} using {} batch sizes".format(
-                self.val_dir, self.config.BATCH_SIZE
+                self.val_dir, self.config['BATCH_SIZE']
             )
         )
 
-        model = model(
-            num_layer=self.config.NUM_LAYERS,
-            input_size=self.config.INPUT_SIZE,
-            hidden_size=self.config.HIDDEN_DIM,
-            output_size=self.config.OUTPUT_SIZE,
-            dropout=self.config.DROPOUT,
-            RNN_TYPE=RNN_TYPE,
-            batch_size=self.config.BATCH_SIZE,
-        )
+        # model = model(**kwargs)
 
         _logger.info(
             "LSTM Model has been initialized with {} "
@@ -107,20 +96,20 @@ class Run:
             "{} output size, "
             "{} batch size, "
             "{} dropout".format(
-                self.config.NUM_LAYERS,
-                self.config.HIDDEN_DIM,
-                self.config.INPUT_SIZE,
-                self.config.OUTPUT_SIZE,
-                self.config.BATCH_SIZE,
-                self.config.DROPOUT,
+                self.config['NUM_LAYERS'],
+                self.config['HIDDEN_DIM'],
+                self.config['INPUT_SIZE'],
+                self.config['OUTPUT_SIZE'],
+                self.config['BATCH_SIZE'],
+                self.config['DROPOUT'],
             )
         )
 
         trained_model = train(
-            model=model,
-            epoch=self.config.EPOCH,
-            gradient_clip=self.config.GRADIENT_CLIP,
-            learning_rate=self.config.LEARNING_RATE,
+            model=lstm_model(self.config),
+            epoch=self.config['EPOCH'],
+            gradient_clip=self.config['GRADIENT_CLIP'],
+            learning_rate=self.config['LEARNING_RATE'],
             train_loader=train_data_loader,
             valid_loader=val_data_loader,
             early_stopping=True,
@@ -131,8 +120,8 @@ class Run:
 
         torch.save(trained_model.state_dict(), trained_model_path)
 
-    def load_data(self, percentage, load="No"):
-        if load == "Yes":
+    def load_data(self, percentage, load=False):
+        if load:
             parser = Mp3parser(
                 data_path=DataDirectory.DATA_DIR,
                 clips_dir=DataDirectory.CLIPS_DIR,
@@ -149,7 +138,7 @@ class Run:
             _logger.info("Uploaded {} MP3 files for trainings".format(len(mp3_list)))
 
             start = datetime.now()
-            run_process_pool(function=parser.convert_to_wav, my_iter=mp3_list)
+            run_thread_pool(function=parser.convert_to_wav, my_iter=mp3_list)
             end = datetime.now()
 
             _logger.info("Added {} total training examples.".format(parser.add_count))
@@ -159,3 +148,16 @@ class Run:
         else:
             _logger.info("Skipping MP3 feature engineering. Will use existing mfcc data for training")
 
+
+def lstm_model(param):
+
+    model = AudioLSTM(batch_size=param['BATCH_SIZE'],
+                      input_size=param['INPUT_SIZE'],
+                      num_layer=param['NUM_LAYERS'],
+                      hidden_size=param['HIDDEN_DIM'],
+                      dropout=param['DROPOUT'],
+                      output_size=param['OUTPUT_SIZE'])
+
+    _logger.info(model)
+
+    return model

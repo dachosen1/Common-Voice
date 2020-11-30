@@ -3,35 +3,43 @@ version: '3.7'
 services:
   commvoice:
     build: .
-    image: anelso42/common-voice
+    image: anelso42/commvoice
     container_name: commvoice
     devices:
       - /dev/snd
     networks:
       - my-network
     environment:
-      - ALSA_PCM=usbstream:CARD=StargazerMicrop
+#      - ALSA_PCM=usbstream:CARD=StargazerMicrop
       - PORT=${PORT:-8080}
       - XDG_RUNTIME_DIR=/run/user/1000
+      - NUMBA_CACHE_DIR=/tmp
       - ALSA_CARD=Generic
     volumes:
       - $HOME/.config/pulse:/usr/src/app/.config/pulse
-      - /etc/machine-id:/etc/machine-id:ro
+#      - /etc/machine-id:/etc/machine-id:ro
       - /run/user/1001/pulse:/run/user/1001/pulse:ro
 
     ports:
       - 8080:${PORT:-8080}
 
+  postgres:
+    image: library/postgres:latest
+
+  redis:
+    image: library/redis:latest
+
   nginx:
-    build: ./server
+    build: ./commonvoice/server
     container_name: nginx
     depends_on:
       - commvoice
+    restart: always
     networks:
       my-network:
         aliases:
           - commvoice
     ports:
-      - "80:80"
+      - "3001:80"
 networks:
     my-network:

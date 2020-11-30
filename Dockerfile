@@ -1,6 +1,6 @@
 FROM python:3.7.9-slim-buster AS builder
 
-ARG DEBIAN_FRONTEND=noninteractive
+ENV DEBIAN_FRONTEND=noninteractive
 ENV PYTHONUNBUFFERED True
 
 WORKDIR /usr/src/app
@@ -56,4 +56,3 @@ ENV PATH="/usr/src/app/.local/bin:$PATH"
 COPY --chown=ml:ml . .
 
 EXPOSE 8080
-

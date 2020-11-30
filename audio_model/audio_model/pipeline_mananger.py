@@ -4,7 +4,7 @@ import typing as t
 
 import joblib
 
-from audio_model.audio_model import LSTM
+from audio_model.audio_model import models
 from audio_model import __version__ as _version
 from audio_model.audio_model.config.config import TRAINED_MODEL_DIR
 
@@ -46,7 +46,7 @@ def load_model(model_name) -> object:
     :return: torch model and model path
     """
 
-    model = LSTM.AudioLSTM(
+    model = models.AudioLSTM(
         num_layer=model_name.PARAM['NUM_LAYERS'],
         hidden_size=model_name.PARAM['HIDDEN_DIM'],
         input_size=model_name.PARAM['INPUT_SIZE'],

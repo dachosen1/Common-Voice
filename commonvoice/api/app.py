@@ -8,9 +8,9 @@ import torch
 from flask import Flask, render_template, request
 from flask_socketio import SocketIO
 
-from audio_model.audio_model.config.config import CommonVoiceModels
+from audio_model.audio_model.config.config import Gender, FRAME
 from audio_model.audio_model.pipeline_mananger import load_model
-from audio_model.audio_model.utils import audio_melspectrogram, generate_pred
+from audio_model.audio_model.utils import audio_melspectrogram, generate_pred, remove_silence, sigmoid
 
 warnings.filterwarnings("ignore")
 
@@ -23,7 +23,7 @@ FORMAT = pyaudio.paFloat32
 CHANNELS = 1
 
 # Gender Model
-model_gender, path_gender = load_model(model_name=CommonVoiceModels.Gender)
+model_gender, path_gender = load_model(model_name=Gender)
 model_gender.load_state_dict(torch.load(path_gender, map_location=torch.device('cpu')))
 model_gender.eval()
 model_gender.init_hidden()
@@ -54,7 +54,7 @@ def run_audio_stream(msg):
     stream = p.open(
         format=FORMAT,
         channels=CHANNELS,
-        rate=CommonVoiceModels.Frame.FRAME["SAMPLE_RATE"],
+        rate=FRAME["SAMPLE_RATE"],
         input=True,
         stream_callback=callback,
     )
@@ -64,15 +64,16 @@ def run_audio_stream(msg):
             socketio.sleep(0.5)
 
             signal = np.concatenate(tuple(frames))
-            wave_period = signal[-CommonVoiceModels.Frame.FRAME["SAMPLE_RATE"]:].astype(np.float)
+            # signal = remove_silence(signal)
+            wave_period = signal[-FRAME["SAMPLE_RATE"]:].astype(np.float)
             spectrogram = audio_melspectrogram(wave_period)
 
             # Gender Model
             gender_output, gender_prob = generate_pred(mel=spectrogram, model=model_gender,
-                                                       label=CommonVoiceModels.Gender.OUTPUT,
-                                                       model_name=CommonVoiceModels.Gender,
+                                                       label=Gender.OUTPUT,
+                                                       model_name=Gender,
                                                        )
-            socketio.emit('gender_model', {'pred': gender_output, 'prob': gender_prob})
+            socketio.emit('gender_model', {'pred': gender_output, 'prob': sigmoid(gender_prob)})
 
 
 @app.route("/about/")
