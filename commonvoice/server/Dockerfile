@@ -15,7 +15,8 @@ RUN chown www-data /var/www/_letsencrypt
 RUN apt-get update
 RUN apt-get -y install python-certbot-nginx
 RUN sed -i -r 's/(listen .*443)/\1;#/g; s/(ssl_(certificate|certificate_key|trusted_certificate) )/#;#\1/g' /etc/nginx/sites-available/commvoice.me.conf
-RUN certbot certonly --webroot -d commvoice.me -d www.commvoice.me -w /var/www/_letsencrypt -n --agree-tos --force-renewal
+
+RUN certbot certonly --webroot -d commvoice.me -d www.commvoice.me --email info@commvoice.me -w /var/www/_letsencrypt -n --agree-tos --force-renewal
 
 # Uncomment SSL related directives in the configuration:
 RUN sed -i -r 's/#?;#//g' /etc/nginx/sites-available/commvoice.me.conf
