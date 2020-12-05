@@ -6,7 +6,7 @@ steps:
 
 # Build the new docker image.
 - name: 'gcr.io/cloud-builders/docker'
-  args: ['push', '-t', 'gcr.io/$PROJECT_ID/gcb-docker-compose:latest', '.']
+  args: ['push', 'gcr.io/$PROJECT_ID/gcb-docker-compose:latest']
 
 # Run the app and dependencies in the background using docker-compose.
 - name: 'docker/compose:1.15.0'
