@@ -3,6 +3,8 @@ FROM python:3.7.9-slim-buster AS builder
 ENV DEBIAN_FRONTEND=noninteractive
 ENV PYTHONUNBUFFERED True
 
+WORKDIR /usr/src/app
+
 RUN apt-get update -qq \
  && apt-get install -qqy --no-install-recommends \
       ffmpeg \
@@ -29,8 +31,6 @@ RUN addgroup --gid 1000 ml \
  && adduser ml audio \
  && adduser ml pulse \
  && adduser ml voice
-
-WORKDIR /usr/src/app
 
 COPY ./requirements.txt .
 

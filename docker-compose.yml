@@ -2,7 +2,8 @@ version: '3.7'
 
 services:
   commvoice:
-    build: .
+    build:
+      context: .
     image: anelso42/commvoice
     container_name: commvoice
     devices:
@@ -24,7 +25,8 @@ services:
       - 8080:${PORT:-8080}
 
   nginx:
-    build: ./commonvoice
+    build:
+      context: ./commonvoice
     container_name: nginx
     depends_on:
       - commvoice
