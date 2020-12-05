@@ -40,8 +40,6 @@ RUN pip3 install -r requirements.txt
 
 COPY . .
 
-ENTRYPOINT /usr/src/app/run.sh
-
 RUN mkdir -p .local/bin .config .cache
 RUN mkdir -p /run/user/1000 \
  && chown ml:ml /run/user/1000
@@ -54,3 +52,4 @@ COPY --chown=ml:ml . .
 
 EXPOSE 8080
 
+ENTRYPOINT /usr/src/app/run.sh
