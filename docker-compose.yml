@@ -33,8 +33,5 @@ services:
       my-network:
         aliases:
           - commvoice
-
-    ports:
-      - "80:80"
 networks:
     my-network:
