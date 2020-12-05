@@ -2,7 +2,8 @@ version: '3.7'
 
 services:
   commvoice:
-    build: .
+    build:
+      context: .
     image: anelso42/commvoice
     container_name: commvoice
     devices:
@@ -23,14 +24,9 @@ services:
     ports:
       - 8080:${PORT:-8080}
 
-  postgres:
-    image: library/postgres:latest
-
-  redis:
-    image: library/redis:latest
-
   nginx:
-    build: ./commonvoice/server
+    build:
+      context: ./commonvoice
     container_name: nginx
     depends_on:
       - commvoice
@@ -39,7 +35,5 @@ services:
       my-network:
         aliases:
           - commvoice
-    ports:
-      - "3001:80"
 networks:
     my-network:
