@@ -50,6 +50,8 @@ ENV PATH="/usr/src/app/.local/bin:$PATH"
 
 COPY --chown=ml:ml . .
 
+RUN chmod +x /usr/src/app/run.sh
+
 EXPOSE 8080
 
 ENTRYPOINT /usr/src/app/run.sh

@@ -32,8 +32,8 @@ services:
       - commvoice
     restart: always
     networks:
-      my-network:
-        aliases:
-          - commvoice
+      - my-network
+    ports:
+      - 80:80
 networks:
     my-network:
