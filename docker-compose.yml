@@ -31,9 +31,12 @@ services:
     depends_on:
       - commvoice
     restart: always
+#    volumes:
+#      - /commonvoice/cert:/etc/nginx/commvoice_me_cert
     networks:
       - my-network
     ports:
       - 80:80
+      - 443:443
 networks:
     my-network:
