@@ -12,7 +12,7 @@ dnspython==1.16.0
 docker-pycreds==0.4.0
 eventlet==0.30.0
 Flask==1.1.2
-Flask-SocketIO==4.3.1
+Flask-SocketIO==4.3.2
 future==0.18.2
 gitdb==4.0.5
 GitPython==3.1.11
@@ -43,7 +43,7 @@ pydub==0.24.1
 pyparsing==2.4.7
 python-dateutil==2.8.1
 python-engineio==3.13.2
-python-socketio==5.0.0
+python-socketio==4.6.1
 pytz==2020.4
 PyYAML==5.3.1
 requests==2.25.0
@@ -56,7 +56,6 @@ six==1.15.0
 smmap==3.0.4
 SoundFile==0.10.3.post1
 subprocess32==3.5.4
-torch==1.6.0+cpu
 tqdm==4.47.0
 typing-extensions==3.7.4.3
 urllib3==1.26.2
