@@ -20,7 +20,7 @@
 <body class="container">
 
   <header class="main-header">
-      <a class="brand-logo" href= {{ url_for("index") }}>
+      <a class="brand-logo" href= {{ url_for('index') }}>
         <img src="../css/img/Logo.png" alt='Logo'>
         <div class="brand-logo-name">Common Voice</div>
       </a>
@@ -103,7 +103,7 @@
 
     <script type="text/javascript" charset="utf-8">
 
-      var socket = io.connect('http://' + document.domain + ':' + location.port)
+      var socket = io.connect('https://' + document.domain + ':' + location.port)
 
       socket.on('connect', function () {
         socket.emit('audio-streaming', {})

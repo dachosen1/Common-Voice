@@ -1,4 +1,4 @@
-FROM python:3.7.9-slim-buster AS builder
+FROM python:3.8.6-slim-buster
 
 ENV DEBIAN_FRONTEND=noninteractive
 ENV PYTHONUNBUFFERED True
