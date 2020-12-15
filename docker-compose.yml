@@ -34,7 +34,9 @@ services:
 #    volumes:
 #      - /commonvoice/cert:/etc/nginx/commvoice_me_cert
     networks:
-      - my-network
+      my-network:
+        aliases:
+          - commvoice
     ports:
       - 80:80
       - 443:443
