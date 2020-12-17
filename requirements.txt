@@ -65,3 +65,4 @@ Werkzeug==1.0.1
 zipp==3.4.0
 setuptools~=51.0.0
 gcsfs~=0.7.1
+google-cloud-storage==1.35.0

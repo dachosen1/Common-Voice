@@ -11,6 +11,8 @@ from tqdm import tqdm
 
 from audio_model.audio_model.config import config
 
+credentials, project = google.auth.default()
+
 
 def upload_from_file(file, bucket, bucket_folder) -> None:
     """
@@ -224,3 +226,26 @@ def clean_bucket(bucket: str, name: str, project: str) -> None:
             round((len(mp3_to_remove) / data.shape[0]) * 100, 2)
         )
     )
+
+
+def download_blob(bucket_name, source_blob_name, destination_file_name):
+
+    """
+    Download a file from a google cloud storage bucket
+    Note `Bucket.blob` differs from `Bucket.get_blob` as it doesn't retrieve any content from Google Cloud Storage.
+
+    Args:
+        bucket_name: your-bucket-name
+        source_blob_name: storage-object-name
+        destination_file_name: local/path/to/file
+
+    Returns:
+
+    """
+
+    storage_client = storage.Client(credentials=credentials)
+    bucket = storage_client.bucket(bucket_name)
+
+    # Construct a client side representation of a blob.
+    blob = bucket.blob(source_blob_name)
+    blob.download_to_filename(destination_file_name)
