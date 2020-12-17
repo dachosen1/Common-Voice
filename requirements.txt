@@ -63,3 +63,5 @@ wandb==0.9.7
 watchdog==1.0.1
 Werkzeug==1.0.1
 zipp==3.4.0
+setuptools~=51.0.0
+gcsfs~=0.7.1
