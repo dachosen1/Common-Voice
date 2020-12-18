@@ -33,6 +33,7 @@ services:
     restart: always
     volumes:
       - /etc/letsencrypt:/etc/letsencrypt
+      - /etc/nginx/dhparam.pem:/etc/nginx/dhparam.pem
     networks:
       my-network:
         aliases:
