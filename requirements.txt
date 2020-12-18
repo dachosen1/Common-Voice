@@ -7,7 +7,7 @@ google-cloud-storage==1.35.0
 gunicorn==20.0.4
 librosa==0.8.0
 llvmlite==0.34.0
-Markdown==3.2.2
+Markdown==3.3.3
 numpy==1.19.4
 pandas==0.25.3
 Pillow==8.0.1
