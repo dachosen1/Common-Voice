@@ -16,5 +16,5 @@ python-socketio==4.6.1
 pydub==0.24.1
 scikit-learn==0.22.2.post1
 SoundFile==0.10.3.post1
-tqdm==4.47.0
+tqdm==4.54.1
 wandb==0.9.7
