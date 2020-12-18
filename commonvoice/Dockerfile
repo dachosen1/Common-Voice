@@ -11,5 +11,3 @@ COPY /home/afrannelson/cert/cloudflare_ssl /etc/nginx/commvoice_me_cert
 
 # Generate Diffie-Hellman keys
 RUN openssl dhparam -out /etc/nginx/dhparam.pem 2048
-
-
