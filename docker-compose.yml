@@ -32,7 +32,7 @@ services:
       - commvoice
     restart: always
     volumes:
-      - /home/afrannelson/cert/cloudflare_ssl:/etc/nginx/commvoice_me_cert
+      - /etc/letsencrypt:/etc/letsencrypt
     networks:
       my-network:
         aliases:
