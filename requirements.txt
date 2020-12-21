@@ -1,6 +1,6 @@
 eventlet==0.30.0
 Flask==1.1.2
-Flask-SocketIO==4.3.2
+Flask-SocketIO==5.0.1
 gevent==20.9.0
 gevent-websocket==0.10.1
 google-cloud-storage==1.35.0
