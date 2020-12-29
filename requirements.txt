@@ -66,7 +66,7 @@ six==1.15.0
 smmap==3.0.4
 SoundFile==0.10.3.post1
 subprocess32==3.5.4
-tqdm==4.47.0
+tqdm==4.55.0
 typing-extensions==3.7.4.3
 urllib3==1.26.2
 wandb==0.9.7
