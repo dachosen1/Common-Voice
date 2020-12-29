@@ -12,7 +12,7 @@ docker-pycreds==0.4.0
 eventlet==0.30.0
 Flask==1.1.2
 Flask-SocketIO==4.3.2
-gevent==20.9.0
+gevent==20.12.1
 gevent-websocket==0.10.1
 gitdb==4.0.5
 GitPython==3.1.11
