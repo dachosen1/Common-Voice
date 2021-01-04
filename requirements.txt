@@ -7,7 +7,7 @@ chardet==4.0.0
 click==7.1.2
 configparser==5.0.1
 decorator==4.4.2
-dnspython==1.16.0
+dnspython==2.0.0
 docker-pycreds==0.4.0
 eventlet==0.30.0
 Flask==1.1.2
