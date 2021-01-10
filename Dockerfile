@@ -34,17 +34,15 @@ ENV PATH="/usr/src/app/.local/bin:$PATH"
 
 WORKDIR $HOME
 
-COPY ./requirements.txt .
+COPY --chown=ml:ml . .
 
-RUN pip3 install --no-cache-dir torch==1.7.1+cpu torchvision==0.8.2+cpu -f https://download.pytorch.org/whl/cpu/torch_stable.html
+#COPY ./requirements.txt .
+
+RUN pip3 install torch==1.7.1+cpu torchvision==0.8.2+cpu -f https://download.pytorch.org/whl/cpu/torch_stable.html
 RUN pip3 install pyaudio
 RUN pip3 install -r requirements.txt
 
-COPY --chown=ml:ml . .
-
 RUN mkdir -p .local/bin .config .cache
-#RUN mkdir -p /run/user/1000 \
-# && chown ml:ml /run/user/1000
 
 USER ml
 
