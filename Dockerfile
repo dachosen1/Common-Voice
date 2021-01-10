@@ -29,7 +29,10 @@ RUN addgroup --gid 1000 ml \
  && adduser ml pulse \
  && adduser ml voice
 
-WORKDIR /usr/src/app
+ENV HOME /usr/src/app
+ENV PATH="/usr/src/app/.local/bin:$PATH"
+
+WORKDIR $HOME
 
 COPY ./requirements.txt .
 
@@ -40,8 +43,8 @@ RUN pip3 install -r requirements.txt
 COPY --chown=ml:ml . .
 
 RUN mkdir -p .local/bin .config .cache
-RUN mkdir -p /run/user/1000 \
- && chown ml:ml /run/user/1000
+#RUN mkdir -p /run/user/1000 \
+# && chown ml:ml /run/user/1000
 
 USER ml
 
