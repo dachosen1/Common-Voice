@@ -1,4 +1,4 @@
-version: '3.3'
+version: '3.4'
 
 services:
   commvoice:
@@ -12,7 +12,7 @@ services:
       - my-network
     environment:
       - ALSA_PCM=usbstream:CARD=StargazerMicrop
-      - PORT=${PORT:-8080}
+      - PORT=${PORT:-5000}
       - XDG_RUNTIME_DIR=/run/user/1000
       - NUMBA_CACHE_DIR=/tmp
       - ALSA_CARD=Generic
@@ -22,7 +22,7 @@ services:
       - /run/user/1001/pulse:/run/user/1001/pulse:ro
 
     ports:
-      - 8080:${PORT:-8080}
+      - 5000:${PORT:-5000}
 
   nginx:
     build:
