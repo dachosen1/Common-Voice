@@ -7,7 +7,7 @@ librosa==0.8.0
 llvmlite==0.34.0
 Markdown==3.2.2
 numba==0.51.2
-numpy==1.19.4
+numpy==1.19.5
 pandas==0.25.3
 Pillow==8.0.1
 python-engineio==3.13.2
