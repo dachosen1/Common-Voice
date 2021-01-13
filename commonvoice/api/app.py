@@ -17,7 +17,7 @@ warnings.filterwarnings("ignore")
 app = Flask(__name__, static_folder="css", static_url_path="/css",
             template_folder="templates")
 
-socketio = SocketIO(app)
+socketio = SocketIO(app,cors_allowed_origins="*")
 
 FORMAT = pyaudio.paFloat32
 CHANNELS = 1

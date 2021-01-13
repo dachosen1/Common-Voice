@@ -18,7 +18,6 @@ RUN apt-get update -qq \
       python3-dev \
  && rm -rf /var/lib/apt/lists/*
 
-#RUN addgroup --gid 1001 pulse
 RUN addgroup --gid 1000 ml \
  && adduser --gecos "" \
       --home /usr/src/app \
