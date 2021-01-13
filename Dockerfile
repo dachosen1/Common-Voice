@@ -42,6 +42,10 @@ RUN addgroup --gid 1000 ml \
 
 COPY --chown=ml:ml . .
 
+RUN mkdir -p .local/bin .config .cache
+RUN mkdir -p /run/user/1000 \
+ && chown ml:ml /run/user/1000
+
 USER ml
 
 ENV PATH="/usr/src/app/.local/bin:$PATH"
