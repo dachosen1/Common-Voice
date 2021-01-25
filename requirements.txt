@@ -13,7 +13,7 @@ Pillow==8.0.1
 python-engineio==3.13.2
 python-socketio==4.6.1
 pydub==0.24.1
-scikit-learn==0.22.2.post1
+scikit-learn==0.24.1
 scipy==1.5.4
 SoundFile==0.10.3.post1
 tqdm==4.47.0
