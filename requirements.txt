@@ -8,7 +8,7 @@ llvmlite==0.34.0
 Markdown==3.2.2
 numba==0.51.2
 numpy==1.19.4
-pandas==0.25.3
+pandas==1.2.1
 Pillow==8.0.1
 python-engineio==3.13.2
 python-socketio==4.6.1
