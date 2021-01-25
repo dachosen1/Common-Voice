@@ -17,4 +17,4 @@ scikit-learn==0.22.2.post1
 scipy==1.5.4
 SoundFile==0.10.3.post1
 tqdm==4.47.0
-wandb==0.9.7
+wandb==0.10.15
