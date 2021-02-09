@@ -25,6 +25,13 @@ jobs:
           names: Package Installation
           command: python setup.py sdist bdist_wheel
 
+  pull-and-build:
+    docker:
+      - image: arvindr226/alpine-ssh
+    steps:
+      - checkout
+      - run: ssh -oStrictHostKeyChecking=no -v $USER@$IP "./deploy.sh"
+
   common-voice-api:
     docker:
       - image: circleci/python:3.7
@@ -46,3 +53,10 @@ workflows:
     jobs:
       - common-voice-audio_model
       - common-voice-api
+  build-project:
+    jobs:
+      - pull-and-build:
+          filters:
+            branches:
+              only:
+                - main
