@@ -6,25 +6,6 @@ defaults:
   working_directory: ~/project
 
 jobs:
-  common-voice-audio_model:
-    docker:
-      - image: circleci/python:3.7
-    working_directory: ~/project/audio_model
-    steps:
-      - checkout:
-          path: ~/project
-
-      - run:
-          name: Model Unit Testing
-          command: |
-            sudo pip install --upgrade pip
-            pip install pytest
-            pip install torch===1.5.1 torchvision===0.6.1 -f https://download.pytorch.org/whl/torch_stable.html
-            pytest
-      - run:
-          names: Package Installation
-          command: python setup.py sdist bdist_wheel
-
   pull-and-build:
     docker:
       - image: arvindr226/alpine-ssh
@@ -51,7 +32,6 @@ workflows:
   version: 2
   model-testing:
     jobs:
-      - common-voice-audio_model
       - common-voice-api
   build-project:
     jobs:
