@@ -34,7 +34,3 @@ workflows:
     jobs:
       - common-voice-api
       - pull-and-build
-          filters:
-            branches:
-              only:
-                - main
