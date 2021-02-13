@@ -20,9 +20,9 @@
 
 
 
-  <!-- <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css')}}"> -->
+  <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='commvoice-style.css')}}">
   <!-- The following is the static route(which I added), the above is the original one -->
-  <link rel="stylesheet" type="text/css" href="../css/style.css">
+  <!-- <link rel="stylesheet" type="text/css" href="../css/commvoice-style.css"> -->
 
 
   <title>Common Voice - Home Page</title>
@@ -37,11 +37,11 @@
       </a>
     <nav class="main-nav">
       <ul>
-{#        <!-- <li><a href={{ url_for("about") }}> About </a> </li> -->#}
+        <!-- <li><a href={{ url_for("about") }}> About </a> </li> -->
 
-{#        <!-- Add a new route for the new About page down below,#}
-{#        it is static for now -->#}
-        <li><a href= {{ url_for('about') }}> About </a> </li>
+        <!-- Add a new route for the new About page down below,
+        it is static for now -->
+        <li><a href={{ url_for("about") }}> About </a> </li>
       </ul>
     </nav>
   </header>
