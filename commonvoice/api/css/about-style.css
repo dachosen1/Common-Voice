@@ -1,0 +1,135 @@
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+body {
+  padding: 0;
+  margin: 0;
+  background-color: white;
+  font-family: Poppins, sans-serif;
+  color: black;
+}
+
+h1 {
+  font-size: 24px;
+}
+.main-header a {
+  text-decoration: none;
+}
+.main-header a:hover {
+  color: #00b4db;
+  transition: 0.2s;
+  /* color: #555555; */
+}
+.brand-logo {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  color: inherit;
+}
+
+.brand-logo img {
+  width: 50px;
+}
+
+.brand-logo-name {
+  margin-left: 2.5rem;
+  font-size: 20px;
+}
+
+.main-nav ul,
+.main-footer ul {
+  display: flex;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.main-nav a {
+  color: inherit;
+  text-decoration: none;
+  padding: 1rem;
+  font-size: 20px;
+}
+
+.main-nav a:hover {
+  color: #00b4db;
+  transition: 0.2s;
+  /* color: #555555; */
+}
+
+.main-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 7rem;
+  margin-left: 2rem;
+  margin-right: 2rem;
+  /* margin-top: 2.2rem; */
+}
+
+.container {
+  max-width: 1500px;
+  margin: 0 auto;
+  padding: 0 6vw;
+}
+
+.main-section {
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+}
+
+.main-section-top h1 {
+  font-size: 3vw;
+  padding-left: 2rem;
+  font-weight: 600;
+  color: #2c2c2c;
+}
+
+.main-section img {
+  width: 45vw;
+}
+.main-section-top p {
+  padding-left: 2rem;
+  margin: 0;
+  font-size: 1.3rem;
+  color: #2c2c2c;
+}
+
+.main-section-top {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.footer-nav {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.footer-nav h1 {
+  font-size: 4rem;
+  color: #2c2c2c;
+  font-weight: 600;
+  margin-bottom: 0;
+}
+.footer-nav p {
+  font-size: 1.5rem;
+  color: #2c2c2c;
+  font-weight: 500;
+  text-align: center;
+  padding: 0 20%;
+}
+.social-link img {
+  margin-top: 30px;
+  margin-bottom: 40px;
+  width: 3.5vw;
+  transition: 0.3s;
+}
+.social-link img:hover {
+  transform: rotate(-20deg);
+}

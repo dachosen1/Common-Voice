@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"
+    />
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="../css/about-style.css" />
+
+    <title>About</title>
+  </head>
+  <body class="container">
+    <header class="main-header">
+      <a class="brand-logo" href= {{ url_for('index') }}>
+        <img src="../css/img/Logo.png" alt='Logo'>
+        <div class="brand-logo-name">Common Voice</div>
+      </a>
+  </header>
+  <div class="main-section">
+    <div class="main-section-top">
+      <h1 class="animate__animated animate__backInLeft animate__slow">About Common <br> Voice</h1>
+      <p class="animate__animated animate__backInLeft animate__slow">The goal for this project is to create an end to end machine learning appliacation that records and processes audio in real time and stream prediction via a socket API. There's a 1 second delay between the audio recording and the output prediction</p>
+    </div>
+    <img src="../css/img/undraw_enter_uhqk.png" alt="" class="animate__animated animate__backInRight animate__slow">
+  </div>
+  <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+  <script>
+    AOS.init();
+  </script>
+  </body>
+  <footer class="main-footer">
+    <div class="container"> 
+      <nav class="footer-nav">
+        <h1 data-aos="fade-right" data-aos-duration="1200">Check out the code here</h1>
+        <p data-aos="fade-left" data-aos-duration="1200">You can check the whole source code along with important READ ME file as well installation instructions</p>
+
+        <ul>
+          <li data-aos="zoom-in-up" data-aos-duration="1200"><a href="https://github.com/dachosen1/Common-Voice" class="social-link" target="__blank">
+            <img src="../css/img/github.svg">
+          </a></li>
+        </ul>
+      </nav>
+    </div>
+  </footer>
+</html>
