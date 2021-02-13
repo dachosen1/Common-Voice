@@ -17,14 +17,7 @@
   />
   <!-- Animate On Scroll AOS -->
   <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
-
-
-
-  <!-- <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css')}}"> -->
-  <!-- The following is the static route(which I added), the above is the original one -->
-  <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css')}}">
-  <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='bootstrap.min.css')}}">
-
+  <link rel="stylesheet" type="text/css" href="../css/style.css" />
 
   <title>Common Voice - Home Page</title>
 </head>
@@ -38,10 +31,6 @@
       </a>
     <nav class="main-nav">
       <ul>
-{#        <!-- <li><a href={{ url_for("about") }}> About </a> </li> -->#}
-
-{#        <!-- Add a new route for the new About page down below,#}
-{#        it is static for now -->#}
         <li><a href= {{ url_for('about') }}> About </a> </li>
       </ul>
     </nav>
@@ -72,8 +61,7 @@
           </button>
         </div>
         <div class="prediction-result">
-          <!-- The predictions boxes below will be populated after
-               user clicks on the record button -->
+          <!-- The predictions boxes below will be populated after user clicks on the record button -->
           <div class="category-class">
             <div class="gender-box">
               <!-- Gender -->
