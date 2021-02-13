@@ -56,13 +56,14 @@ def test_disconnect():
 
 @socketio.on('stream-audio')
 def write_audio(data):
-    """Receive a chunk of audio from the client and store it in session."""
+    """
+    Receive a chunk of audio from the client and store it in session.
+    """
     print("Audio Chunk received for session: [", session['sess_id'], "] Frames Count: [", len(session['frames']), "]")
     session['frames'].append(np.frombuffer(data, dtype=np.int16))
 
     frames = session['frames']
     if len(frames) >= 32:
-        socketio.sleep(0.5)
 
         signal = np.concatenate(tuple(frames))
         session['frames'] = []
