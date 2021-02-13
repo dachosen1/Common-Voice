@@ -1,4 +1,4 @@
-from audio_model.audio_model.config.config import Gender, Age
+from audio_model.audio_model.config.config import Gender, Age, Country
 from audio_model.pipeline import Run
 
 if __name__ == '__main__':
@@ -6,6 +6,6 @@ if __name__ == '__main__':
     #                  input_size=216, batch_size=256, dropout=0.25)
 
     # Gender
-    run = Run(Gender)
-    run.load_data(load=True, percentage=0.03)
+    run = Run(Country)
+    run.load_data(load=False, percentage=0.05)
     run.train_model()

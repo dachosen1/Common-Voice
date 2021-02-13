@@ -10,8 +10,19 @@
   <!-- Latest compiled and minified CSS -->
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
       integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+  <!-- Animate.css Library -->
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"
+  />
+  <!-- Animate On Scroll AOS -->
+  <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
 
-  <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css')}}">
+
+
+  <!-- <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css')}}"> -->
+  <!-- The following is the static route(which I added), the above is the original one -->
+  <link rel="stylesheet" type="text/css" href="../css/style.css">
 
 
   <title>Common Voice - Home Page</title>
@@ -26,67 +37,88 @@
       </a>
     <nav class="main-nav">
       <ul>
-        <li><a href={{ url_for("about") }}> About </a> </li>
+{#        <!-- <li><a href={{ url_for("about") }}> About </a> </li> -->#}
+
+{#        <!-- Add a new route for the new About page down below,#}
+{#        it is static for now -->#}
+        <li><a href= {{ url_for('about') }}> About </a> </li>
       </ul>
     </nav>
   </header>
   <main class="home-main-section">
     <div class="section-2">
-      <div class="recording-picture">
+      <div class="main-section-left">
+        <div class="call-to-action">
+          <h1 class="title animate__animated animate__backInLeft animate__slow">Live Streaming Audio to Generate Predictions using Machine Learning </h1>
+        </div>
+
+      </div>
+      <div class="recording-picture animate__animated animate__backInRight animate__slow">
         <img src="../css/img/undraw_recording.png" alt="Recording logo">
       </div>
-      <div class="main-section-right">
-        <div class="call-to-action">
-          <h1 class="title">Live Streaming Audio to Generate Predictions using Machine Learning </h1>
-        </div>
+    </div>
+
+    <div class="audio-section" data-aos="fade-up" data-aos-duration="1200">
+      <div class="audio-section-left">
+        <h1>Speak</h1>
+        <p>Click on the microphone button to start</p>
+      </div>
+      <div class="audio-section-right">
+
         <div class="audio-mic">
           <button type="submit" id="mic">
-            <img src="../css/img/mic.png" alt="submit"/>
+            <!-- <img src="../css/img/microphone.svg" alt="submit"> -->
           </button>
         </div>
-          <div class="prediction-result">
-            <div class="category-class">
-              <div class="gender-box">
-              </div>
+        <div class="prediction-result">
+          <!-- The predictions boxes below will be populated after
+               user clicks on the record button -->
+          <div class="category-class">
+            <div class="gender-box">
+              <!-- Gender -->
             </div>
-            <div class="category-prob">
-              <div class="category-prob-gender">
-
-              </div>
+            <div class="age-box">
+              <!-- Age -->
+            </div>
+            <div class="country-box">
+              <!-- Country -->
             </div>
           </div>
-           </div>
-      </div>
+          <div class="category-prob">
+            <div class="category-prob-gender">
 
-      <div class="section-3">
-        <div class="section-3-top">
-          <h1>
-            What is Common Voice?
-          </h1>
+            </div>
+            <div class="category-prob-age">
+
+            </div>
+            <div class="category-prob-country">
+
+            </div>
+          </div>
         </div>
+      </div>
+    </div>
+      <div class="section-3">
+        <div class="section-left" data-aos="fade-right" data-aos-duration="1200">
+          <img src="../css/img/undraw_things_to_say_ewwb.png" alt="">
+        </div>
+        <div class="section-right">
+          <h1 data-aos="fade-down" data-aos-duration="1200">What is Common Voice?</h1>
+          <p data-aos="fade-left" data-aos-duration="1200">Common Voice is Mozilla's initiative to help teach machines how real people speak</p>
+          <p data-aos="fade-left" data-aos-duration="1200"> Voice is natural, voice is human. That’s why Common-voice is excited about
+            creating usable voice technology. But to create voice systems, developers need an extremely large amount
+            of voice data.</p>
+          <p data-aos="fade-left" data-aos-duration="1200">
+              Most of the data used by large companies isn’t available to the majority of people. Common voice
+              believes that stifles innovation.  Common Voice is a project to help make voice recognition open and
+              accessible to everyone.
+          </p>
 
-        <div class="section-3-bottom">
-          <div class="section-3-bottom-left">
-            <p class="section-3-bottom-left-text">
-              Common Voice is Mozilla's initiative to help teach machines how real people speak.
-            </p>
-          </div>
-          <div class="section-3-bottom-right">
-            <p class="common-voice-overview"> Voice is natural, voice is human. That’s why Common-voice is excited about
-              creating usable voice technology. But to create voice systems, developers need an extremely large amount
-              of voice data. </p>
+          <p data-aos="fade-left" data-aos-duration="1200"> Now you can donate your voice to help us build an open-source voice database that anyone can use to
+            make innovative apps for devices and the web. Read a sentence to help machines learn how real people
+            speak. Check the work of other contributors to improve the quality. It’s that simple! </p>
 
-              <p> Most of the data used by large companies isn’t available to the majority of people. Common voice
-                believes that stifles innovation.  Common Voice is a project to help make voice recognition open and
-                accessible to everyone. </p>
-
-            <p> Now you can donate your voice to help us build an open-source voice database that anyone can use to
-              make innovative apps for devices and the web. Read a sentence to help machines learn how real people
-              speak. Check the work of other contributors to improve the quality. It’s that simple! </p>
-
-            <p> To learn more visit: <a href="https://voice.mozilla.org/en">Common Voice</a>
-            </p>
-          </div>
+          <p  data-aos="fade-up" data-aos-duration="1200" class="last-text"> To learn more visit:  <a href="https://voice.mozilla.org/en" target="__blank"> Common Voice</a>
         </div>
       </div>
 
@@ -101,14 +133,19 @@
             crossorigin="anonymous">
     </script>
     <script src="{{ url_for('static', filename='audio.js') }}"></script>
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script>
+      AOS.init();
+    </script>
   </main>
 </body>
 <footer class="main-footer">
   <div class="container">
     <nav class="footer-nav">
+      <h1 data-aos="zoom-in-up" data-aos-duration="1200">Check out the code here</h1>
       <ul>
-        <li><a href="https://github.com/dachosen1/Common-Voice" class="social-link">
-          <img src="../css/img/github.png">
+        <li data-aos="zoom-in-up" data-aos-duration="1200"><a href="https://github.com/dachosen1/Common-Voice" class="social-link" target="__blank">
+          <img src="../css/img/github.svg">
         </a></li>
       </ul>
     </nav>

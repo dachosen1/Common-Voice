@@ -40,6 +40,11 @@ def index():
     return render_template("index.html")
 
 
+@app.route("/about")
+def about():
+    return render_template("about.html")
+
+
 @socketio.on('connect')
 def test_connect():
     """Initialize a new session"""
@@ -78,11 +83,11 @@ def write_audio(data):
         socketio.emit('gender_model', {'pred': gender_output, 'prob': sigmoid(gender_prob)})
 
 
-@app.route("/about/")
-def about():
-    with open(os.path.join(os.getcwd(), "README.md"), "r") as markdown_file:
-        content = markdown_file.read()
-        return markdown.markdown(content)
+# @app.route("/about/")
+# def about():
+#     with open(os.path.join(os.getcwd(), "README.md"), "r") as markdown_file:
+#         content = markdown_file.read()
+#         return markdown.markdown(content)
 
 
 @app.route("/health", methods=['GET'])

@@ -42,7 +42,7 @@ class Country:
               4: 'American'}
 
     NAME = "model_country-"
-    PARAM = {'HIDDEN_DIM': 8, 'NUM_LAYERS': 16, 'DROPOUT': 0.3, 'INPUT_SIZE': 216, 'BATCH_SIZE': 256,
+    PARAM = {'HIDDEN_DIM': 8, 'NUM_LAYERS': 16, 'DROPOUT': 0.3, 'INPUT_SIZE': 128, 'BATCH_SIZE': 256,
              'OUTPUT_SIZE': 5, 'LEARNING_RATE': 0.001, 'GRADIENT_CLIP': 20, 'EPOCH': 25}
     LABEL = 'accent'
 
