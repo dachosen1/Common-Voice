@@ -133,3 +133,40 @@ h1 {
 .social-link img:hover {
   transform: rotate(-20deg);
 }
+
+/* Making it responsive */
+@media only screen and (max-width: 400px) {
+  .main-section {
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+  }
+  .main-section img {
+    order: 1;
+    width: 350px;
+  }
+  .main-section-top h1 {
+    font-size: 40px;
+    order: 10;
+    padding-left: 0;
+  }
+  .main-section-top p {
+    order: 11;
+    padding-left: 0;
+  }
+  .footer-nav {
+    text-align: center;
+  }
+  .footer-nav h1 {
+    font-size: 40px;
+  }
+  .footer-nav p {
+    font-size: 20px;
+    padding: 0;
+  }
+  .social-link img {
+    margin-top: 30px;
+    margin-bottom: 40px;
+    width: 10vw;
+  }
+}

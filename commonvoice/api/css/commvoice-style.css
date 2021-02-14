@@ -208,7 +208,7 @@ h1 {
 .category-class {
   display: flex;
   justify-content: space-between;
-  height: 75px;
+  /* height: 75px; */
 }
 
 .gender-box,
@@ -217,13 +217,15 @@ h1 {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  height: 100%;
+  align-items: center;
+  /* height: 100%; */
   width: 100px;
   background: #00b4db;
   border-radius: 7px;
   color: white;
   font-size: 2rem;
-  margin: 0px 10px 10px 10px;
+  margin: 0px 1.5vw 1.5vw 1.5vw;
+  /* padding: 25px; */
 }
 
 .gender-box h1,
@@ -310,4 +312,127 @@ h1 {
 }
 .social-link img:hover {
   transform: rotate(-20deg);
+}
+
+/* Making it responsive */
+
+@media only screen and (max-width: 400px) {
+  html,
+  body {
+    overflow-x: hidden;
+  }
+  .main-header a {
+    font-size: 15px;
+  }
+  .brand-logo-name {
+    font-size: 15px;
+  }
+  .brand-logo img {
+    width: 35px;
+  }
+  .section-2 {
+    display: grid;
+    grid-template-columns: 100%;
+    max-width: 100%;
+    padding: 5rem;
+  }
+  .section-2 h1 {
+    font-size: 20px;
+    line-height: 40px;
+  }
+  .audio-section-left h1 {
+    font-size: 30px;
+  }
+  .audio-section-left {
+    transform: translateX(15vw);
+  }
+  .audio-section:hover .audio-section-left {
+    visibility: visible;
+    opacity: 1;
+    transform: translateX(-5vw);
+  }
+  .audio-section:hover .audio-section-right {
+    visibility: visible;
+    opacity: 1;
+    transform: translateX(-5vw);
+  }
+
+  .audio-section-right {
+    visibility: hidden;
+    opacity: 0;
+    transform: translateX(-30vw);
+  }
+  .audio-mic {
+    height: 150px;
+    margin: auto auto;
+  }
+  #mic {
+    width: 100%;
+    height: 100%;
+  }
+  #mic:hover {
+    transform: scale(1);
+  }
+  .prediction-result {
+    display: flex;
+  }
+  .category-class {
+    display: flex;
+    flex-direction: column;
+    /* height: 75px; */
+  }
+  .category-prob {
+    display: flex;
+    flex-direction: column;
+    font-size: 15px;
+  }
+  .gender-box,
+  .age-box,
+  .country-box {
+    font-size: 15px;
+  }
+  .section-3 {
+    grid-template-columns: 100%;
+  }
+  .section-left img {
+    width: 35%;
+  }
+  .section-right {
+    padding: 50px 20px;
+    text-align: center;
+  }
+  .section-right h1 {
+    font-size: 3rem;
+    font-weight: 600;
+  }
+
+  .section-right p:nth-child(2) {
+    font-size: 1.5rem;
+  }
+  .section-right p:nth-child(3) {
+    margin-top: 35px;
+    font-size: 1.7rem;
+  }
+  .section-right p:nth-child(4) {
+    font-size: 1.7rem;
+  }
+  .section-right p:nth-child(5) {
+    font-size: 1.7rem;
+  }
+  .section-right p:nth-child(6) {
+    font-size: 1.5rem;
+  }
+  .footer-nav {
+    padding: 0px 20px;
+  }
+  .footer-nav h1 {
+    font-size: 3rem;
+    text-align: center;
+  }
+  .social-link img {
+    margin-top: 10px;
+    margin-bottom: 40px;
+    width: 10vw;
+    transition: 0.3s;
+  }
 }
