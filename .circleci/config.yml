@@ -10,7 +10,8 @@ jobs:
     docker:
       - image: arvindr226/alpine-ssh
     steps:
-      - checkout
+      - checkout:
+          path: ~/project
       - run: ssh -oStrictHostKeyChecking=no -v $USER@$IP "./deploy.sh"
 
   common-voice-api:
