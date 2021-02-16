@@ -13,7 +13,6 @@ from .models import AudioCNN, AudioLSTM
 from audio_model import utils
 from audio_model import pipeline_mananger
 from audio_model import model_manager
-from audio_model import model_testing
 from audio_model import preprocessing
 from audio_model import trained_model
 
