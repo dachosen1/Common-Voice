@@ -3,12 +3,14 @@ import os
 import warnings
 from datetime import datetime
 
+import numpy as np
 import torch
 import wandb
 from torch.utils.data import DataLoader
 from torchvision.datasets import DatasetFolder
 
 from audio_model import __version__
+from audio_model import config
 from audio_model.config import (
     DataDirectory,
     TrainingTestingSplitDirectory,
@@ -16,7 +18,9 @@ from audio_model.config import (
 )
 from audio_model.model_manager import train
 from audio_model.models import AudioLSTM
+from audio_model.pipeline_mananger import load_model
 from audio_model.preprocessing.mp3_parser import Mp3parser
+from audio_model.utils import generate_pred
 from audio_model.utils import npy_loader, sample_weight, run_thread_pool
 
 warnings.filterwarnings("ignore")
@@ -147,9 +151,37 @@ class Run:
         else:
             _logger.info("Skipping MP3 feature engineering. Will use existing mfcc data for training")
 
+    def model_pipeline_test(self):
+        """
+        Test model performance on a test set
+        """
+        dir_path = config.DataDirectory.DEV_DIR
+        model, path = load_model(self.model_name)
+        model.load_state_dict(torch.load(path))
+        model.eval()
+        model.init_hidden()
+
+        test_dir = os.path.join(dir_path, self.model_name.LABEL, config.TrainingTestingSplitDirectory.TEST_DIR)
+
+        assert os.path.exists(test_dir)
+        test_accuracy = {}
+        for label in os.listdir(test_dir):
+            test_set = os.path.join(test_dir, label)
+            accuracy = 0
+            for value in os.listdir(test_set):
+                data = np.load(os.path.join(test_set, value))
+                pred_label, _ = generate_pred(mel=data, model=model, label=self.model_name.OUTPUT, model_name=self.model_name)
+                if pred_label.lower() == label.lower():
+                    accuracy += 1
+            test_accuracy[label] = accuracy / len(os.listdir(test_set))
+
+        _logger.info(
+            test_accuracy
+        )
+        return test_accuracy
+
 
 def lstm_model(param):
-
     model = AudioLSTM(batch_size=param['BATCH_SIZE'],
                       input_size=param['INPUT_SIZE'],
                       num_layer=param['NUM_LAYERS'],
