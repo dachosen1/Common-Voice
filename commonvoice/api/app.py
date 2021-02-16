@@ -7,9 +7,9 @@ import torch
 from flask import Flask, render_template, request, session
 from flask_socketio import SocketIO
 
-from audio_model.audio_model.config.config import Gender, FRAME
-from audio_model.audio_model.pipeline_mananger import load_model
-from audio_model.audio_model.utils import audio_melspectrogram, generate_pred, remove_silence, sigmoid
+from audio_model.config import Gender, FRAME
+from audio_model.pipeline_mananger import load_model
+from audio_model.utils import audio_melspectrogram, generate_pred, remove_silence, sigmoid
 
 warnings.filterwarnings("ignore")
 

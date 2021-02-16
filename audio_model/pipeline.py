@@ -8,17 +8,16 @@ import wandb
 from torch.utils.data import DataLoader
 from torchvision.datasets import DatasetFolder
 
-from audio_model.audio_model.models import AudioLSTM, AudioCNN
-
 from audio_model import __version__
-from audio_model.audio_model.config.config import (
+from audio_model.config import (
     DataDirectory,
     TrainingTestingSplitDirectory,
     TRAINED_MODEL_DIR
 )
-from audio_model.audio_model.model_manager import train
-from audio_model.audio_model.preprocessing.mp3_parser import Mp3parser
-from audio_model.audio_model.utils import npy_loader, sample_weight, run_thread_pool, csv_loader
+from audio_model.model_manager import train
+from audio_model.models import AudioLSTM
+from audio_model.preprocessing.mp3_parser import Mp3parser
+from audio_model.utils import npy_loader, sample_weight, run_thread_pool
 
 warnings.filterwarnings("ignore")
 

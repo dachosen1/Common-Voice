@@ -1,18 +1,17 @@
 from __future__ import unicode_literals
 
 import concurrent.futures
-import itertools
 import logging
 import os
 import shutil
 import warnings
 
+import librosa
 import numpy as np
 import pandas as pd
 import torch
 import wandb
-from librosa import power_to_db
-from librosa import stft
+from librosa import power_to_db, stft
 from pydub import AudioSegment
 from sklearn.metrics import (
     accuracy_score,
@@ -23,33 +22,38 @@ from sklearn.metrics import (
 from torch.utils.data import WeightedRandomSampler
 from tqdm import tqdm
 
-from audio_model.audio_model.config.config import FRAME, DataDirectory
+from audio_model.config import FRAME, DataDirectory
 
 _logger = logging.getLogger("audio_model")
 
 warnings.filterwarnings("ignore")
-import librosa
 
 
 def npy_loader(path: str) -> torch.Tensor:
     """
-    :param path:
-    :return:
+    Load npy file from a specified location and convert to a torch tensor
+    :param path: file path for the npy document
+    :return: Torch Tensor
     """
-    data = np.array(np.load(path))
-    sample = torch.from_numpy(data)
-    return sample
+
+    return torch.from_numpy(np.array(np.load(path)))
 
 
 def mp3_loader(path):
+    """
+    Load mp3 file from a specified location
+    :param path: file path for the npy document
+    :return: Torch Tensor
+    """
     file = AudioSegment.from_mp3(path)
     return file
 
 
 def csv_loader(path: str) -> torch.Tensor:
     """
-    :param path:
-    :return:
+    Load csv file from a specified location and convert to a torch tensor
+    :param path: file path for the npy document
+    :return: Torch Tensor
     """
     data = np.array(pd.read_csv(path, header=None))
     sample = torch.from_numpy(data)
@@ -71,21 +75,20 @@ def envelope(y: int, signal_rate: int, threshold: float):
     return signal_clean
 
 
-def remove_un_label_files(clips_names: list) -> None:
+def remove_un_label_files(clips_names: list, path, recyle_bin) -> None:
     """
     Remove a list of list of files that do not contain any labels
     :param clips_names: list of of mp3 names
-
+    :path directory path
+    :recyle_bin directory to move deleted path
     """
-    data = pd.read_csv("Development/data.csv")
+    data = pd.read_csv(path)
     data_path = set(data.path)
     clips_path = DataDirectory.CLIPS_DIR
 
-    delete_path = r"C:\Users\ander\Documents\delete"
-
     for mp3 in tqdm(clips_names):
         if mp3 not in data_path:
-            shutil.move(os.path.join(clips_path, mp3), os.path.join(delete_path, mp3))
+            shutil.move(os.path.join(clips_path, mp3), os.path.join(recyle_bin, mp3))
 
 
 def calc_fft(*, y, rate):
@@ -166,7 +169,7 @@ def generate_pred(mel, model, label, model_name):
 
 def _metric_summary(pred: np.ndarray, label: np.ndarray):
     acc = accuracy_score(y_true=label, y_pred=pred)
-    f1 = f1_score(y_true=label, y_pred=pred,average='weighted')
+    f1 = f1_score(y_true=label, y_pred=pred, average='weighted')
     pc = precision_score(y_true=label, y_pred=pred, average='weighted')
     rs = recall_score(y_true=label, y_pred=pred, average='weighted')
     return acc, f1, pc, rs
@@ -193,12 +196,6 @@ def run_process_pool(function, my_iter):
 def linear_to_mel(spectrogram):
     return librosa.feature.melspectrogram(
         S=spectrogram, sr=FRAME['SAMPLE_RATE'], n_fft=FRAME['NFFT'], n_mels=FRAME['N_MELS'], fmin=FRAME['TOP_DB'])
-
-
-'''
-def build_mel_basis():
-    return librosa.filters.mel(hp.sample_rate, hp.n_fft, n_mels=hp.num_mels, fmin=hp.fmin)
-'''
 
 
 def normalize(signal):
@@ -242,7 +239,7 @@ def remove_silence(signal):
 
 
 def sigmoid(x):
-    return f'{np.round(1 / (1 + np.exp(-x))*100, 2)}%'
+    return f'{np.round(1 / (1 + np.exp(-x)) * 100, 2)}%'
 
 
 def stft(y):

@@ -8,7 +8,7 @@ import pandas as pd
 from matplotlib import cm
 from matplotlib import pyplot as plt
 
-from audio_model.audio_model.config.config import DO_NOT_INCLUDE
+from audio_model.config import DO_NOT_INCLUDE
 
 warnings.filterwarnings('ignore')
 

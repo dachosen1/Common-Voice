@@ -1,6 +1,6 @@
 import os
 
-from audio_model import audio_model
+import audio_model
 
 PACKAGE_ROOT = os.path.dirname(audio_model.__file__)
 TRAINED_MODEL_DIR = os.path.join(PACKAGE_ROOT, "trained_model")
