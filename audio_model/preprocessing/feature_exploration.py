@@ -1,5 +1,6 @@
 import os
 import warnings
+from audio_model import config
 
 import librosa
 import librosa.display
@@ -12,12 +13,12 @@ from audio_model.config import DO_NOT_INCLUDE
 
 warnings.filterwarnings('ignore')
 
-ROOT_DIR = r'C:\Users\ander\Documents\common-voice-data'
+ROOT_DIR = config.DataDirectory.DATA_DIR
 DATA = pd.read_csv(os.path.join(ROOT_DIR, 'data.csv'))
 CLIPS = os.path.join(ROOT_DIR, 'clips')
 
 
-def generate_label_dict(data, unique_labels, mp3_label, label_count=5, ):
+def generate_label_dict(data, unique_labels, mp3_label, label_count=5):
     label_dict = {}
 
     for label in unique_labels:
@@ -83,12 +84,20 @@ def plot_feature(audio_transformation, target_list, target_dict, n_rows=4, top_d
     plt.show()
 
 
+# Accent
 accent = DATA[['name', 'path', 'accent']].dropna()
 unique_accent = [i for i in accent['accent'].unique() if i not in DO_NOT_INCLUDE]
-
 accent_dict = generate_label_dict(data=accent, unique_labels=unique_accent, mp3_label='accent')
+plot_feature(feature_power_to_db, unique_accent, accent_dict, top_db=30, n_rows=5, sr=22500, seconds=1)
 
-# plot_power_db(unique_accent, accent_dict, top_db=20)
-# plot_power_db(unique_accent, accent_dict, top_db=60)
+# Gender
+gender = DATA[['name', 'path', 'gender']].dropna()
+unique_gender = [i for i in gender['gender'].unique() if i not in DO_NOT_INCLUDE]
+gender_dict = generate_label_dict(data=gender, unique_labels=unique_gender, mp3_label='gender')
+plot_feature(feature_power_to_db, unique_gender, gender_dict, top_db=30, n_rows=5, sr=22500, seconds=2)
 
-plot_feature(feature_power_to_db, unique_accent, accent_dict, top_db=30, n_rows=5, sr=22500, seconds=3)
+# Age
+age = DATA[['name', 'path', 'age']].dropna()
+unique_age = [i for i in age['age'].unique() if i not in DO_NOT_INCLUDE]
+age_dict = generate_label_dict(data=age, unique_labels=unique_age, mp3_label='age')
+plot_feature(feature_power_to_db, unique_age, age_dict, top_db=30, n_rows=5, sr=22500, seconds=1)

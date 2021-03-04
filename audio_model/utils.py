@@ -154,15 +154,9 @@ def generate_pred(mel, model, label, model_name):
         mel = mel.cuda()
 
     out = model(mel)
-    prob = torch.topk(out, k=1).values
+    prob = torch.sigmoid(torch.topk(out, k=1).values)
     pred = torch.topk(out, k=1).indices
     label_name = label[int(pred.cpu().data.numpy())]
-
-    _logger.info(
-        "Prediction: {}, Probability: {}".format(
-            label_name, round(float(prob.flatten()[0]), 5)
-        )
-    )
 
     return label_name, round(float(prob.flatten()[0]), 5)
 

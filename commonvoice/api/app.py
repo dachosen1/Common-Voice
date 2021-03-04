@@ -4,6 +4,7 @@ import warnings
 import numpy as np
 import pyaudio
 import torch
+import logging
 from flask import Flask, render_template, request, session
 from flask_socketio import SocketIO
 
@@ -12,6 +13,8 @@ from audio_model.pipeline_mananger import load_model
 from audio_model.utils import audio_melspectrogram, generate_pred, remove_silence, sigmoid
 
 warnings.filterwarnings("ignore")
+
+_logger = logging.getLogger("audio_model")
 
 app = Flask(__name__, static_folder="css", static_url_path="/css", template_folder="templates")
 socketio = SocketIO(app, cors_allowed_origins="*")
