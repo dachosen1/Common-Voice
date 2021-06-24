@@ -15,7 +15,7 @@ warnings.filterwarnings('ignore')
 
 ROOT_DIR = config.DataDirectory.DATA_DIR
 DATA = pd.read_csv(os.path.join(ROOT_DIR, 'data.csv'))
-CLIPS = os.path.join(ROOT_DIR, 'clips')
+CLIPS = config.DataDirectory.CLIPS_DIR
 
 
 def generate_label_dict(data, unique_labels, mp3_label, label_count=5):
@@ -66,7 +66,7 @@ def feature_mfcc(signal, sr, seconds):
     return S
 
 
-def plot_feature(audio_transformation, target_list, target_dict, n_rows=4, top_db=60, **kwargs):
+def plot_feature(audio_transformation, target_list, target_dict, n_rows=4, top_db=60,sr=22500, **kwargs):
     n_cols = len(target_list)
 
     fig, axs = plt.subplots(ncols=n_cols, nrows=n_rows, figsize=(25, 12))
@@ -75,9 +75,9 @@ def plot_feature(audio_transformation, target_list, target_dict, n_rows=4, top_d
         axs[0, count].set_title(f"Output: {value}, top DB: {top_db}", loc='center', y=1.1)
 
         for j in range(n_rows):
-            signal, sr = librosa.load(os.path.join(CLIPS, target_dict[value][j]))
+            signal, sr = librosa.load(os.path.join(CLIPS, target_dict[value][j]), sr=sr)
             signal, _ = librosa.effects.trim(signal, top_db=top_db)
-            audio_feature = audio_transformation(signal=signal, **kwargs)
+            audio_feature = audio_transformation(signal=signal, sr=sr, **kwargs)
             axs[j, count].imshow(audio_feature, cmap=cm.inferno)
 
     plt.tight_layout()
@@ -88,16 +88,16 @@ def plot_feature(audio_transformation, target_list, target_dict, n_rows=4, top_d
 accent = DATA[['name', 'path', 'accent']].dropna()
 unique_accent = [i for i in accent['accent'].unique() if i not in DO_NOT_INCLUDE]
 accent_dict = generate_label_dict(data=accent, unique_labels=unique_accent, mp3_label='accent')
-plot_feature(feature_power_to_db, unique_accent, accent_dict, top_db=30, n_rows=5, sr=22500, seconds=1)
+plot_feature(feature_power_to_db, unique_accent, accent_dict, top_db=30, n_rows=5, sr=48000, seconds=1)
 
 # Gender
 gender = DATA[['name', 'path', 'gender']].dropna()
 unique_gender = [i for i in gender['gender'].unique() if i not in DO_NOT_INCLUDE]
 gender_dict = generate_label_dict(data=gender, unique_labels=unique_gender, mp3_label='gender')
-plot_feature(feature_power_to_db, unique_gender, gender_dict, top_db=30, n_rows=5, sr=22500, seconds=2)
-
+plot_feature(feature_power_to_db, unique_gender, gender_dict, top_db=30, n_rows=5, sr=48000, seconds=2)
+e
 # Age
 age = DATA[['name', 'path', 'age']].dropna()
 unique_age = [i for i in age['age'].unique() if i not in DO_NOT_INCLUDE]
 age_dict = generate_label_dict(data=age, unique_labels=unique_age, mp3_label='age')
-plot_feature(feature_power_to_db, unique_age, age_dict, top_db=30, n_rows=5, sr=22500, seconds=1)
+plot_feature(feature_power_to_db, unique_age, age_dict, top_db=30, n_rows=5, sr=48000, seconds=1)

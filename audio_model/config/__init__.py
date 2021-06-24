@@ -5,7 +5,7 @@ import audio_model
 PACKAGE_ROOT = os.path.dirname(audio_model.__file__)
 TRAINED_MODEL_DIR = os.path.join(PACKAGE_ROOT, "trained_model")
 
-FRAME = dict(SAMPLE_RATE=16000, NUMCEP=13, NFILT=26, NFFT=2048, TOP_DB=40, FMAX=8000, N_MELS=128, MIN_LEVEL_DB=-100,
+FRAME = dict(SAMPLE_RATE=48000, NUMCEP=13, NFILT=26, NFFT=2048, TOP_DB=40, FMAX=8000, N_MELS=128, MIN_LEVEL_DB=-100,
              HOP_LENGTH=275, MASK_THRESHOLD=0.01, WIN_LENGTH=1100, REF_LEVEL_DB=20)
 
 
@@ -14,8 +14,8 @@ class Gender:
               1: "Male"}
 
     NAME = "model_gender-"
-    PARAM = {'HIDDEN_DIM': 120, 'NUM_LAYERS': 2, 'DROPOUT': 0.3, 'INPUT_SIZE': 128, 'BATCH_SIZE': 512,
-             'OUTPUT_SIZE': 2, 'LEARNING_RATE': 0.001, 'GRADIENT_CLIP': 15, 'EPOCH': 40}
+    PARAM = {'HIDDEN_DIM': 128, 'NUM_LAYERS': 2, 'DROPOUT': 0.3, 'INPUT_SIZE': 128, 'BATCH_SIZE': 512,
+             'OUTPUT_SIZE': 2, 'LEARNING_RATE': 0.001, 'GRADIENT_CLIP': 15, 'EPOCH': 1}
     LABEL = 'gender'
 
 
@@ -30,7 +30,10 @@ class Age:
 
     NAME = "model_age-"
     PARAM = {'HIDDEN_DIM': 256, 'NUM_LAYERS': 4, 'DROPOUT': 0, 'INPUT_SIZE': 44, 'BATCH_SIZE': 525,
-             'OUTPUT_SIZE': 5, 'LEARNING_RATE': 0.001, 'GRADIENT_CLIP': 15, 'EPOCH': 5}
+             'OUTPUT_SIZE': 5, 'LEARNING_RATE': 0.001, 'GRADIENT_CLIP':
+
+
+                 15, 'EPOCH': 5}
     LABEL = 'age'
 
 
@@ -69,7 +72,7 @@ DO_NOT_INCLUDE = [
 class DataDirectory:
     DATA_DIR = r"C:\Users\ander\Documents\common-voice-data"
     DEV_DIR = r"C:\Users\ander\Documents\common-voice-dev"
-    CLIPS_DIR = r"C:\Users\ander\Documents\common-voice-data\clips"
+    CLIPS_DIR = r"C:\Users\ander\Documents\cv-corpus-6.1-2020-12-11\en\clips"
 
 
 # class DataDirectory:

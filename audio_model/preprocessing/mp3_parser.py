@@ -71,7 +71,7 @@ class Mp3parser:
                 training_mfcc = audio_melspectrogram(data)
 
                 assert training_mfcc.shape[0] == self.model.PARAM["INPUT_SIZE"]
-                assert training_mfcc.shape[1] == 32
+                assert training_mfcc.shape[1] == 94
 
                 clip_name = "{}".format(clips_name.split(".")[0])
                 label_name = self.label_data[self.label_data.path == clips_name][self.data_label].values[0]

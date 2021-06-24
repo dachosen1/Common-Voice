@@ -4,17 +4,16 @@ import warnings
 import numpy as np
 import pyaudio
 import torch
-import logging
 from flask import Flask, render_template, request, session
 from flask_socketio import SocketIO
 
+from matplotlib import pyplot as plt
 from audio_model.config import Gender, FRAME
 from audio_model.pipeline_mananger import load_model
 from audio_model.utils import audio_melspectrogram, generate_pred, remove_silence, sigmoid
 
 warnings.filterwarnings("ignore")
 
-_logger = logging.getLogger("audio_model")
 
 app = Flask(__name__, static_folder="css", static_url_path="/css", template_folder="templates")
 socketio = SocketIO(app, cors_allowed_origins="*")
@@ -65,12 +64,19 @@ def write_audio(data):
     session['frames'].append(np.frombuffer(data, dtype=np.int16))
 
     frames = session['frames']
-    if len(frames) >= 32:
+    if len(frames) >= 70:
         signal = np.concatenate(tuple(frames))
         session['frames'] = []
         signal = remove_silence(signal)
+
+        plt.plot(signal)
+        plt.show()
+
         wave_period = signal[-FRAME["SAMPLE_RATE"]:].astype(np.float)
         spectrogram = audio_melspectrogram(wave_period)
+
+        assert spectrogram.shape[0] == Gender.PARAM["INPUT_SIZE"]
+        assert spectrogram.shape[1] == 94
 
         # Gender Model
         gender_output, gender_prob = generate_pred(mel=spectrogram, model=model_gender,
