@@ -69,8 +69,8 @@ def write_audio(data):
         session['frames'] = []
         signal = remove_silence(signal)
 
-        plt.plot(signal)
-        plt.show()
+        # plt.plot(signal)
+        # plt.show()
 
         wave_period = signal[-FRAME["SAMPLE_RATE"]:].astype(np.float)
         spectrogram = audio_melspectrogram(wave_period)
