@@ -3,8 +3,6 @@ FROM python:3.8.6-slim-buster
 ENV DEBIAN_FRONTEND=noninteractive
 ENV PYTHONUNBUFFERED True
 
-WORKDIR /usr/src/app
-
 RUN apt-get update -qq \
  && apt-get install -qqy --no-install-recommends \
       ffmpeg \
@@ -17,6 +15,8 @@ RUN apt-get update -qq \
       gcc \
       python3-dev \
  && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /usr/src/app
 
 RUN addgroup --gid 1000 ml \
  && adduser --gecos "" \
