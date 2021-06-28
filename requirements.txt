@@ -9,7 +9,7 @@ Markdown==3.2.2
 MarkupSafe==1.1.1
 matplotlib==3.3.4
 numba==0.51.2
-numpy==1.19.4
+numpy==1.20.1
 pandas==0.25.3
 pydub==0.25.1
 pytest==6.2.2
