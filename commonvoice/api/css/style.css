@@ -101,7 +101,7 @@ h1{
   flex-grow: 1;
   justify-content: center;
   align-items: center;
-  margin:auto auto;
+  margin:auto;
 }
 
 .call-to-action h1{
@@ -114,7 +114,7 @@ h1{
   align-items: center;
   justify-content: center;
   height: 200px;
-  margin: auto auto;
+  margin: auto;
 }
 
 .audio-mic img{
