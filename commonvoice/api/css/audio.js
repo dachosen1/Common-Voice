@@ -32,20 +32,20 @@ socketio.on('gender_model', function (ms) {
         console.log('Connected', socketio.id)
       })
 
-document.getElementById("mic").addEventListener("click", function() {
- audioContext.resume();
- console.log("resumed mic")
+document.getElementById("mic").addEventListener("click", function(e) {
+   
+    toggleRecording(e);
 });
 
 function toggleRecording( e ) {
-    if (e.classList.contains('recording')) {
+    if (e.target.classList.contains('recording')) {
         // stop recording
-        e.classList.remove('recording');
+        e.target.classList.remove('recording');
         recording = false;
         socketio.emit('end-recording');
     } else {
         // start recording
-        e.classList.add('recording');
+        e.target.classList.add('recording');
         recording = true;
         socketio.emit('start-audio', {numChannels: 1, bps: 16, fps: parseInt(audioContext.sampleRate)});
     }
@@ -64,6 +64,7 @@ function convertToMono( input ) {
 
 
 function gotStream(stream) {
+     document.getElementById("prediction-result").classList.add("prediction-show");
     inputPoint = audioContext.createGain();
 
     // Create an AudioNode from the stream.
@@ -110,10 +111,13 @@ function initAudio() {
     if (!navigator.requestAnimationFrame)
         navigator.requestAnimationFrame = navigator.webkitRequestAnimationFrame || navigator.mozRequestAnimationFrame;
 
+    
     navigator.getUserMedia({audio: true}, gotStream, function(e) {
         alert('Error getting audio');
+        document.getElementById("prediction-result").classList.remove("prediction-show");
         console.log(e);
     });
+    
 }
 
 window.addEventListener('load', initAudio );
