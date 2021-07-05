@@ -1,4 +1,4 @@
-    /* Audio recording and streaming demo by Miguel Grinberg.
+   /* Audio recording and streaming demo by Miguel Grinberg.
    Adapted from https://webaudiodemos.appspot.com/AudioRecorder
    Copyright 2013 Chris Wilson
    Licensed under the Apache License, Version 2.0 (the "License");
@@ -32,20 +32,20 @@ socketio.on('gender_model', function (ms) {
         console.log('Connected', socketio.id)
       })
 
-document.getElementById("mic").addEventListener("click", function(e) {
-   
-    toggleRecording(e);
+document.getElementById("mic").addEventListener("click", function() {
+ audioContext.resume();
+ console.log("resumed mic")
 });
 
 function toggleRecording( e ) {
-    if (e.target.classList.contains('recording')) {
+    if (e.classList.contains('recording')) {
         // stop recording
-        e.target.classList.remove('recording');
+        e.classList.remove('recording');
         recording = false;
         socketio.emit('end-recording');
     } else {
         // start recording
-        e.target.classList.add('recording');
+        e.classList.add('recording');
         recording = true;
         socketio.emit('start-audio', {numChannels: 1, bps: 16, fps: parseInt(audioContext.sampleRate)});
     }
@@ -64,7 +64,7 @@ function convertToMono( input ) {
 
 
 function gotStream(stream) {
-     document.getElementById("prediction-result").classList.add("prediction-show");
+    document.getElementById("prediction-result").classList.add("prediction-show");
     inputPoint = audioContext.createGain();
 
     // Create an AudioNode from the stream.
@@ -111,13 +111,11 @@ function initAudio() {
     if (!navigator.requestAnimationFrame)
         navigator.requestAnimationFrame = navigator.webkitRequestAnimationFrame || navigator.mozRequestAnimationFrame;
 
-    
     navigator.getUserMedia({audio: true}, gotStream, function(e) {
         alert('Error getting audio');
         document.getElementById("prediction-result").classList.remove("prediction-show");
         console.log(e);
     });
-    
 }
 
 window.addEventListener('load', initAudio );
