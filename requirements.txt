@@ -10,11 +10,10 @@ MarkupSafe==1.1.1
 matplotlib==3.3.4
 numba==0.51.2
 numpy==1.20.1
-pandas==0.25.3
+pandas==1.2.1
 pydub==0.25.1
 pytest==6.2.2
 python-socketio==4.6.1
 scikit-learn==0.24.1
-scipy==1.5.4
-tqdm==4.47.0
-wandb==0.10.22
+tqdm==4.56.0
+wandb==0.9.7
