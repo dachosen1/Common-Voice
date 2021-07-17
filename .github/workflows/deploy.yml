@@ -2,22 +2,18 @@ name: Build & Deploy
 
 on: [push]
 
-jobs: 
-  deploy: 
-    runs-on: unbutu-latest
-    steps: 
-    - name: Deploy Common Voice Application
-      uses: appleboy/ssh-action@v0.1.2
-      with: 
-        host: ${{secrets.SSH_HOST}}
-        key: ${{secrets.SSH_KEY}}
-        username: ${{secrets.SSH_USERNAME}}
-        
-        script: | 
-          cd Common-Voice
-          git pull
-          docker-compose up --build
-        
-        
-        
-        
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy Common Voice  app
+        uses: appleboy/ssh-action@v0.1.2
+        with:
+          host: ${{secrets.SSH_HOST}} 
+          key: ${{secrets.SSH_KEY}} 
+          username: ${{ secrets.SSH_USERNAME }} 
+     
+          script: |
+            cd Common-Voice 
+            git pull 
+            docker-compose up --build
