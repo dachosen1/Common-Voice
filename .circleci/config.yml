@@ -9,6 +9,7 @@ jobs:
   pull-and-build:
     docker:
       - image: arvindr226/alpine-ssh
+    working_directory: ~/project
     steps:
       - checkout:
           path: ~/project
