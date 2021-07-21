@@ -6,18 +6,10 @@ defaults:
   working_directory: ~/project
 
 jobs:
-  pull-and-build:
-    docker:
-      - image: arvindr226/alpine-ssh
-    steps:
-      - checkout:
-          path: ~/project
-      - run: ssh -oStrictHostKeyChecking=no -v $USER@$IP "./deploy.sh"
-
   common-voice-api:
     docker:
       - image: circleci/python:3.7
-    working_directory: ~/project/commonvoice
+    working_directory: ~/project
     steps:
       - checkout:
           path: ~/project
@@ -29,9 +21,11 @@ jobs:
             source venv/bin/activate
             sudo pip install --upgrade pip
             sudo apt-get install portaudio19-dev python-pyaudio python3-pyaudio
+            sudo pip install -r requirements.txt
+            sudo pip install --no-cache-dir torch==1.6.0+cpu -f https://download.pytorch.org/whl/cpu/torch_stable.html
+            #sudo pytest
 workflows:
   version: 2
   build-project:
     jobs:
       - common-voice-api
-      - pull-and-build
