@@ -6,17 +6,17 @@ defaults:
   working_directory: ~/project
 
 jobs:
-  pull-and-build:
-    docker:
-      - image: arvindr226/alpine-ssh
-    working_directory: ~/Common-Voice
-    steps:
-      - checkout:
-          path: ~/Common-Voice
-      - run:
-          name: Deploy 
-          command: |
-            ssh -oStrictHostKeyChecking=no -v $USER@$IP 
+  # pull-and-build:
+  #   docker:
+  #     - image: arvindr226/alpine-ssh
+  #   working_directory: ~/Common-Voice
+  #   steps:
+  #     - checkout:
+  #         path: ~/Common-Voice
+  #     - run:
+  #         name: Deploy 
+  #         command: |
+  #           ssh -oStrictHostKeyChecking=no -v $USER@$IP 
 
   common-voice-api:
     docker:
@@ -38,4 +38,4 @@ workflows:
   build-project:
     jobs:
       - common-voice-api
-      - pull-and-build
+      # - pull-and-build
