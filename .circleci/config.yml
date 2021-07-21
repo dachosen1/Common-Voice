@@ -6,18 +6,6 @@ defaults:
   working_directory: ~/project
 
 jobs:
-  # pull-and-build:
-  #   docker:
-  #     - image: arvindr226/alpine-ssh
-  #   working_directory: ~/Common-Voice
-  #   steps:
-  #     - checkout:
-  #         path: ~/Common-Voice
-  #     - run:
-  #         name: Deploy 
-  #         command: |
-  #           ssh -oStrictHostKeyChecking=no -v $USER@$IP 
-
   common-voice-api:
     docker:
       - image: circleci/python:3.7
@@ -33,11 +21,10 @@ jobs:
             source venv/bin/activate
             sudo pip install --upgrade pip
             sudo apt-get install portaudio19-dev python-pyaudio python3-pyaudio
-            sudo pip install -r requirements.txt
-            sudo pytest
+            # sudo pip install -r requirements.txt
+            # sudo pytest
 workflows:
   version: 2
   build-project:
     jobs:
       - common-voice-api
-      # - pull-and-build
