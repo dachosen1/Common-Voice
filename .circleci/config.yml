@@ -21,8 +21,8 @@ jobs:
             source venv/bin/activate
             sudo pip install --upgrade pip
             sudo apt-get install portaudio19-dev python-pyaudio python3-pyaudio
-            # sudo pip install -r requirements.txt
-            # sudo pytest
+            sudo pip install -r requirements.txt
+            sudo pytest
 workflows:
   version: 2
   build-project:
