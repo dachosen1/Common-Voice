@@ -9,11 +9,14 @@ jobs:
   pull-and-build:
     docker:
       - image: arvindr226/alpine-ssh
-    working_directory: ~/project
+    working_directory: ~/Common-Voice
     steps:
       - checkout:
-          path: ~/project
-      - run: ssh -oStrictHostKeyChecking=no -v $USER@$IP "./deploy.sh"
+          path: ~/Common-Voice
+      - run:
+          name: Deploy 
+          command: |
+            ssh -oStrictHostKeyChecking=no -v $USER@$IP 
 
   common-voice-api:
     docker:
