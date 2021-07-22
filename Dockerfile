@@ -33,15 +33,15 @@ RUN addgroup --gid 1000 ml \
 
 COPY ./requirements.txt .
 
-RUN pip3 install torch==1.6.0+cpu -f https://download.pytorch.org/whl/cpu/torch_stable.html
-RUN pip3 install pyaudio
-RUN pip3 install -r requirements.txt
+RUN pip3 install --no-cache-dir torch==1.6.0+cpu -f https://download.pytorch.org/whl/cpu/torch_stable.html
+RUN pip3 install --no-cache-dir pyaudio
+RUN pip3 install --no-cache-dir -r requirements.txt
 
 COPY . .
 
-RUN mkdir -p .local/bin .config .cache
-RUN mkdir -p /run/user/1000 \
- && chown ml:ml /run/user/1000
+RUN mkdir -p .local/bin .config .cache \
+    mkdir -p /run/user/1000 \
+    && chown ml:ml /run/user/1000
 
 USER ml
 
