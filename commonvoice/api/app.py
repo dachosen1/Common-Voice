@@ -1,5 +1,5 @@
-import uuid
 import warnings
+from uuid import uuid4
 
 import numpy as np
 import pyaudio
@@ -7,7 +7,6 @@ import torch
 from flask import Flask, render_template, request, session
 from flask_socketio import SocketIO
 
-from matplotlib import pyplot as plt
 from audio_model.config import Gender, FRAME
 from audio_model.pipeline_mananger import load_model
 from audio_model.utils import audio_melspectrogram, generate_pred, remove_silence, sigmoid
@@ -44,7 +43,7 @@ def about():
 @socketio.on('connect')
 def test_connect():
     """Initialize a new session"""
-    id = uuid.uuid4().hex  # Unique Session ID
+    id = uuid4().hex  # Unique Session ID
     session['sess_id'] = id
     session['frames'] = []
     print("Client Session: [", id, "] Connected")

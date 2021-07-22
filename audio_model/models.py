@@ -89,38 +89,65 @@ class AudioLSTM(nn.Module):
         return hidden
 
 
-# define the CNN architecture
 class AudioCNN(nn.Module):
-    def __init__(self, ):
-        super(AudioCNN, self).__init__()
-    # out_channel, kernel_size, output_size, padding, input_size, batch_size
-        self.conv1 = nn.Conv2d(1, 88, 3, padding=1)
 
-        # max pooling layer
-        self.pool = nn.MaxPool2d(2, 2)
-        # linear layer (64 * 4 * 4 -> 500)
-        self.fc1 = nn.Linear(22*6*88, 500)
-        self.fc2 = nn.Linear(500, 5)
+    def __init__(self):
+        super().__init__()
+        # 4 conv blocks / flatten / linear / softmax
+        self.conv1 = nn.Sequential(
+            nn.Conv2d(
+                in_channels=1,
+                out_channels=16,
+                kernel_size=3,
+                stride=1,
+                padding=2
+            ),
+            nn.ReLU(),
+            nn.MaxPool2d(kernel_size=2)
+        )
+        self.conv2 = nn.Sequential(
+            nn.Conv2d(
+                in_channels=16,
+                out_channels=32,
+                kernel_size=3,
+                stride=1,
+                padding=2
+            ),
+            nn.ReLU(),
+            nn.MaxPool2d(kernel_size=2)
+        )
+        self.conv3 = nn.Sequential(
+            nn.Conv2d(
+                in_channels=32,
+                out_channels=64,
+                kernel_size=3,
+                stride=1,
+                padding=2
+            ),
+            nn.ReLU(),
+            nn.MaxPool2d(kernel_size=2)
+        )
+        self.conv4 = nn.Sequential(
+            nn.Conv2d(
+                in_channels=64,
+                out_channels=128,
+                kernel_size=3,
+                stride=1,
+                padding=2
+            ),
+            nn.ReLU(),
+            nn.MaxPool2d(kernel_size=2)
+        )
+        self.flatten = nn.Flatten()
+        self.linear = nn.Linear(128 * 5 * 4, 10)
+        self.softmax = nn.Softmax(dim=1)
 
-        # dropout layer (p=0.25)
-        self.dropout = nn.Dropout(0.25)
-
-    def forward(self, x):
-        # add sequence of convolutional and max pooling layers
-        x = self.pool(F.relu(self.conv1(x)))
-
-        # flatten image input
-        x = x.view(-1, 22*6*88)
-
-        # add dropout layer
-        x = self.dropout(x)
-
-        # add 1st hidden layer, with relu activation function
-        x = F.relu(self.fc1(x))
-
-        # add dropout layer
-        x = self.dropout(x)
-
-        # add 2nd hidden layer, with relu activation function
-        x = self.fc2(x)
-        return x
+    def forward(self, input_data):
+        x = self.conv1(input_data)
+        x = self.conv2(x)
+        x = self.conv3(x)
+        x = self.conv4(x)
+        x = self.flatten(x)
+        logits = self.linear(x)
+        predictions = self.softmax(logits)
+        return predictions
