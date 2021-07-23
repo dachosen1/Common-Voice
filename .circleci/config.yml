@@ -15,10 +15,14 @@ jobs:
           path: ~/project
 
       - run:
-          name: Test Package
+          name: Install Pre-requisite
           command: |
             sudo apt-get install libsndfile1
             sudo apt-get install portaudio19-dev python-pyaudio python3-pyaudio
+
+      - run:
+          name: Test Package
+          command: |
             python -m venv venv
             source venv/bin/activate
             pip install --upgrade pip
