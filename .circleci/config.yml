@@ -48,9 +48,9 @@ jobs:
             pip install -r requirements.txt
             pip install --no-cache-dir torch==1.6.0+cpu -f https://download.pytorch.org/whl/cpu/torch_stable.html
             
-            $HOME/.local/bin/coverage run -m pytest
-            $HOME/.local/bin/coverage report
-            $HOME/.local/bin/coverage html
+            coverage run -m pytest
+            coverage report
+            coverage html
 
       - store_artifacts:
           path: htmlcov
