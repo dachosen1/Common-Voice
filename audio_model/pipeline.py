@@ -14,7 +14,7 @@ from audio_model import config
 from audio_model.config import (
     DataDirectory,
     TrainingTestingSplitDirectory,
-    TRAINED_MODEL_DIR
+    TRAINED_MODEL_DIR,
 )
 from audio_model.model_manager import train
 from audio_model.models import AudioLSTM
@@ -41,30 +41,43 @@ class Run:
             DataDirectory.DEV_DIR, self.label, TrainingTestingSplitDirectory.TRAIN_DIR
         )
         self.val_dir = os.path.join(
-            DataDirectory.DEV_DIR, self.label, TrainingTestingSplitDirectory.VAL_DIR,
+            DataDirectory.DEV_DIR,
+            self.label,
+            TrainingTestingSplitDirectory.VAL_DIR,
         )
         self.test_dir = os.path.join(
-            DataDirectory.DEV_DIR, self.label, TrainingTestingSplitDirectory.TEST_DIR,
+            DataDirectory.DEV_DIR,
+            self.label,
+            TrainingTestingSplitDirectory.TEST_DIR,
         )
 
-        wandb.init(project="Common-Voice", group=self.label, tags=self.label, config=self.model_name.PARAM)
+        wandb.init(
+            project="Common-Voice",
+            group=self.label,
+            tags=self.label,
+            config=self.model_name.PARAM,
+        )
 
         self.config = wandb.config
 
-        self.output_size = self.config['OUTPUT_SIZE']
+        self.output_size = self.config["OUTPUT_SIZE"]
 
     def train_model(self) -> None:
-        train_dataset = DatasetFolder(root=self.train_dir, loader=npy_loader, extensions=".npy")
+        train_dataset = DatasetFolder(
+            root=self.train_dir, loader=npy_loader, extensions=".npy"
+        )
 
         print(self.train_dir)
-        val_dataset = DatasetFolder(root=self.val_dir, loader=npy_loader, extensions=".npy")
+        val_dataset = DatasetFolder(
+            root=self.val_dir, loader=npy_loader, extensions=".npy"
+        )
 
         train_sample_weight = sample_weight(train_dataset)
         val_sample_weight = sample_weight(val_dataset)
 
         train_data_loader = DataLoader(
             train_dataset,
-            batch_size=self.config['BATCH_SIZE'],
+            batch_size=self.config["BATCH_SIZE"],
             sampler=train_sample_weight,
             num_workers=4,
             drop_last=True,
@@ -72,13 +85,13 @@ class Run:
 
         _logger.info(
             "Uploaded training data to {} using {} batch sizes".format(
-                self.train_dir, self.config['BATCH_SIZE']
+                self.train_dir, self.config["BATCH_SIZE"]
             )
         )
 
         val_data_loader = DataLoader(
             val_dataset,
-            batch_size=self.config['BATCH_SIZE'],
+            batch_size=self.config["BATCH_SIZE"],
             sampler=val_sample_weight,
             num_workers=4,
             drop_last=True,
@@ -86,7 +99,7 @@ class Run:
 
         _logger.info(
             "Uploaded validation data to {} using {} batch sizes".format(
-                self.val_dir, self.config['BATCH_SIZE']
+                self.val_dir, self.config["BATCH_SIZE"]
             )
         )
 
@@ -99,27 +112,33 @@ class Run:
             "{} output size, "
             "{} batch size, "
             "{} dropout".format(
-                self.config['NUM_LAYERS'],
-                self.config['HIDDEN_DIM'],
-                self.config['INPUT_SIZE'],
-                self.config['OUTPUT_SIZE'],
-                self.config['BATCH_SIZE'],
-                self.config['DROPOUT'],
+                self.config["NUM_LAYERS"],
+                self.config["HIDDEN_DIM"],
+                self.config["INPUT_SIZE"],
+                self.config["OUTPUT_SIZE"],
+                self.config["BATCH_SIZE"],
+                self.config["DROPOUT"],
             )
         )
 
         trained_model = train(
             model=lstm_model(self.config),
-            epoch=self.config['EPOCH'],
-            gradient_clip=self.config['GRADIENT_CLIP'],
-            learning_rate=self.config['LEARNING_RATE'],
+            epoch=self.config["EPOCH"],
+            gradient_clip=self.config["GRADIENT_CLIP"],
+            learning_rate=self.config["LEARNING_RATE"],
             train_loader=train_data_loader,
             valid_loader=val_data_loader,
             early_stopping=True,
         )
 
-        trained_model_path = os.path.join(TRAINED_MODEL_DIR, self.name + __version__ + ".pt")
-        _logger.info("Saved {} version {} in {}".format(self.name, __version__, TRAINED_MODEL_DIR))
+        trained_model_path = os.path.join(
+            TRAINED_MODEL_DIR, self.name + __version__ + ".pt"
+        )
+        _logger.info(
+            "Saved {} version {} in {}".format(
+                self.name, __version__, TRAINED_MODEL_DIR
+            )
+        )
 
         torch.save(trained_model.state_dict(), trained_model_path)
 
@@ -134,7 +153,7 @@ class Run:
             )
 
             path_list = parser.label_data.path
-            path_list = path_list[0:round(len(path_list) * percentage)]
+            path_list = path_list[0 : round(len(path_list) * percentage)]
 
             mp3_list = range(len(path_list))
 
@@ -145,11 +164,15 @@ class Run:
             end = datetime.now()
 
             _logger.info("Added {} total training examples.".format(parser.add_count))
-            _logger.info("Removed {} total training examples.".format(parser.remove_count))
+            _logger.info(
+                "Removed {} total training examples.".format(parser.remove_count)
+            )
             _logger.info("Processing was completed in {}. ".format(end - start))
 
         else:
-            _logger.info("Skipping MP3 feature engineering. Will use existing mfcc data for training")
+            _logger.info(
+                "Skipping MP3 feature engineering. Will use existing mfcc data for training"
+            )
 
     def model_pipeline_test(self):
         """
@@ -161,7 +184,11 @@ class Run:
         model.eval()
         model.init_hidden()
 
-        test_dir = os.path.join(dir_path, self.model_name.LABEL, config.TrainingTestingSplitDirectory.TEST_DIR)
+        test_dir = os.path.join(
+            dir_path,
+            self.model_name.LABEL,
+            config.TrainingTestingSplitDirectory.TEST_DIR,
+        )
 
         assert os.path.exists(test_dir)
         test_accuracy = {}
@@ -170,24 +197,29 @@ class Run:
             accuracy = 0
             for value in os.listdir(test_set):
                 data = np.load(os.path.join(test_set, value))
-                pred_label, _ = generate_pred(mel=data, model=model, label=self.model_name.OUTPUT, model_name=self.model_name)
+                pred_label, _ = generate_pred(
+                    mel=data,
+                    model=model,
+                    label=self.model_name.OUTPUT,
+                    model_name=self.model_name,
+                )
                 if pred_label.lower() == label.lower():
                     accuracy += 1
             test_accuracy[label] = accuracy / len(os.listdir(test_set))
 
-        _logger.info(
-            test_accuracy
-        )
+        _logger.info(test_accuracy)
         return test_accuracy
 
 
 def lstm_model(param):
-    model = AudioLSTM(batch_size=param['BATCH_SIZE'],
-                      input_size=param['INPUT_SIZE'],
-                      num_layer=param['NUM_LAYERS'],
-                      hidden_size=param['HIDDEN_DIM'],
-                      dropout=param['DROPOUT'],
-                      output_size=param['OUTPUT_SIZE'])
+    model = AudioLSTM(
+        batch_size=param["BATCH_SIZE"],
+        input_size=param["INPUT_SIZE"],
+        num_layer=param["NUM_LAYERS"],
+        hidden_size=param["HIDDEN_DIM"],
+        dropout=param["DROPOUT"],
+        output_size=param["OUTPUT_SIZE"],
+    )
 
     _logger.info(model)
 

@@ -13,12 +13,7 @@ import torch
 import wandb
 from librosa import power_to_db, stft
 from pydub import AudioSegment
-from sklearn.metrics import (
-    accuracy_score,
-    f1_score,
-    precision_score,
-    recall_score
-)
+from sklearn.metrics import accuracy_score, f1_score, precision_score, recall_score
 from torch.utils.data import WeightedRandomSampler
 from tqdm import tqdm
 
@@ -63,9 +58,7 @@ def csv_loader(path: str) -> torch.Tensor:
 def envelope(y: int, signal_rate: int, threshold: float):
     signal_clean = []
     y = pd.Series(y).apply(np.abs)
-    y_mean = y.rolling(
-        window=int(signal_rate / 10), min_periods=1, center=True
-    ).mean()
+    y_mean = y.rolling(window=int(signal_rate / 10), min_periods=1, center=True).mean()
 
     for mean in y_mean:
         if mean > threshold:
@@ -106,7 +99,11 @@ def sample_weight(data_folder):
     :return:
     """
     class_sample_count = np.array(
-        [len([i for i in data_folder.targets if i == t]) for t in range(0, len(data_folder.classes))])
+        [
+            len([i for i in data_folder.targets if i == t])
+            for t in range(0, len(data_folder.classes))
+        ]
+    )
     weight = 1 / class_sample_count
     samples_weight = np.array([weight[t] for t in data_folder.targets])
     samples_weight = torch.from_numpy(samples_weight)
@@ -116,13 +113,16 @@ def sample_weight(data_folder):
 
 
 def envelop_mask(signal):
-    mask = envelope(signal, signal_rate=FRAME['SAMPLE_RATE'], threshold=FRAME['MASK_THRESHOLD'])
+    mask = envelope(
+        signal, signal_rate=FRAME["SAMPLE_RATE"], threshold=FRAME["MASK_THRESHOLD"]
+    )
     return signal[mask]
 
 
 def audio_melspectrogram(signal):
-    specto = librosa.feature.melspectrogram(y=signal, sr=FRAME['SAMPLE_RATE'], n_mels=FRAME['N_MELS'],
-                                            fmax=FRAME['FMAX'])
+    specto = librosa.feature.melspectrogram(
+        y=signal, sr=FRAME["SAMPLE_RATE"], n_mels=FRAME["N_MELS"], fmax=FRAME["FMAX"]
+    )
     spec_to_db = power_to_db(specto, ref=np.max)
     return spec_to_db
 
@@ -134,7 +134,9 @@ def audio_sfft(signal):
 
 
 def audio_mfcc(signal):
-    signal_mfcc_ = librosa.feature.mfcc(signal, sr=FRAME['SAMPLE_RATE'], n_mfcc=FRAME['NUMCEP'])
+    signal_mfcc_ = librosa.feature.mfcc(
+        signal, sr=FRAME["SAMPLE_RATE"], n_mfcc=FRAME["NUMCEP"]
+    )
     return normalize(signal_mfcc_.T)
 
 
@@ -163,9 +165,9 @@ def generate_pred(mel, model, label, model_name):
 
 def _metric_summary(pred: np.ndarray, label: np.ndarray):
     acc = accuracy_score(y_true=label, y_pred=pred)
-    f1 = f1_score(y_true=label, y_pred=pred, average='weighted')
-    pc = precision_score(y_true=label, y_pred=pred, average='weighted')
-    rs = recall_score(y_true=label, y_pred=pred, average='weighted')
+    f1 = f1_score(y_true=label, y_pred=pred, average="weighted")
+    pc = precision_score(y_true=label, y_pred=pred, average="weighted")
+    rs = recall_score(y_true=label, y_pred=pred, average="weighted")
     return acc, f1, pc, rs
 
 
@@ -189,7 +191,12 @@ def run_process_pool(function, my_iter):
 
 def linear_to_mel(spectrogram):
     return librosa.feature.melspectrogram(
-        S=spectrogram, sr=FRAME['SAMPLE_RATE'], n_fft=FRAME['NFFT'], n_mels=FRAME['N_MELS'], fmin=FRAME['TOP_DB'])
+        S=spectrogram,
+        sr=FRAME["SAMPLE_RATE"],
+        n_fft=FRAME["NFFT"],
+        n_mels=FRAME["N_MELS"],
+        fmin=FRAME["TOP_DB"],
+    )
 
 
 def normalize(signal):
@@ -209,7 +216,7 @@ def db_to_amp(x):
 
 def spectrogram(y):
     D = stft(y)
-    S = amp_to_db(np.abs(D)) - FRAME['REF_LEVEL_DB']
+    S = amp_to_db(np.abs(D)) - FRAME["REF_LEVEL_DB"]
     return normalize(S)
 
 
@@ -226,18 +233,25 @@ def remove_silence(signal):
     :return:
     """
 
-    signal = signal[np.abs(signal) > FRAME['TOP_DB'] / 1000]
-    wrap = envelope(y=signal, signal_rate=FRAME['SAMPLE_RATE'], threshold=FRAME['MASK_THRESHOLD'])
+    signal = signal[np.abs(signal) > FRAME["TOP_DB"] / 1000]
+    wrap = envelope(
+        y=signal, signal_rate=FRAME["SAMPLE_RATE"], threshold=FRAME["MASK_THRESHOLD"]
+    )
     signal = signal[wrap]
     return signal
 
 
 def sigmoid(x):
-    return f'{np.round(1 / (1 + np.exp(-x)) * 100, 2)}%'
+    return f"{np.round(1 / (1 + np.exp(-x)) * 100, 2)}%"
 
 
 def stft(y):
-    return librosa.stft(y=y, n_fft=FRAME['NFFT'], hop_length=FRAME['HOP_LENGTH'], win_length=FRAME['WIN_LENGTH'])
+    return librosa.stft(
+        y=y,
+        n_fft=FRAME["NFFT"],
+        hop_length=FRAME["HOP_LENGTH"],
+        win_length=FRAME["WIN_LENGTH"],
+    )
 
 
 class EarlyStopping:
@@ -246,7 +260,7 @@ class EarlyStopping:
     """
 
     def __init__(
-            self, threshold: int = 5, verbose: bool = False, delta: float = 0
+        self, threshold: int = 5, verbose: bool = False, delta: float = 0
     ) -> None:
         """
         :param threshold: How long to wait after last time validation loss improved. Default: 50

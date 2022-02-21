@@ -32,12 +32,9 @@ def data_labels(data_path, label):
     return label_data
 
 
-
 class Mp3parser:
     def __init__(self, data_path, clips_dir, document_path, data_label, model):
-        """
-
-        """
+        """ """
         self.data_path = data_path
         self.clips_dir = clips_dir
         self.data_label = data_label
@@ -49,7 +46,7 @@ class Mp3parser:
 
         self.remove_count = 0
         self.add_count = 0
-        self.SAMPLE_RATE = FRAME['SAMPLE_RATE']
+        self.SAMPLE_RATE = FRAME["SAMPLE_RATE"]
 
     def convert_to_wav(self, index) -> None:
         clips_name = self.label_data.path.values[index]
@@ -66,7 +63,7 @@ class Mp3parser:
             step = int(sample_length_in_seconds * self.SAMPLE_RATE)
 
             for i in range(1, duration + 1):
-                data = signal[start: start + step]
+                data = signal[start : start + step]
 
                 training_mfcc = audio_melspectrogram(data)
 
@@ -74,7 +71,9 @@ class Mp3parser:
                 assert training_mfcc.shape[1] == 94
 
                 clip_name = "{}".format(clips_name.split(".")[0])
-                label_name = self.label_data[self.label_data.path == clips_name][self.data_label].values[0]
+                label_name = self.label_data[self.label_data.path == clips_name][
+                    self.data_label
+                ].values[0]
 
                 if label_name in DO_NOT_INCLUDE:
                     break
@@ -83,10 +82,14 @@ class Mp3parser:
                     ["train_data", "val_data", "test_data"], p=[0.7, 0.2, 0.1]
                 )
 
-                dir_path = os.path.join(self.document_path, self.data_label, train_test_choice)
+                dir_path = os.path.join(
+                    self.document_path, self.data_label, train_test_choice
+                )
                 check_dir(dir_path)
 
-                dir_path = os.path.join(self.document_path, self.data_label, train_test_choice, label_name)
+                dir_path = os.path.join(
+                    self.document_path, self.data_label, train_test_choice, label_name
+                )
 
                 check_dir(dir_path)
                 save_path = os.path.join(dir_path, clip_name + "_" + str(i))

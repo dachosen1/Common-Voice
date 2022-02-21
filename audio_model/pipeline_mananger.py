@@ -47,12 +47,12 @@ def load_model(model_name) -> object:
     """
 
     model = AudioLSTM(
-        num_layer=model_name.PARAM['NUM_LAYERS'],
-        hidden_size=model_name.PARAM['HIDDEN_DIM'],
-        input_size=model_name.PARAM['INPUT_SIZE'],
-        output_size=model_name.PARAM['OUTPUT_SIZE'],
-        dropout=model_name.PARAM['DROPOUT'],
-        batch_size=1
+        num_layer=model_name.PARAM["NUM_LAYERS"],
+        hidden_size=model_name.PARAM["HIDDEN_DIM"],
+        input_size=model_name.PARAM["INPUT_SIZE"],
+        output_size=model_name.PARAM["OUTPUT_SIZE"],
+        dropout=model_name.PARAM["DROPOUT"],
+        batch_size=1,
     )
     model.eval()
     file_path = os.path.join(TRAINED_MODEL_DIR, model_name.NAME + _version + ".pt")

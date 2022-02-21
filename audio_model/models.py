@@ -9,14 +9,14 @@ class AudioLSTM(nn.Module):
     """
 
     def __init__(
-            self,
-            batch_size,
-            input_size: int,
-            hidden_size: int,
-            dropout: float,
-            num_layer: int,
-            output_size: int,
-            RNN_TYPE: str = "LSTM",
+        self,
+        batch_size,
+        input_size: int,
+        hidden_size: int,
+        dropout: float,
+        num_layer: int,
+        output_size: int,
+        RNN_TYPE: str = "LSTM",
     ) -> None:
         """
 
@@ -40,16 +40,12 @@ class AudioLSTM(nn.Module):
 
         if RNN_TYPE == "LSTM":
             self.RNN_TYPE = nn.LSTM(
-                input_size=input_size,
-                hidden_size=hidden_size,
-                num_layers=num_layer
+                input_size=input_size, hidden_size=hidden_size, num_layers=num_layer
             )
 
         if RNN_TYPE == "GRU":
             self.RNN_TYPE = nn.GRU(
-                input_size=input_size,
-                hidden_size=hidden_size,
-                num_layers=num_layer
+                input_size=input_size, hidden_size=hidden_size, num_layers=num_layer
             )
 
         self.dropout = nn.Dropout(dropout)
@@ -76,8 +72,12 @@ class AudioLSTM(nn.Module):
 
         if torch.cuda.is_available():
             hidden = (
-                weight.new(self.num_layer, self.batch_size, self.hidden_size).zero_().cuda(),
-                weight.new(self.num_layer, self.batch_size, self.hidden_size).zero_().cuda(),
+                weight.new(self.num_layer, self.batch_size, self.hidden_size)
+                .zero_()
+                .cuda(),
+                weight.new(self.num_layer, self.batch_size, self.hidden_size)
+                .zero_()
+                .cuda(),
             )
 
         else:
@@ -90,53 +90,36 @@ class AudioLSTM(nn.Module):
 
 
 class AudioCNN(nn.Module):
-
     def __init__(self):
         super().__init__()
         # 4 conv blocks / flatten / linear / softmax
         self.conv1 = nn.Sequential(
             nn.Conv2d(
-                in_channels=1,
-                out_channels=16,
-                kernel_size=3,
-                stride=1,
-                padding=2
+                in_channels=1, out_channels=16, kernel_size=3, stride=1, padding=2
             ),
             nn.ReLU(),
-            nn.MaxPool2d(kernel_size=2)
+            nn.MaxPool2d(kernel_size=2),
         )
         self.conv2 = nn.Sequential(
             nn.Conv2d(
-                in_channels=16,
-                out_channels=32,
-                kernel_size=3,
-                stride=1,
-                padding=2
+                in_channels=16, out_channels=32, kernel_size=3, stride=1, padding=2
             ),
             nn.ReLU(),
-            nn.MaxPool2d(kernel_size=2)
+            nn.MaxPool2d(kernel_size=2),
         )
         self.conv3 = nn.Sequential(
             nn.Conv2d(
-                in_channels=32,
-                out_channels=64,
-                kernel_size=3,
-                stride=1,
-                padding=2
+                in_channels=32, out_channels=64, kernel_size=3, stride=1, padding=2
             ),
             nn.ReLU(),
-            nn.MaxPool2d(kernel_size=2)
+            nn.MaxPool2d(kernel_size=2),
         )
         self.conv4 = nn.Sequential(
             nn.Conv2d(
-                in_channels=64,
-                out_channels=128,
-                kernel_size=3,
-                stride=1,
-                padding=2
+                in_channels=64, out_channels=128, kernel_size=3, stride=1, padding=2
             ),
             nn.ReLU(),
-            nn.MaxPool2d(kernel_size=2)
+            nn.MaxPool2d(kernel_size=2),
         )
         self.flatten = nn.Flatten()
         self.linear = nn.Linear(128 * 5 * 4, 10)

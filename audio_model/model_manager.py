@@ -17,14 +17,14 @@ _logger = logging.getLogger(__name__)
 
 
 def train(
-        model: object,
-        epoch,
-        gradient_clip,
-        learning_rate,
-        train_loader: torch.utils.data.dataloader.DataLoader,
-        valid_loader: torch.utils.data.dataloader.DataLoader,
-        early_stopping_threshold: int = 10,
-        early_stopping: bool = True,
+    model: object,
+    epoch,
+    gradient_clip,
+    learning_rate,
+    train_loader: torch.utils.data.dataloader.DataLoader,
+    valid_loader: torch.utils.data.dataloader.DataLoader,
+    early_stopping_threshold: int = 10,
+    early_stopping: bool = True,
 ) -> object:
     """
     :param model:  Torch model
@@ -71,7 +71,8 @@ def train(
             train_output = model(train_inputs)
 
             train_acc, train_f1, train_pr, train_rc = _metric_summary(
-                pred=torch.max(train_output, dim=1).indices.data.cpu().numpy(), label=train_labels.cpu().numpy()
+                pred=torch.max(train_output, dim=1).indices.data.cpu().numpy(),
+                label=train_labels.cpu().numpy(),
             )
 
             train_loss = criterion(train_output, train_labels)
@@ -103,7 +104,8 @@ def train(
             val_loss_list.append(val_loss.item())
 
             val_acc, val_f1, val_pr, val_rc = _metric_summary(
-                pred=torch.max(val_output, dim=1).indices.data.cpu().numpy(), label=val_labels.cpu().numpy()
+                pred=torch.max(val_output, dim=1).indices.data.cpu().numpy(),
+                label=val_labels.cpu().numpy(),
             )
 
             val_acc_list.append(val_acc)
@@ -155,7 +157,9 @@ def model_pipeline_test(model_name):
     model.eval()
     model.init_hidden()
 
-    test_dir = os.path.join(dir_path, model_name.LABEL, config.TrainingTestingSplitDirectory.TEST_DIR)
+    test_dir = os.path.join(
+        dir_path, model_name.LABEL, config.TrainingTestingSplitDirectory.TEST_DIR
+    )
 
     assert os.path.exists(test_dir)
     test_accuracy = {}
@@ -164,12 +168,12 @@ def model_pipeline_test(model_name):
         accuracy = 0
         for value in os.listdir(test_set):
             data = np.load(os.path.join(test_set, value))
-            pred_label, _ = generate_pred(mel=data, model=model, label=model_name.OUTPUT, model_name=model_name)
+            pred_label, _ = generate_pred(
+                mel=data, model=model, label=model_name.OUTPUT, model_name=model_name
+            )
             if pred_label.lower() == label.lower():
                 accuracy += 1
         test_accuracy[label] = accuracy / len(os.listdir(test_set))
 
-    _logger.info(
-        test_accuracy
-    )
+    _logger.info(test_accuracy)
     return test_accuracy

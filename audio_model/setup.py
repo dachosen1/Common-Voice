@@ -26,9 +26,9 @@ long_description = (
 
 EMAIL = "anderson.nelson1@gmail.com"
 AUTHOR = "Anderson Nelson"
-REQUIRES_PYTHON = '>=3.5.4'
+REQUIRES_PYTHON = ">=3.5.4"
 
-URL = 'https://github.com/dachosen1/Common-Voice'
+URL = "https://github.com/dachosen1/Common-Voice"
 
 
 # What packages are required for this module to be executed?
@@ -41,18 +41,18 @@ def list_reqs(name="requirements.txt"):
 
 PACKAGE_ROOT = os.path.join(os.getcwd())
 about = {}
-with open(os.path.join(PACKAGE_ROOT, 'VERSION.txt')) as f:
+with open(os.path.join(PACKAGE_ROOT, "VERSION.txt")) as f:
     _version = f.read().strip()
-    about['__version__'] = _version
+    about["__version__"] = _version
 
 setup(
     name=NAME,
-    version=about['__version__'],
+    version=about["__version__"],
     description=DESCRIPTION,
     long_description=long_description,
     long_description_content_type="text/markdown",
-    packages=find_packages(exclude=('tests',)),
-    package_data={'audio_model': ['__version__']},
+    packages=find_packages(exclude=("tests",)),
+    package_data={"audio_model": ["__version__"]},
     author=AUTHOR,
     author_email=EMAIL,
     python_requires=REQUIRES_PYTHON,

@@ -2,8 +2,7 @@ import logging
 import sys
 
 
-FORMATTER = logging.Formatter(
-)
+FORMATTER = logging.Formatter()
 
 
 FORMATTER = logging.Formatter(
@@ -15,6 +14,3 @@ def get_console_handler():
     console_handler = logging.StreamHandler(sys.stdout)
     console_handler.setFormatter(FORMATTER)
     return console_handler
-
-
-

@@ -82,7 +82,7 @@ def list_blobs(bucket_name):
 
 
 def delete_mp3_from_bucket(
-        file_list: list, bucket: google.cloud.storage.bucket.Bucket
+    file_list: list, bucket: google.cloud.storage.bucket.Bucket
 ) -> None:
     """
     Iterates through a list of file names, and removes them from a google cloud bucket if they exist.
@@ -96,7 +96,7 @@ def delete_mp3_from_bucket(
 
 
 def delete_blob(
-        bucket_blob: google.cloud.storage.bucket.Bucket, blob_name: str
+    bucket_blob: google.cloud.storage.bucket.Bucket, blob_name: str
 ) -> None:
     """
     Deletes a blob from the bucket.
@@ -142,7 +142,7 @@ def delete_extra_file(name: chr, bucket: str) -> None:
 
 # noinspection PyTypeChecker
 def upload_blob(
-        bucket_name: str, source_file_name: str, destination_blob_name: str
+    bucket_name: str, source_file_name: str, destination_blob_name: str
 ) -> None:
     """
 
