@@ -1,6 +1,7 @@
 ## Common Voice
-[![CodeFactor](https://www.codefactor.io/repository/github/dachosen1/common-voice/badge)](https://www.codefactor.io/repository/github/dachosen1/common-voice)
-[![CircleCI](https://circleci.com/gh/dachosen1/Common-Voice.svg?style=svg)](https://circleci.com/gh/dachosen1/Common-Voice)
+[![Total alerts](https://img.shields.io/lgtm/alerts/g/dachosen1/Common-Voice.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/dachosen1/Common-Voice/alerts/)
+[![Language grade: JavaScript](https://img.shields.io/lgtm/grade/javascript/g/dachosen1/Common-Voice.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/dachosen1/Common-Voice/context:javascript)
+[![Language grade: Python](https://img.shields.io/lgtm/grade/python/g/dachosen1/Common-Voice.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/dachosen1/Common-Voice/context:python)
 
 **Live Deployment**: [Commvoice](https://commvoice.me/)
 
