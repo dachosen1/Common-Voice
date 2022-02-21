@@ -1,6 +1,6 @@
 joblib==1.0.0
 librosa==0.8.0
-llvmlite==0.34.0
+llvmlite==0.38.0
 MarkupSafe==1.1.1
 matplotlib==3.3.4
 numba==0.51.2
