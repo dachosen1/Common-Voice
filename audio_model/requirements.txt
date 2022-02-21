@@ -3,7 +3,7 @@ librosa==0.8.0
 llvmlite==0.34.0
 MarkupSafe==1.1.1
 matplotlib==3.3.4
-numba==0.51.2
+numba==0.55.1
 numpy==1.21.0
 pandas==1.2.1
 pydub==0.25.1
