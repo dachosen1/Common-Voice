@@ -9,13 +9,16 @@ updates:
     directory: "/" 
     schedule:
       interval: "weekly"
+    open-pull-requests-limit: 15
       
   - package-ecosystem: "github-actions" 
     directory: "/" 
     schedule:
       interval: "weekly"
-
+    open-pull-requests-limit: 15
+  
   - package-ecosystem: "docker"
     directory: "/"
     schedule:
       interval: "weekly"
+    open-pull-requests-limit: 15    
