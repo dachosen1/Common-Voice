@@ -7,7 +7,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Deploy Common Voice  app
-        uses: appleboy/ssh-action@v0.1.2
+        uses: appleboy/ssh-action@v0.1.7
         with:
           host: ${{secrets.SSH_HOST}} 
           key: ${{secrets.SSH_KEY}} 
