@@ -4,7 +4,7 @@ gevent-websocket==0.10.1
 gunicorn==20.1.0
 joblib==1.1.0
 librosa==0.9.1
-Markdown==3.3.6
+Markdown==3.10.1
 MarkupSafe==2.1.0
 numba==0.55.1
 pydub==0.25.1
